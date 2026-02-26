@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLAN 2026 - Planejamento Estratégico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Hide number input arrows (spinners) */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield; /* Firefox */
+    }
+
+    #error-display {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 1rem;
+      z-index: 9999;
+      border-bottom: 1px solid #ef4444;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+    #loading-display {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: sans-serif;
+      color: #6b7280;
+      font-size: 1.2rem;
+    }
+
+    @media print {
+      @page {
+        margin: 1cm;
+        size: landscape;
+      }
+      
+      /* === RESET & GENERAL === */
+      html, body {
+        height: auto !important;
+        overflow: visible !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: white !important;
+      }
+
+      /* Force background graphics to print */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Hide interactive elements and specific UI */
+      .no-print, button, nav, #error-display, #loading-display {
+        display: none !important;
+      }
+      
+      /* Expand scrollable areas to show all content */
+      .overflow-x-auto, .overflow-y-auto {
+        overflow: visible !important;
+        height: auto !important;
+        display: block !important;
+        width: 100% !important;
+        white-space: normal !important;
+      }
+
+      /* === SCENARIO 1: PRINTING THE MAIN APP (e.g., Scenario Planning) === */
+      /* When the body DOES NOT have the 'printing-report-mode' class */
+      
+      body:not(.printing-report-mode) #root {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        position: static !important;
+        overflow: visible !important;
+      }
+
+      /* Break the flex h-screen layout of App.tsx */
+      body:not(.printing-report-mode) #root > div {
+        display: block !important;
+        height: auto !important;
+        width: 100% !important;
+        position: static !important;
+        overflow: visible !important;
+      }
+
+      body:not(.printing-report-mode) main {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      /* === SCENARIO 2: PRINTING A REPORT MODAL === */
+      /* When the body HAS the 'printing-report-mode' class */
+
+      /* Hide the underlying app */
+      body.printing-report-mode #root {
+        display: none !important;
+      }
+
+      /* Style the portal container */
+      body.printing-report-mode .report-preview-container {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        z-index: 9999 !important;
+        display: block !important;
+        background: white !important;
+        overflow: visible !important;
+      }
+
+      /* Reset modal internal styles for print */
+      body.printing-report-mode .report-portal-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      
+      body.printing-report-mode .report-toolbar {
+        display: none !important;
+      }
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            'brand-dark': '#1a202c',
+            'brand-blue': '#2d3748',
+            'brand-orange': '#dd6b20',
+            'brand-gray': '#e2e8f0',
+            'brand-optimistic': '#38a169',
+            'brand-conservative': '#dd6b20',
+            'brand-disruptive': '#e53e3e',
+            'brand-light-gray': '#f7fafc',
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    window.addEventListener('error', function(e) {
+      const errorDiv = document.getElementById('error-display');
+      if (errorDiv) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent += `Error: ${e.message} at ${e.filename}:${e.lineno}\n`;
+      }
+      console.error('Global error:', e);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      const errorDiv = document.getElementById('error-display');
+      if (errorDiv) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent += `Unhandled Rejection: ${e.reason}\n`;
+      }
+      console.error('Unhandled Rejection:', e);
+    });
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/": "https://esm.sh/react@18.3.1/",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "@google/genai": "https://esm.sh/@google/genai@0.1.1",
+    "recharts": "https://esm.sh/recharts@2.12.7?deps=react@18.3.1,react-dom@18.3.1",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "uuid": "https://esm.sh/uuid@9.0.1",
+    "prop-types": "https://esm.sh/prop-types@15.8.1",
+    "react-is": "https://esm.sh/react-is@18.3.1",
+    "firebase/app": "https://esm.sh/firebase@10.12.2/app",
+    "firebase/auth": "https://esm.sh/firebase@10.12.2/auth",
+    "firebase/firestore": "https://esm.sh/firebase@10.12.2/firestore",
+    "path": "https://esm.sh/path-browserify@1.0.1",
+    "fs": "https://esm.sh/browserify-fs@1.0.0",
+    "process": "https://esm.sh/process@0.11.10"
+  }
+}
+</script>
+</head>
+<body class="bg-brand-light-gray">
+  <div id="error-display"></div>
+  <div id="root">
+    <div id="loading-display">Carregando aplicação...</div>
+  </div>
+</body>
+</html>
