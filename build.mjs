@@ -58,7 +58,12 @@ async function build() {
     jsx: 'automatic',
     loader: { '.js': 'jsx' }, // Ensure JSX is processed in JS files if needed
     // Mark dependencies present in importmap as external so esbuild doesn't try to bundle them
-    external: ['react', 'react/jsx-runtime', 'react-dom', 'react-dom/client', 'firebase/app', 'firebase/auth', 'firebase/firestore', '@google/genai', 'recharts', 'clsx', 'uuid'],
+    external: [
+      'react', 'react/jsx-runtime', 'react-dom', 'react-dom/client', 
+      'firebase/app', 'firebase/auth', 'firebase/firestore', 
+      '@google/genai', 'recharts', 'clsx', 'uuid',
+      'prop-types', 'react-is', 'path', 'fs', 'process'
+    ],
     format: 'esm', // Ensure output is ESM compatible with imports
     define: {
       'process.env.FIREBASE_API_KEY': JSON.stringify(process.env.FIREBASE_API_KEY || ''),
