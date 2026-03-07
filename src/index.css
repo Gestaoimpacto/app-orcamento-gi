@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Montserrat', sans-serif;
+  --color-brand-dark: #1a202c;
+  --color-brand-blue: #2d3748;
+  --color-brand-orange: #dd6b20;
+  --color-brand-gray: #e2e8f0;
+  --color-brand-optimistic: #38a169;
+  --color-brand-conservative: #dd6b20;
+  --color-brand-disruptive: #e53e3e;
+  --color-brand-light-gray: #f7fafc;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Hide number input arrows (spinners) */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#error-display {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  z-index: 9999;
+  border-bottom: 1px solid #ef4444;
+  font-family: monospace;
+  white-space: pre-wrap;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+@media print {
+  @page {
+    margin: 1cm;
+    size: landscape;
+  }
+  
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: white !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print, button, nav, #error-display, #loading-display {
+    display: none !important;
+  }
+  
+  .overflow-x-auto, .overflow-y-auto {
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+    width: 100% !important;
+    white-space: normal !important;
+  }
+
+  body:not(.printing-report-mode) #root {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  body:not(.printing-report-mode) #root > div {
+    display: block !important;
+    height: auto !important;
+    width: 100% !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  body:not(.printing-report-mode) main {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.printing-report-mode #root {
+    display: none !important;
+  }
+
+  body.printing-report-mode .report-preview-container {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    z-index: 9999 !important;
+    display: block !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+
+  body.printing-report-mode .report-portal-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  body.printing-report-mode .report-toolbar {
+    display: none !important;
+  }
+}

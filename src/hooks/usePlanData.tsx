@@ -16,14 +16,14 @@ import {
     BlueOceanFactor, BlueOceanFourActions, ScenarioProjectionData, StrategicObjectives, CustomProjectionLineItem
 } from '../types';
 
-// Firebase configuration
+// Firebase configuration - loaded from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyB5fB2J-D431lc4m3NrTDDVEpTtvd_U_1A",
-  authDomain: "plan-ea4cc.firebaseapp.com",
-  projectId: "plan-ea4cc",
-  storageBucket: "plan-ea4cc.firebasestorage.app",
-  messagingSenderId: "1007485589925",
-  appId: "1:1007485589925:web:9514ab68c669cf5a52b04c"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB5fB2J-D431lc4m3NrTDDVEpTtvd_U_1A",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "plan-ea4cc.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "plan-ea4cc",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "plan-ea4cc.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1007485589925",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:1007485589925:web:9514ab68c669cf5a52b04c"
 };
 const isConfigValid = firebaseConfig.apiKey && firebaseConfig.apiKey !== "COLE_SUA_API_KEY_AQUI";
 const isOfflineMode = !isConfigValid;

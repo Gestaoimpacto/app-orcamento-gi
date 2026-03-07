@@ -10,7 +10,7 @@ const getAI = () => {
     // 1. Valid Environment Variable (System) IF it's not a placeholder
     // 2. Valid Local Storage (User Settings)
     
-    let apiKey = process.env.API_KEY;
+    let apiKey = import.meta.env.VITE_API_KEY as string | undefined;
     
     // Check if env var is missing, empty, or a known placeholder from some build systems
     if (!apiKey || apiKey.trim() === '' || apiKey === 'undefined' || apiKey === 'null' || apiKey.includes('YOUR_API_KEY')) {

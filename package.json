@@ -1,15 +1,35 @@
 {
   "name": "plan-2026-app",
+  "private": true,
   "version": "1.0.0",
-  "description": "Planejamento Estratégico 2026",
-  "main": "index.js",
+  "description": "Planejamento Estratégico 2026 - Gestão de Impacto",
+  "type": "module",
   "scripts": {
-    "build": "node build.mjs",
-    "dev": "npx serve -s dist -l 3000"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^1.44.0",
+    "clsx": "^2.1.1",
+    "firebase": "^12.10.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.8.0",
+    "uuid": "^13.0.0"
+  },
   "devDependencies": {
-    "esbuild": "^0.21.4"
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^11.0.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gestaoimpacto/app-orcamento-gi.git"
   }
 }
