@@ -15,8 +15,8 @@ const StrategicScoreSummary: React.FC = () => {
     const isPositive = total >= 0;
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Pontuação Estratégica Consolidada</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Pontuação Estratégica Consolidada</h2>
             <p className="text-sm text-gray-600 mb-4">
                 Este score é calculado automaticamente com base nas análises abaixo (SWOT, Oceano Azul, Mercado, Portfólio e Bowman). 
                 Ele impacta diretamente o <strong>Fator Estratégico</strong> na aba de Orçamentos/Cenários.
@@ -115,8 +115,8 @@ const SwotAnalysis: React.FC = () => {
     );
     
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Análise SWOT</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Análise SWOT</h2>
             <p className="text-sm text-gray-600">
                 Identifique os fatores internos (Forças e Fraquezas) e externos (Oportunidades e Ameaças) que impactam seu negócio.
                 O nível de impacto influencia diretamente o Fator Estratégico.
@@ -153,8 +153,8 @@ const BlueOcean: React.FC = () => {
     );
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-6 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Estratégia do Oceano Azul</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Estratégia do Oceano Azul</h2>
             <p className="text-sm text-gray-600">
                 Compare os atributos de valor da sua empresa com o principal concorrente. 
                 Quanto maior a diferença a seu favor, melhor o impacto no Fator Estratégico.
@@ -251,8 +251,8 @@ const BowmanClock: React.FC = () => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-6 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Relógio Estratégico de Bowman</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Relógio Estratégico de Bowman</h2>
             <p className="text-sm text-gray-600">
                 Posicione seus produtos/serviços com base no <strong>preço praticado</strong> e no <strong>valor percebido pelo cliente</strong>. 
                 O ideal é ter alto valor percebido com preço competitivo (quadrante verde).
@@ -301,7 +301,7 @@ const BowmanClock: React.FC = () => {
                         {avgPosition && (
                             <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                                 <p className="text-xs font-bold text-gray-600 uppercase">Posição Estratégica Média</p>
-                                <p className="text-sm font-bold text-brand-dark mt-1">{avgPosition.strategy}</p>
+                                <p className="text-sm font-bold text-gray-900 mt-1">{avgPosition.strategy}</p>
                                 <p className="text-xs text-gray-500 mt-0.5">
                                     Preço médio: {avgPosition.avgPrice.toFixed(1)} | Valor médio: {avgPosition.avgValue.toFixed(1)}
                                 </p>
@@ -338,7 +338,7 @@ export const StrategicAnalysis: React.FC = () => {
   return (
     <div className="space-y-8">
         <header>
-            <h1 className="text-4xl font-bold text-brand-dark">3. Análise Estratégica</h1>
+            <h1 className="text-4xl font-bold text-gray-900">3. Análise Estratégica</h1>
             <p className="text-lg text-gray-600 mt-2">
                 Analise seu mercado, concorrência e portfólio para encontrar oportunidades de crescimento.
                 Cada análise abaixo alimenta automaticamente o <strong>Fator Estratégico</strong> que impacta seus cenários de orçamento.

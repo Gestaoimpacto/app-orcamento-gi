@@ -89,19 +89,19 @@ const SensitivityAnalysis: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">Análise de Sensibilidade</h1>
+                <h1 className="text-4xl font-bold text-gray-900">Análise de Sensibilidade</h1>
                 <p className="text-lg text-gray-600 mt-2">
                     Simule o impacto cruzado de variações de <strong>Preço</strong> e <strong>Volume</strong> no seu Lucro Líquido e entenda os riscos do seu negócio.
                 </p>
             </header>
 
             {/* Resumo Executivo */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h2 className="text-xl font-bold text-brand-blue mb-4">Resumo Executivo</h2>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Resumo Executivo</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-500 uppercase font-semibold">Receita Líquida Base</p>
-                        <p className="text-2xl font-extrabold text-brand-dark mt-1">{formatCurrency(baseRevenue, true)}</p>
+                        <p className="text-2xl font-extrabold text-gray-900 mt-1">{formatCurrency(baseRevenue, true)}</p>
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-500 uppercase font-semibold">Lucro Líquido Base</p>
@@ -109,7 +109,7 @@ const SensitivityAnalysis: React.FC = () => {
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                         <p className="text-xs text-gray-500 uppercase font-semibold">Ponto de Equilíbrio</p>
-                        <p className="text-2xl font-extrabold text-brand-dark mt-1">{formatCurrency(breakevenRevenue, true)}</p>
+                        <p className="text-2xl font-extrabold text-gray-900 mt-1">{formatCurrency(breakevenRevenue, true)}</p>
                     </div>
                     <div className={`text-center p-4 rounded-lg ${safetyMarginPercent > 20 ? 'bg-green-50' : safetyMarginPercent > 10 ? 'bg-yellow-50' : 'bg-red-50'}`}>
                         <p className="text-xs text-gray-500 uppercase font-semibold">Margem de Segurança</p>
@@ -137,7 +137,7 @@ const SensitivityAnalysis: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Controles */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="text-lg font-bold text-brand-blue mb-4">Como Ler a Matriz</h3>
                         <div className="space-y-3 text-sm text-gray-600">
                             <p><strong>Linhas (vertical):</strong> Variação no <strong>volume de vendas</strong> (quantidade vendida).</p>
@@ -154,7 +154,7 @@ const SensitivityAnalysis: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
                         <label className="font-bold text-gray-700 block mb-2">Amplitude da Simulação</label>
                         <div className="flex items-center gap-4">
                             <input 
@@ -173,7 +173,7 @@ const SensitivityAnalysis: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200">
                         <h4 className="text-sm font-bold text-blue-800">Dica de Consultor</h4>
                         <p className="text-xs text-blue-700 mt-1">
                             A alavancagem operacional mostra que aumentar <strong>preço</strong> é sempre mais lucrativo que aumentar <strong>volume</strong> na mesma proporção. Isso porque o volume traz custos variáveis junto, enquanto o preço vai direto para a margem.
@@ -185,7 +185,7 @@ const SensitivityAnalysis: React.FC = () => {
                 </div>
 
                 {/* Matrix Table */}
-                <div className="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div className="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <h3 className="text-lg font-bold text-brand-blue mb-1">Matriz de Impacto no Lucro Líquido</h3>
                     <p className="text-xs text-gray-500 mb-4">Cenário base: {baseScenario} | Valores em R$</p>
                     <div className="overflow-x-auto">

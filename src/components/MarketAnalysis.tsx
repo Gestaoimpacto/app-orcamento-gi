@@ -46,8 +46,8 @@ const MarketAnalysis: React.FC = () => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Mercado e Concorrência</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Mercado e Concorrência</h2>
             <p className="text-sm text-gray-600">Preencha os dados do seu mercado. A participação de mercado é calculada automaticamente com base na sua receita de 2025.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {renderInput('tamanhoMercado', 'Tamanho do Mercado (R$)', 'number', 'Estimativa do faturamento total do seu setor.')}

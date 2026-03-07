@@ -217,6 +217,83 @@ const WhatIfSimulator: React.FC = () => {
     );
 };
 
+const FinancialAlerts: React.FC = () => {
+    const { summary2025 } = usePlan();
+    
+    const alerts = useMemo(() => {
+        const list: { type: 'danger' | 'warning' | 'success'; title: string; message: string; }[] = [];
+        const hasData = summary2025.receitaBrutaTotal > 0;
+        if (!hasData) return list;
+
+        // Margem EBITDA
+        if (summary2025.margemEbitda < 5) {
+            list.push({ type: 'danger', title: 'Margem EBITDA Critica', message: `Sua margem EBITDA esta em ${formatPercentage(summary2025.margemEbitda)}. Abaixo de 5% indica risco operacional grave. Revise custos fixos e variaveis urgentemente.` });
+        } else if (summary2025.margemEbitda < 10) {
+            list.push({ type: 'warning', title: 'Margem EBITDA Baixa', message: `Sua margem EBITDA esta em ${formatPercentage(summary2025.margemEbitda)}. O ideal e acima de 15%. Busque otimizar custos ou aumentar precos.` });
+        } else if (summary2025.margemEbitda >= 20) {
+            list.push({ type: 'success', title: 'Margem EBITDA Saudavel', message: `Sua margem EBITDA de ${formatPercentage(summary2025.margemEbitda)} esta excelente. Continue monitorando para manter esse nivel.` });
+        }
+
+        // LTV/CAC
+        if (summary2025.relacaoLtvCac > 0 && summary2025.relacaoLtvCac < 2) {
+            list.push({ type: 'danger', title: 'LTV/CAC Insustentavel', message: `Relacao LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. Abaixo de 2x significa que voce gasta mais para adquirir clientes do que eles geram de valor.` });
+        } else if (summary2025.relacaoLtvCac >= 2 && summary2025.relacaoLtvCac < 3) {
+            list.push({ type: 'warning', title: 'LTV/CAC Precisa Melhorar', message: `Relacao LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. O ideal e acima de 3x. Invista em retencao ou reduza o custo de aquisicao.` });
+        }
+
+        // Ponto de Equilibrio vs Receita Media
+        const receitaMediaMensal = summary2025.receitaTotal / 12;
+        if (summary2025.pontoEquilibrioContabil > 0 && receitaMediaMensal > 0) {
+            const peRatio = summary2025.pontoEquilibrioContabil / receitaMediaMensal;
+            if (peRatio > 1) {
+                list.push({ type: 'danger', title: 'Abaixo do Ponto de Equilibrio', message: `Sua receita media mensal (${formatCurrency(receitaMediaMensal, true)}) esta abaixo do ponto de equilibrio (${formatCurrency(summary2025.pontoEquilibrioContabil, true)}). A empresa esta operando no prejuizo.` });
+            } else if (peRatio > 0.85) {
+                list.push({ type: 'warning', title: 'Proximo do Ponto de Equilibrio', message: `Sua receita media mensal esta apenas ${formatPercentage((1 - peRatio) * 100)} acima do ponto de equilibrio. Margem de seguranca muito baixa.` });
+            }
+        }
+
+        // Concentracao de custos fixos
+        if (summary2025.receitaTotal > 0) {
+            const fixedCostRatio = (summary2025.despesasTotal / summary2025.receitaTotal) * 100;
+            if (fixedCostRatio > 60) {
+                list.push({ type: 'danger', title: 'Custos Fixos Elevados', message: `Custos fixos representam ${formatPercentage(fixedCostRatio)} da receita liquida. Acima de 60% reduz drasticamente a flexibilidade financeira.` });
+            } else if (fixedCostRatio > 45) {
+                list.push({ type: 'warning', title: 'Custos Fixos Altos', message: `Custos fixos representam ${formatPercentage(fixedCostRatio)} da receita liquida. Considere renegociar contratos ou terceirizar atividades nao-essenciais.` });
+            }
+        }
+
+        return list;
+    }, [summary2025]);
+
+    if (alerts.length === 0) return null;
+
+    const iconMap = {
+        danger: <svg className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>,
+        warning: <svg className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+        success: <svg className="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    };
+    const bgMap = { danger: 'bg-red-50 border-red-100', warning: 'bg-amber-50 border-amber-100', success: 'bg-emerald-50 border-emerald-100' };
+    const titleColorMap = { danger: 'text-red-700', warning: 'text-amber-700', success: 'text-emerald-700' };
+
+    return (
+        <div className="space-y-2">
+            <div className="flex items-center gap-2 mb-1">
+                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                <h3 className="text-sm font-bold text-gray-600">Alertas Financeiros</h3>
+            </div>
+            {alerts.map((alert, i) => (
+                <div key={i} className={clsx("flex items-start gap-3 p-3.5 rounded-xl border", bgMap[alert.type])}>
+                    <div className="flex-shrink-0 mt-0.5">{iconMap[alert.type]}</div>
+                    <div>
+                        <p className={clsx("text-sm font-bold", titleColorMap[alert.type])}>{alert.title}</p>
+                        <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{alert.message}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
 const Dashboard: React.FC = () => {
     const { summary2025, planData, generateBenchmarkAnalysis } = usePlan();
     const [isLoading, setIsLoading] = useState(false);
@@ -272,6 +349,9 @@ const Dashboard: React.FC = () => {
                     icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2" /></svg>} 
                 />
             </div>
+
+            {/* Financial Alerts */}
+            <FinancialAlerts />
 
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -329,7 +409,7 @@ const Dashboard: React.FC = () => {
                         )}
                     </button>
                 </div>
-                <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-5 rounded-xl border border-gray-100 min-h-[120px] leading-relaxed">
+                <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-5 rounded-2xl border border-gray-100 min-h-[120px] leading-relaxed">
                     {planData.analysis?.benchmarkAnalysis || "A analise da Inteligencia Artificial sobre seu posicionamento de mercado aparecera aqui apos clicar em 'Gerar Analise'."}
                 </div>
             </div>

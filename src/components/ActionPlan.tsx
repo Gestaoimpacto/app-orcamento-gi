@@ -35,13 +35,13 @@ const ActionPlan: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">8. Plano de Ação (5W2H)</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">8. Plano de Ação (5W2H)</h1>
+                <p className="text-gray-500 mt-2">
                     Transforme seus objetivos estratégicos em ações concretas e mensuráveis.
                 </p>
             </header>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm align-top border-separate border-spacing-2">
                         <thead className="bg-gray-50">
@@ -98,7 +98,7 @@ const ActionPlan: React.FC = () => {
                 <div className="mt-6">
                     <button onClick={addActionPlanItem} className="text-brand-orange font-semibold hover:text-orange-700">+ Adicionar Ação</button>
                 </div>
-                 <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg">
+                 <div className="mt-6 p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl">
                     <p className="font-bold">O que é a metodologia 5W2H?</p>
                     <p className="text-sm mt-1">
                         É uma ferramenta de gestão que ajuda a detalhar um plano de ação. Cada letra corresponde a uma pergunta em inglês, garantindo que todas as informações essenciais para a execução de uma tarefa sejam definidas.

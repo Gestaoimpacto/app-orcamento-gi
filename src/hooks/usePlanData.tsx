@@ -836,7 +836,7 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
     const addProductPortfolioItem = () => {
         setPlanData(prev => ({
             ...prev,
-            productPortfolio: [...prev.productPortfolio, { id: uuidv4(), name: '', revenue2025: 0, quantitySold2025: 0 }]
+            productPortfolio: [...prev.productPortfolio, { id: uuidv4(), name: '', revenue2025: 0, cost2025: 0, quantitySold2025: 0 }]
         }));
     };
 

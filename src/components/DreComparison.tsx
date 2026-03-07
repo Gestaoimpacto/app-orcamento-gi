@@ -12,7 +12,7 @@ const SummaryCard: React.FC<{ title: string; planned: number; actual: number; hi
     const isGood = higherIsBetter ? diff >= 0 : diff <= 0;
     
     return (
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col">
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col">
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{title} (YTD)</h3>
             <div className="flex items-end justify-between">
                 <div>
@@ -21,7 +21,7 @@ const SummaryCard: React.FC<{ title: string; planned: number; actual: number; hi
                 </div>
                 <div className="text-right">
                     <p className="text-xs text-gray-400">Realizado</p>
-                    <p className="text-xl font-bold text-brand-dark">{formatCurrency(actual, true)}</p>
+                    <p className="text-xl font-bold text-gray-900">{formatCurrency(actual, true)}</p>
                 </div>
             </div>
             <div className={`mt-2 text-xs font-bold ${isGood ? 'text-green-600' : 'text-red-600'} text-center bg-gray-50 py-1 rounded`}>
@@ -69,7 +69,7 @@ const DreRow: React.FC<{
 
     return (
         <tr className={clsx("border-b border-gray-100 hover:bg-gray-50 transition-colors", isBold && "bg-yellow-50/50 font-semibold")}>
-            <td className={clsx("sticky left-0 bg-white z-10 p-3 text-sm border-r border-gray-200 whitespace-nowrap", isSubItem ? "pl-8 text-gray-600" : "text-gray-800", isBold && "bg-yellow-50/50 font-bold text-brand-dark")}>
+            <td className={clsx("sticky left-0 bg-white z-10 p-3 text-sm border-r border-gray-200 whitespace-nowrap", isSubItem ? "pl-8 text-gray-600" : "text-gray-800", isBold && "bg-yellow-50/50 font-bold text-gray-900")}>
                 {label}
             </td>
             {visibleMonths.map(m => {
@@ -97,11 +97,11 @@ const DreRow: React.FC<{
                                 <CurrencyInput 
                                     value={actual as number | null} 
                                     onChange={(v) => onUpdate(m, fieldKey, v)}
-                                    className="w-full h-full p-2 text-right text-xs font-medium text-brand-dark border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:bg-white"
+                                    className="w-full h-full p-2 text-right text-xs font-medium text-gray-900 border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:bg-white"
                                     placeholder="-"
                                 />
                             ) : (
-                                <div className={clsx("p-2 text-xs font-medium", isBold ? "text-brand-dark" : "text-gray-700")}>
+                                <div className={clsx("p-2 text-xs font-medium", isBold ? "text-gray-900" : "text-gray-700")}>
                                     {hasActual ? formatCurrency(actual, true) : <span className="text-gray-300">-</span>}
                                 </div>
                             )}
@@ -301,13 +301,13 @@ const DreComparison: React.FC = () => {
         <div className="space-y-8">
             <header className="flex justify-between items-center no-print">
                 <div>
-                    <h1 className="text-4xl font-bold text-brand-dark">13. Comparativo DRE (Orçado x Realizado)</h1>
-                    <p className="text-lg text-gray-600 mt-2">
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">13. Comparativo DRE (Orçado x Realizado)</h1>
+                    <p className="text-gray-500 mt-2">
                         Acompanhe mês a mês o desempenho real vs. planejado. Preencha os sub-itens e os totais são calculados automaticamente.
                     </p>
                     <p className="text-xs text-brand-orange font-bold mt-1">Cenário Base: {baseScenario}</p>
                 </div>
-                <button onClick={() => window.print()} className="flex items-center px-4 py-2 font-semibold text-white bg-brand-blue rounded-md hover:opacity-80 shadow-sm">
+                <button onClick={() => window.print()} className="flex items-center px-4 py-2 font-semibold text-white bg-gray-800 rounded-xl hover:bg-gray-700 transition-colors shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                     </svg>
@@ -348,7 +348,7 @@ const DreComparison: React.FC = () => {
                         onClick={() => setQuarterFilter(q.key as any)}
                         className={clsx(
                             "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
-                            quarterFilter === q.key ? "bg-brand-orange text-white shadow" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            quarterFilter === q.key ? "bg-brand-orange text-white shadow" : "bg-gray-50 text-gray-500 hover:bg-gray-200"
                         )}
                     >
                         {q.label}
@@ -357,7 +357,7 @@ const DreComparison: React.FC = () => {
             </div>
 
             {/* Main Comparison Table */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
                     <h2 className="text-lg font-bold text-brand-blue">Demonstrativo de Resultados Comparativo</h2>
                     <div className="text-xs text-gray-500 flex items-center gap-3">

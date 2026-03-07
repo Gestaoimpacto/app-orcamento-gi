@@ -82,7 +82,7 @@ const OnboardingWizard: React.FC = () => {
                         <div className="space-y-6 animate-fadeIn">
                             <div className="text-center">
                                 <span className="text-4xl">🚀</span>
-                                <h2 className="text-2xl font-bold text-brand-dark mt-4">Bem-vindo ao PLAN 2026</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mt-4">Bem-vindo ao PLAN 2026</h2>
                                 <p className="text-gray-600 mt-2">Vamos configurar o sistema para o seu negócio em menos de 1 minuto.</p>
                             </div>
                             
@@ -125,7 +125,7 @@ const OnboardingWizard: React.FC = () => {
                         <div className="space-y-6 animate-fadeIn">
                             <div className="text-center">
                                 <span className="text-4xl">📊</span>
-                                <h2 className="text-2xl font-bold text-brand-dark mt-4">Ponto de Partida</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mt-4">Ponto de Partida</h2>
                                 <p className="text-gray-600 mt-2">Nos dê uma estimativa de 2025 para gerar os gráficos iniciais.</p>
                             </div>
                             
@@ -174,7 +174,7 @@ const OnboardingWizard: React.FC = () => {
                         <div className="space-y-6 animate-fadeIn">
                             <div className="text-center">
                                 <span className="text-4xl">🎯</span>
-                                <h2 className="text-2xl font-bold text-brand-dark mt-4">Ambição para 2026</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mt-4">Ambição para 2026</h2>
                                 <p className="text-gray-600 mt-2">Qual o seu objetivo principal de crescimento?</p>
                             </div>
                             

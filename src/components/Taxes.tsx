@@ -97,14 +97,14 @@ const Taxes: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">2. Configuração de Impostos</h1>
+                <h1 className="text-4xl font-bold text-gray-900">2. Configuração de Impostos</h1>
                 <p className="text-lg text-gray-600 mt-2">
                     Preencha as informações tributárias da sua empresa. Os impostos são aplicados automaticamente na Coleta de Dados quando você altera as alíquotas.
                 </p>
             </header>
 
             {/* Resumo Visual - Impacto dos Impostos */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-brand-orange space-y-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-brand-orange space-y-4">
                 <h2 className="text-xl font-bold text-brand-orange">Resumo do Impacto Tributário</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-orange-50 p-4 rounded-lg text-center">
@@ -113,7 +113,7 @@ const Taxes: React.FC = () => {
                     </div>
                     <div className="bg-blue-50 p-4 rounded-lg text-center">
                         <p className="text-xs font-semibold text-gray-500 uppercase">Receita Bruta 2025</p>
-                        <p className="text-2xl font-bold text-brand-blue mt-1">{formatCurrency(receitaBruta2025, true)}</p>
+                        <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(receitaBruta2025, true)}</p>
                     </div>
                     <div className="bg-red-50 p-4 rounded-lg text-center">
                         <p className="text-xs font-semibold text-gray-500 uppercase">Total Impostos Estimado</p>
@@ -135,8 +135,8 @@ const Taxes: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 
                 {/* Section 1: Regime Tributário */}
-                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4 md:col-span-2">
-                    <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Regime Tributário</h2>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4 md:col-span-2">
+                    <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Regime Tributário</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                        {renderInput('regimeTributario', 'Regime Tributário Atual', 'select')}
                        {taxes.regimeTributario === 'Simples Nacional' && 
@@ -146,8 +146,8 @@ const Taxes: React.FC = () => {
                 </div>
 
                 {/* Section 2: Impostos sobre Faturamento */}
-                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
-                     <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Impostos sobre Faturamento</h2>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                     <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Impostos sobre Faturamento</h2>
                       <div className="space-y-4">
                         {renderInput('aliquotaEfetiva', 'Alíquota Efetiva Total (%)', 'number', 'Se souber a alíquota total, preencha aqui. Caso contrário, preencha os campos abaixo.')}
                         
@@ -171,8 +171,8 @@ const Taxes: React.FC = () => {
                 {/* Section 3 & 4 */}
                 <div className="space-y-6">
                     {/* Section 3: Encargos sobre Folha */}
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
-                        <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Encargos sobre Folha</h2>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                        <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Encargos sobre Folha</h2>
                         <div className="space-y-4">
                             {renderInput('inssPatronal', 'INSS Patronal (%)', 'number', 'Padrão: 20%')}
                             {renderInput('fgts', 'FGTS (%)', 'number', 'Padrão: 8%')}
@@ -182,8 +182,8 @@ const Taxes: React.FC = () => {
                     </div>
 
                     {/* Section 4: Valores Pagos */}
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
-                        <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Valores Pagos</h2>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                        <h2 className="text-lg font-bold text-gray-900 border-b pb-2">Valores Pagos</h2>
                         <div className="space-y-4">
                             {renderInput('totalImpostos2024', 'Total Impostos 2024 (R$)', 'number', '0.00')}
                             {renderInput('totalImpostos2025', 'Total Impostos 2025 (R$)', 'number', '0.00')}

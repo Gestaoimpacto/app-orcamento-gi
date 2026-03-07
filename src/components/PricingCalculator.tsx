@@ -10,7 +10,7 @@ import clsx from 'clsx';
 // --- HELPER COMPONENTS ---
 
 const Card: React.FC<{ title: string; children: React.ReactNode; className?: string }> = ({ title, children, className }) => (
-    <div className={clsx("bg-white p-5 rounded-xl shadow-sm border border-gray-200", className)}>
+    <div className={clsx("bg-white p-5 rounded-2xl shadow-sm border border-gray-200", className)}>
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">{title}</h3>
         {children}
     </div>
@@ -312,8 +312,8 @@ const PricingCalculator: React.FC = () => {
         <div className="space-y-8">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold text-brand-dark">Precificação Estratégica (Markup)</h1>
-                    <p className="text-lg text-gray-600 mt-2">
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Precificação Estratégica (Markup)</h1>
+                    <p className="text-gray-500 mt-2">
                         Defina preços lucrativos considerando todos os custos, impostos e a percepção de valor do cliente.
                     </p>
                 </div>
@@ -405,13 +405,13 @@ const PricingCalculator: React.FC = () => {
                     <div className="xl:col-span-8 space-y-6">
                         
                         {/* Price Display */}
-                        <div className="bg-white p-6 rounded-xl border-l-4 border-brand-orange shadow-lg flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="bg-white p-6 rounded-2xl border-l-4 border-brand-orange shadow-lg flex flex-col md:flex-row justify-between items-center gap-6">
                             <div>
                                 <p className="text-sm text-gray-500 uppercase font-bold">Preço de Venda Sugerido</p>
                                 <div className="flex items-baseline gap-2">
                                     {financialCalc.isValid ? (
                                         <>
-                                            <p className="text-5xl font-extrabold text-brand-dark">{formatCurrency(financialCalc.finalPrice)}</p>
+                                            <p className="text-5xl font-extrabold text-gray-900">{formatCurrency(financialCalc.finalPrice)}</p>
                                             <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600 font-bold">Markup: {formatNumber(financialCalc.markupMultiplier)}x</span>
                                         </>
                                     ) : (
@@ -445,7 +445,7 @@ const PricingCalculator: React.FC = () => {
                                                 <p>Você usou o método do <strong>Divisor (Markup por Dentro)</strong>. Isso garante que, ao dar o preço final, todas as taxas que incidem sobre a venda (impostos, comissões) sejam cobertas.</p>
                                                 <p><strong>Custo Direto:</strong> {formatCurrency(directCost)}</p>
                                                 <p><strong>Custo Fixo Rateado:</strong> {formatCurrency(financialCalc.finalPrice * (fixedCostRate/100))} (Isso paga aluguel, luz, equipe administrativa...)</p>
-                                                <p className="font-bold text-brand-dark mt-2">O Preço foi multiplicado por {formatNumber(financialCalc.markupMultiplier)}x sobre o custo.</p>
+                                                <p className="font-bold text-gray-900 mt-2">O Preço foi multiplicado por {formatNumber(financialCalc.markupMultiplier)}x sobre o custo.</p>
                                             </div>
                                         </Card>
                                         
@@ -510,11 +510,11 @@ const PricingCalculator: React.FC = () => {
             {activeTab === 'list' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {pricingItems.map(item => (
-                        <div key={item.id} className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 relative group transition-all hover:shadow-xl">
+                        <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative group transition-all hover:shadow-xl">
                             <button onClick={() => removePricingItem(item.id)} className="absolute top-4 right-4 text-gray-300 hover:text-red-500">&times;</button>
                             <div className="flex items-center gap-2 mb-2">
                                 <span className={clsx("w-2 h-2 rounded-full", item.type === 'product' ? 'bg-purple-500' : 'bg-teal-500')}></span>
-                                <h3 className="font-bold text-lg text-brand-dark">{item.name}</h3>
+                                <h3 className="font-bold text-lg text-gray-900">{item.name}</h3>
                             </div>
                             <div className="flex justify-between items-baseline mb-4">
                                 <p className="text-3xl font-extrabold text-brand-orange">{formatCurrency(item.finalPrice)}</p>
@@ -550,7 +550,7 @@ const PricingCalculator: React.FC = () => {
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <Card title="Receita Potencial Mix">
-                            <p className="text-2xl font-extrabold text-brand-dark">{formatCurrency(mixAnalysis.totalRevenueMix)}</p>
+                            <p className="text-2xl font-extrabold text-gray-900">{formatCurrency(mixAnalysis.totalRevenueMix)}</p>
                             <p className="text-xs text-gray-500">Soma de todos os itens cadastrados</p>
                         </Card>
                         <Card title="Margem Contrib. Média">
@@ -569,7 +569,7 @@ const PricingCalculator: React.FC = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* ABC Analysis */}
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <h3 className="text-lg font-bold text-brand-blue mb-4">Curva ABC de Margem (Quem paga a conta?)</h3>
                             <div className="overflow-y-auto max-h-[400px]">
                                 <table className="min-w-full text-sm">
@@ -600,7 +600,7 @@ const PricingCalculator: React.FC = () => {
                         </div>
 
                         {/* Break-even Timeline - NEW VISUALIZATION */}
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col h-fit">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-fit">
                             <h3 className="text-lg font-bold text-brand-blue mb-2">Jornada do Lucro Mensal</h3>
                             <p className="text-xs text-gray-500 mb-6">Em que dia do mês você termina de pagar os custos e começa a lucrar?</p>
                             
@@ -647,7 +647,7 @@ const PricingCalculator: React.FC = () => {
                             
                             <div className="mt-4 text-center p-3 bg-gray-50 rounded-lg">
                                 <p className="text-sm font-medium text-gray-600">Diagnóstico:</p>
-                                <p className={clsx("text-xl font-bold", mixAnalysis.breakEvenDay > 30 ? "text-red-600" : "text-brand-dark")}>
+                                <p className={clsx("text-xl font-bold", mixAnalysis.breakEvenDay > 30 ? "text-red-600" : "text-gray-900")}>
                                     {mixAnalysis.breakEvenDay > 30 
                                         ? "Sua operação está no prejuízo." 
                                         : `Você começa a lucrar no dia ${mixAnalysis.breakEvenDay}.`

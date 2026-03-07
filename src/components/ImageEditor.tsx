@@ -62,11 +62,11 @@ const ImageEditor: React.FC = () => {
     return (
         <div className="space-y-8 max-w-6xl mx-auto">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">Gemini Image Editor</h1>
-                <p className="text-lg text-gray-600 mt-2">Edite imagens usando prompts de texto com o poder do Gemini 2.5 Flash Image.</p>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Gemini Image Editor</h1>
+                <p className="text-gray-500 mt-2">Edite imagens usando prompts de texto com o poder do Gemini 2.5 Flash Image.</p>
             </header>
 
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label htmlFor="image-upload" className="block text-sm font-medium text-gray-700 mb-2">
@@ -136,8 +136,8 @@ const ImageEditor: React.FC = () => {
             </div>
 
             {result && (
-                <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                    <h2 className="text-2xl font-bold text-brand-blue mb-6">Resultados</h2>
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Resultados</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <h3 className="text-lg font-semibold mb-2">Original</h3>

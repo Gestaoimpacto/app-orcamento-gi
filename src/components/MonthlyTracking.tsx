@@ -8,10 +8,10 @@ import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 const ForecastCard: React.FC<{ title: string; subtitle: string; value: number; ebitda: number; margin: number; color: string }> = ({ title, subtitle, value, ebitda, margin, color }) => (
-    <div className={`p-5 rounded-xl border-2 ${color} text-center`}>
+    <div className={`p-5 rounded-2xl border-2 ${color} text-center`}>
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">{title}</h3>
         <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>
-        <p className="text-3xl font-extrabold text-brand-dark my-3">{formatCurrency(value, true)}</p>
+        <p className="text-3xl font-extrabold text-gray-900 my-3">{formatCurrency(value, true)}</p>
         <div className="flex justify-center gap-4 text-sm text-gray-600">
             <div>
                 <span className="text-xs text-gray-400">EBITDA</span>
@@ -175,8 +175,8 @@ const MonthlyTracking: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">12. Acompanhamento & Forecast</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">12. Acompanhamento & Forecast</h1>
+                <p className="text-gray-500 mt-2">
                     Acompanhe o realizado vs. projetado (cenário <span className="font-bold text-brand-orange">{baseScenario}</span>), analise desvios e crie uma previsão (Forecast) para o restante do ano.
                 </p>
             </header>
@@ -193,7 +193,7 @@ const MonthlyTracking: React.FC = () => {
             )}
 
             {/* Status dos meses preenchidos */}
-            <div className="bg-white p-4 rounded-xl shadow border border-gray-200">
+            <div className="bg-white p-4 rounded-2xl shadow border border-gray-200">
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-bold text-gray-600">Progresso de Preenchimento</h3>
                     <span className="text-xs text-gray-400">{monthsWithData} de 12 meses preenchidos</span>
@@ -219,8 +219,8 @@ const MonthlyTracking: React.FC = () => {
             </div>
             
             {/* Forecast Cards */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h2 className="text-xl font-bold text-brand-blue mb-2">Forecast Anual 2026</h2>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">Forecast Anual 2026</h2>
                 <p className="text-sm text-gray-500 mb-4">O Forecast combina os dados realizados (até o mês selecionado) com os projetados (meses futuros) para estimar como o ano terminará.</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <ForecastCard title="Projetado (Ano)" subtitle="Meta do cenário base" value={yearEndSummary.projected.receita} ebitda={yearEndSummary.projected.ebitda} margin={yearEndSummary.projected.margin} color="border-blue-200 bg-blue-50/30" />
@@ -229,7 +229,7 @@ const MonthlyTracking: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="mb-6">
                     <label htmlFor="month-select" className="block text-sm font-medium text-gray-700">Selecione o Mês para Análise e Inserção de Dados</label>
                     <select
@@ -245,7 +245,7 @@ const MonthlyTracking: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Data Input */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-brand-blue">Dados Realizados de {MONTH_LABELS[selectedMonth]}</h2>
+                        <h2 className="text-lg font-bold text-gray-900">Dados Realizados de {MONTH_LABELS[selectedMonth]}</h2>
                         <p className="text-xs text-gray-500">Preencha os valores reais do mês. Use o formato brasileiro (ex: 1.500,00).</p>
                          <div>
                             <label className="block text-sm font-medium text-gray-700">Receita Realizada</label>
@@ -271,7 +271,7 @@ const MonthlyTracking: React.FC = () => {
 
                     {/* Comparison Table */}
                     <div>
-                         <h2 className="text-xl font-bold text-brand-blue mb-4">Análise de Desvios Mensal</h2>
+                         <h2 className="text-lg font-bold text-gray-900 mb-4">Análise de Desvios Mensal</h2>
                          <table className="min-w-full">
                             <thead>
                                 <tr className="border-b-2 border-gray-200">
@@ -303,8 +303,8 @@ const MonthlyTracking: React.FC = () => {
 
                  <div className="mt-8 border-t pt-6 space-y-4">
                     <div className="flex flex-wrap gap-4 justify-between items-center">
-                        <h2 className="text-xl font-bold text-brand-blue">Análise de Performance com IA</h2>
-                        <button onClick={handleGenerateAnalysis} disabled={isAnalysisLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400">
+                        <h2 className="text-lg font-bold text-gray-900">Análise de Performance com IA</h2>
+                        <button onClick={handleGenerateAnalysis} disabled={isAnalysisLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
                             {isAnalysisLoading ? 'Analisando...' : 'Gerar Análise com IA'}
                         </button>
                     </div>

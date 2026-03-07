@@ -84,23 +84,23 @@ const ScenarioPlanning: React.FC = () => {
         };
 
         return (
-             <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+             <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
                 <table className="min-w-full text-sm">
-                    <thead className="bg-gray-100 text-gray-600">
+                    <thead className="bg-gray-50 text-gray-500">
                         <tr>
-                            <th className="sticky left-0 bg-gray-100 z-10 p-3 text-left font-semibold" style={{width: '250px'}}>Indicador</th>
+                            <th className="sticky left-0 bg-gray-50 z-10 p-3 text-left font-semibold" style={{width: '250px'}}>Indicador</th>
                             <th className="p-3 text-left font-semibold">Instruções</th>
                             <th className="p-3 text-right font-semibold">Total 2026</th>
                             {MONTHS.map(m => <th key={m} className="p-2 text-center font-medium">{MONTH_LABELS[m]}</th>)}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        <tr className="bg-orange-50"><td colSpan={15} className="p-2 font-bold text-orange-800">RECEITA</td></tr>
+                        <tr className="bg-orange-50/50"><td colSpan={15} className="p-2.5 font-bold text-orange-700 text-sm">RECEITA</td></tr>
                         <FinancialDataRow label="Receita Bruta Total (R$)" rowData={{values: projection.receitaBruta}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'receitaBruta', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'receitaBruta', v) : undefined} seasonalReference={planData.financialSheet.receitaBruta.values2025} hint="Faturamento total"/>
                         <FinancialDataRow label="(-) Impostos (R$)" rowData={{values: projection.impostosSobreFaturamento}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'impostosSobreFaturamento', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'impostosSobreFaturamento', v) : undefined} seasonalReference={planData.financialSheet.impostosSobreFaturamento.values2025} hint="Com base na receita"/>
                         <FinancialDataRow label="(=) Receita Líquida (R$)" rowData={{values: monthlyReceitaLiquida}} calculatedValue={receitaLiquidaTotal} isTotal={true} />
                         
-                        <tr className="bg-blue-50"><td colSpan={15} className="p-2 font-bold text-blue-800">CUSTOS FIXOS</td></tr>
+                        <tr className="bg-blue-50/50"><td colSpan={15} className="p-2.5 font-bold text-blue-700 text-sm">CUSTOS FIXOS</td></tr>
                         <FinancialDataRow label="Folha de Pagamento (R$)" rowData={{values: projection.folhaPagamento}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'folhaPagamento', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'folhaPagamento', v) : undefined} seasonalReference={planData.financialSheet.folhaPagamento.values2025} hint="Salários + Encargos"/>
                         <FinancialDataRow label="Aluguel (R$)" rowData={{values: projection.aluguel}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'aluguel', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'aluguel', v) : undefined} seasonalReference={planData.financialSheet.aluguel.values2025} hint="Infraestrutura"/>
                         <FinancialDataRow label="Despesas Operacionais (R$)" rowData={{values: projection.despesasOperacionais}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'despesasOperacionais', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'despesasOperacionais', v) : undefined} seasonalReference={planData.financialSheet.despesasOperacionais.values2025} hint="Água, luz, internet"/>
@@ -123,7 +123,7 @@ const ScenarioPlanning: React.FC = () => {
                         </tr>
                         <FinancialDataRow label="(=) Total Custos Fixos (R$)" calculatedValue={custosFixosTotal} isTotal={true}/>
 
-                        <tr className="bg-yellow-50"><td colSpan={15} className="p-2 font-bold text-yellow-800">CUSTOS VARIÁVEIS</td></tr>
+                        <tr className="bg-amber-50/50"><td colSpan={15} className="p-2.5 font-bold text-amber-700 text-sm">CUSTOS VARIÁVEIS</td></tr>
                         <FinancialDataRow label="CMV (R$)" rowData={{values: projection.cmv}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'cmv', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'cmv', v) : undefined} seasonalReference={planData.financialSheet.cmv.values2025} hint="Custo direto prod."/>
                         <FinancialDataRow label="Comissões (R$)" rowData={{values: projection.comissoes}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'comissoes', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'comissoes', v) : undefined} seasonalReference={planData.financialSheet.comissoes.values2025} hint="Comissão de vendas"/>
                         <FinancialDataRow label="Fretes (R$)" rowData={{values: projection.fretes}} onUpdate={isManual ? (m,v) => updateScenarioProjectionValue(scenarioName, 'fretes', m, v) : undefined} onUpdateAll={isManual ? (v) => updateScenarioProjectionAllValues(scenarioName, 'fretes', v) : undefined} seasonalReference={planData.financialSheet.fretes.values2025} hint="Logística"/>
@@ -144,7 +144,7 @@ const ScenarioPlanning: React.FC = () => {
                         </tr>
                          <FinancialDataRow label="(=) Total Custos Variáveis (R$)" calculatedValue={custosVariaveisTotal} isTotal={true}/>
                         
-                        <tr className="bg-green-50"><td colSpan={15} className="p-2 font-bold text-green-800">RESULTADOS</td></tr>
+                        <tr className="bg-emerald-50/50"><td colSpan={15} className="p-2.5 font-bold text-emerald-700 text-sm">RESULTADOS</td></tr>
                         <FinancialDataRow label="Margem de Contribuição (R$)" rowData={{values: monthlyMargemContribuicao}} calculatedValue={margemContribuicaoTotal} isTotal={true} hint="Receita Líquida - Custos Variáveis"/>
                         <FinancialDataRow label="EBITDA (R$)" rowData={{values: monthlyEbitda}} calculatedValue={ebitdaTotal} isTotal={true} hint="Margem de Contrib. - Custos Fixos"/>
                         <FinancialDataRow label="Margem EBITDA (%)" calculatedValue={margemEbitda} isPercentage={true} isTotal={true} hint="(EBITDA / Receita Líquida)"/>
@@ -155,29 +155,94 @@ const ScenarioPlanning: React.FC = () => {
     }
 
 
+    // Dados resumidos para comparacao
+    const scenarioSummary = useMemo(() => {
+        return (['Otimista', 'Conservador', 'Disruptivo'] as ScenarioName[]).map(name => {
+            const s = scenarios2026[name];
+            if (!s?.projection) return { name, receita: 0, ebitda: 0, margem: 0, crescimento: 0 };
+            const p = s.projection;
+            const recBruta = sumMonthlyData(p.receitaBruta);
+            const impostos = sumMonthlyData(p.impostosSobreFaturamento);
+            const recLiq = recBruta - impostos;
+            const custFixos = sumMonthlyData(p.folhaPagamento) + sumMonthlyData(p.aluguel) + sumMonthlyData(p.despesasOperacionais) + sumMonthlyData(p.marketingFixo) + sumMonthlyData(p.administrativo) + (p.customCustosFixos || []).reduce((sum, i) => sum + sumMonthlyData(i.values), 0);
+            const custVar = sumMonthlyData(p.cmv) + sumMonthlyData(p.comissoes) + sumMonthlyData(p.fretes) + (p.customCustosVariaveis || []).reduce((sum, i) => sum + sumMonthlyData(i.values), 0);
+            const ebitda = recLiq - custVar - custFixos;
+            const margem = recLiq > 0 ? (ebitda / recLiq) * 100 : 0;
+            const crescimento = (s.growthPercentage || 0) + planData.analysis.strategicScore.total + productivityGainFactor;
+            return { name, receita: recLiq, ebitda, margem, crescimento };
+        });
+    }, [scenarios2026, planData.analysis.strategicScore.total, productivityGainFactor]);
+
+    const scenarioColors: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+        'Otimista': { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', badge: 'bg-emerald-100' },
+        'Conservador': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', badge: 'bg-blue-100' },
+        'Disruptivo': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', badge: 'bg-purple-100' },
+    };
+
     return (
         <div className="space-y-8">
             <header className="flex justify-between items-start gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold text-brand-dark">9. Orçamento & Cenários 2026</h1>
-                    <p className="text-lg text-gray-600 mt-2">
-                        Projete o orçamento para 2026 em diferentes cenários e defina gatilhos e ações estratégicas.
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Orcamento e Cenarios 2026</h1>
+                    <p className="text-gray-500 mt-1">
+                        Projete o orcamento para 2026 em diferentes cenarios e defina gatilhos e acoes estrategicas.
                     </p>
                 </div>
                 <button 
                     onClick={() => window.print()}
-                    className="flex items-center px-4 py-2 font-semibold text-white bg-brand-blue rounded-md hover:opacity-80 shadow-sm no-print"
+                    className="flex items-center gap-2 px-5 py-2.5 font-semibold text-white bg-gray-800 rounded-xl hover:bg-gray-700 shadow-sm text-sm no-print transition-colors"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Imprimir / Salvar PDF
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                    Imprimir
                 </button>
             </header>
 
+            {/* COMPARACAO LADO A LADO DOS 3 CENARIOS */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-lg font-bold text-gray-900 mb-1">Comparativo de Cenarios</h2>
+                <p className="text-xs text-gray-400 mb-5">Visao rapida dos 3 cenarios lado a lado</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {scenarioSummary.map(s => {
+                        const colors = scenarioColors[s.name] || scenarioColors['Conservador'];
+                        return (
+                            <div key={s.name} className={clsx("p-5 rounded-2xl border", colors.bg, colors.border)}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className={clsx("text-lg font-extrabold", colors.text)}>{s.name}</span>
+                                    <span className={clsx("px-2.5 py-1 rounded-full text-xs font-bold", colors.badge, colors.text)}>
+                                        {formatPercentage(s.crescimento, 1)} crescimento
+                                    </span>
+                                </div>
+                                <div className="space-y-3">
+                                    <div>
+                                        <p className="text-xs text-gray-500">Receita Liquida Projetada</p>
+                                        <p className="text-xl font-extrabold text-gray-900">{formatCurrency(s.receita, true)}</p>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <div className="flex-1">
+                                            <p className="text-xs text-gray-500">EBITDA</p>
+                                            <p className={clsx("text-base font-bold", s.ebitda >= 0 ? 'text-emerald-600' : 'text-red-500')}>{formatCurrency(s.ebitda, true)}</p>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-xs text-gray-500">Margem EBITDA</p>
+                                            <p className={clsx("text-base font-bold", s.margem >= 15 ? 'text-emerald-600' : s.margem >= 5 ? 'text-amber-600' : 'text-red-500')}>{formatPercentage(s.margem, 1)}</p>
+                                        </div>
+                                    </div>
+                                    {/* Barra visual de margem */}
+                                    <div>
+                                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div className={clsx("h-full rounded-full transition-all", s.margem >= 15 ? 'bg-emerald-500' : s.margem >= 5 ? 'bg-amber-500' : 'bg-red-400')} style={{ width: `${Math.min(Math.max(s.margem, 0), 50) * 2}%` }} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             {(['Otimista', 'Conservador', 'Disruptivo'] as ScenarioName[]).map(scenarioName => (
-                <div key={scenarioName} className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
-                    <h2 className="text-2xl font-bold text-brand-blue">{`Cenário ${scenarioName}`}</h2>
+                <div key={scenarioName} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <h2 className={clsx("text-2xl font-extrabold", scenarioColors[scenarioName]?.text || 'text-blue-700')}>{`Cenario ${scenarioName}`}</h2>
                     
                     <div className="flex items-center gap-4 no-print">
                         <label className="text-sm font-medium">Modo de projeção:</label>
@@ -236,7 +301,7 @@ const ScenarioPlanning: React.FC = () => {
                                                 recalculateScenario(scenarioName);
                                             }
                                         }}
-                                        className="px-3 py-2 bg-brand-blue text-white text-sm rounded hover:bg-blue-700 shadow-sm"
+                                        className="px-3 py-2 bg-gray-800 text-white text-sm rounded-xl hover:bg-gray-700 transition-colors shadow-sm"
                                         title="Recalcular com base nos dados atuais de 2025"
                                     >
                                         Recalcular Projeção
@@ -277,7 +342,7 @@ const ScenarioPlanning: React.FC = () => {
                     
                     {renderBudgetTable(scenarioName)}
 
-                    <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg no-print">
+                    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl no-print">
                         <p className="font-bold">Como funciona a projeção?</p>
                         <p className="text-sm mt-1">
                            No modo <strong>% Crescimento</strong>, o sistema projeta 2026 aplicando o "Crescimento Ajustado" sobre os dados de 2025. Ao clicar em <strong>Adicionar Custo</strong> ou editar uma célula, o sistema mudará automaticamente para o modo <strong>Manual</strong>, permitindo personalização total.

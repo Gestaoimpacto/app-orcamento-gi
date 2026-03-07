@@ -22,7 +22,7 @@ const avgMonthlyData = (data?: MonthlyData): number => {
 const InfoBox: React.FC<{ label: string; value: string; hint: string }> = ({ label, value, hint }) => (
     <div className="bg-gray-50 p-4 rounded-lg text-center border">
         <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold text-brand-dark my-1">{value}</p>
+        <p className="text-2xl font-bold text-gray-900 my-1">{value}</p>
         <p className="text-xs text-gray-500">{hint}</p>
     </div>
 );
@@ -70,8 +70,8 @@ const PeopleAnalyticsDashboard: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Dashboard de People Analytics</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Dashboard de People Analytics</h2>
             <p className="text-sm text-gray-600 mb-4">
                 Esta análise conecta suas metas de gestão de pessoas a um resultado financeiro tangível: a projeção de receita que sua equipe é capaz de gerar (Bottom-Up).
                 Use este número para validar as metas de crescimento (Top-Down) nos seus cenários.
@@ -85,7 +85,7 @@ const PeopleAnalyticsDashboard: React.FC = () => {
                                     {row.label}
                                     <p className="text-xs text-gray-500 font-normal">{row.hint}</p>
                                 </td>
-                                <td className={`px-4 py-3 whitespace-nowrap text-lg font-bold text-right ${row.color || 'text-brand-dark'}`}>
+                                <td className={`px-4 py-3 whitespace-nowrap text-lg font-bold text-right ${row.color || 'text-gray-900'}`}>
                                     {row.value}
                                 </td>
                             </tr>
@@ -295,8 +295,8 @@ const CommercialPlanning: React.FC = () => {
         
         return (
             <div className="space-y-6 mt-6">
-                <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                     <h3 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Planejamento de Demanda por Canal</h3>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                     <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Planejamento de Demanda por Canal</h3>
                      <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 text-sm">
                             <thead className="bg-gray-100">
@@ -343,7 +343,7 @@ const CommercialPlanning: React.FC = () => {
                      <button onClick={addDemandChannel} className="mt-2 text-brand-orange font-semibold hover:text-orange-700 text-sm">+ Adicionar Canal</button>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="text-lg font-bold text-brand-blue mb-4">Mix de Receita por Canal</h3>
                         <div style={{width: '100%', height: 250}}>
                             <ResponsiveContainer>
@@ -357,10 +357,10 @@ const CommercialPlanning: React.FC = () => {
                             </ResponsiveContainer>
                         </div>
                      </div>
-                     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-bold text-brand-blue">Análise de Canais com IA</h3>
-                            <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400">
+                            <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
                                 {isLoading.channel ? 'Analisando...' : 'Gerar Análise'}
                             </button>
                         </div>
@@ -379,7 +379,7 @@ const CommercialPlanning: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
                 {/* Coluna Esquerda: Inputs e Sugestões IA */}
                 <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                          <h3 className="text-lg font-bold text-brand-blue">Premissas do Funil Granular</h3>
                          <InputField label="Tx. Conversão (Lead > MQL)" value={salesFunnel.conversionRateLeadToMql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateLeadToMql', e.target.value)} hint="Marketing Qualified Lead" suffix="%" />
                          <InputField label="Tx. Conversão (MQL > SQL)" value={salesFunnel.conversionRateMqlToSql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateMqlToSql', e.target.value)} hint="Sales Qualified Lead" suffix="%" />
@@ -388,10 +388,10 @@ const CommercialPlanning: React.FC = () => {
                          <InputField label="Dias Úteis em 2026" value={salesFunnel.workingDays} onChange={e => updateCommercialPlanning('salesFunnel', 'workingDays', e.target.value)} hint="Ex: 252 dias" />
                          <InputField label="Tempo de Ramp-up (meses)" value={salesFunnel.rampUpTime} onChange={e => updateCommercialPlanning('salesFunnel', 'rampUpTime', e.target.value)} hint="Tempo para um novo vendedor ser 100% produtivo." suffix="meses" />
                     </div>
-                     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                          <div className="flex justify-between items-center">
                             <h3 className="text-lg font-bold text-brand-blue">Otimização do Funil com IA</h3>
-                            <button onClick={handleGenerateFunnelSuggestions} disabled={isLoading.funnel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400">
+                            <button onClick={handleGenerateFunnelSuggestions} disabled={isLoading.funnel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
                                  {isLoading.funnel ? 'Gerando...' : 'Gerar Sugestões'}
                              </button>
                          </div>
@@ -402,7 +402,7 @@ const CommercialPlanning: React.FC = () => {
                 </div>
                 {/* Coluna Direita: Resultados */}
                 <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <h3 className="text-lg font-bold text-brand-blue">Projeção do Funil</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <InfoBox label="Meta Anual de Leads" value={formatNumber(funnelCalculations.totalLeadsGoal)} hint="Vinda do Plano de Demanda" />
@@ -413,14 +413,14 @@ const CommercialPlanning: React.FC = () => {
                             <InfoBox label="Ticket Médio Implícito" value={formatCurrency(funnelCalculations.avgTicket)} hint="Receita / Vendas" />
                         </div>
                     </div>
-                     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <h3 className="text-lg font-bold text-brand-blue">Meta de Comportamento</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                              <InfoBox label="Leads Necessários / Dia" value={formatNumber(funnelCalculations.dailyActivitiesNeeded)} hint="Para alimentar o funil" />
                              <InfoBox label="Atividades de Vendas / Dia" value={formatNumber((funnelCalculations.repsNeeded || 0) * (salesFunnel.activitiesPerRep || 0))} hint="Total da equipe" />
                         </div>
                     </div>
-                    <div className="bg-brand-blue text-white p-6 rounded-xl shadow-lg border">
+                    <div className="bg-brand-blue text-white p-6 rounded-2xl shadow-sm border">
                         <h3 className="text-lg font-bold">Headcount de Vendas Necessário</h3>
                          <p className="text-5xl font-extrabold my-2 text-center">{formatNumber(Math.ceil(funnelCalculations.repsNeeded))}</p>
                          <p className="text-sm text-center opacity-80">Vendedores necessários para gerar o volume de leads diários.</p>
@@ -430,8 +430,8 @@ const CommercialPlanning: React.FC = () => {
         );
     }
     const renderHiringTab = () => (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
-            <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Projeção de Contratações e Orçamento de Pessoal 2026</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Projeção de Contratações e Orçamento de Pessoal 2026</h2>
             
             <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 text-sm rounded-r-lg">
                 <h4 className="font-bold flex items-center">
@@ -478,7 +478,7 @@ const CommercialPlanning: React.FC = () => {
                                     <td className="px-4 py-2"><input type="number" value={item.newHires ?? ''} onChange={(e) => updateHiringProjectionItem(item.id, 'newHires', e.target.value)} className="w-28 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
                                     <td className="px-4 py-2 text-right font-semibold text-gray-700">{formatNumber(headcount2026)}</td>
                                     <td className="px-4 py-2"><input type="number" value={item.avgAnnualCost ?? ''} onChange={(e) => updateHiringProjectionItem(item.id, 'avgAnnualCost', e.target.value)} className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
-                                    <td className="px-4 py-2 text-right font-semibold text-brand-dark">{formatCurrency(budgetTotal, true)}</td>
+                                    <td className="px-4 py-2 text-right font-semibold text-gray-900">{formatCurrency(budgetTotal, true)}</td>
                                     <td className="px-2 py-2 text-center"><button onClick={() => removeHiringProjectionItem(item.id)} className="text-red-400 hover:text-red-600 font-bold text-lg">&times;</button></td>
                                 </tr>
                             );
@@ -532,9 +532,9 @@ const CommercialPlanning: React.FC = () => {
         const isGap = diff > 0;
 
         return (
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6 space-y-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6 space-y-4">
                 <div className="flex flex-wrap gap-4 justify-between items-center">
-                    <h2 className="text-xl font-bold text-brand-blue">Driver-Based Planning - Projeção 2026</h2>
+                    <h2 className="text-lg font-bold text-gray-900">Driver-Based Planning - Projeção 2026</h2>
                     <div className="flex gap-2">
                         <button onClick={handleImportFromFunnel} className="text-sm text-brand-orange bg-orange-50 px-3 py-1 rounded hover:bg-orange-100 border border-orange-200 font-medium">
                             🔄 Importar do Funil & Demanda 2026
@@ -545,7 +545,7 @@ const CommercialPlanning: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg">
+                <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl">
                     <p className="font-bold">Como funciona a correlação?</p>
                     <p className="text-sm mt-1">
                         Aqui comparamos sua <strong>Meta (Desejo)</strong> com seu <strong>Plano Operacional (Realidade)</strong>. Se houver um GAP, use os Drivers abaixo para encontrar o caminho (aumentar leads? melhorar conversão?).
@@ -598,10 +598,10 @@ const CommercialPlanning: React.FC = () => {
                                 {driverCalculations.monthlyResults.map((r, i) => <td key={i} className="p-2 text-right">{formatNumber(r.novosClientes)}</td>)}
                                 <td className="p-3 text-right font-bold sticky right-0 bg-gray-50 z-10">{formatNumber(driverCalculations.totals.novosClientes)}</td>
                             </tr>
-                            <tr className="bg-gray-100 font-bold text-brand-dark">
-                                <td className="p-3 sticky left-0 bg-gray-100 z-10">(=) Receita Projetada (R$)</td>
+                            <tr className="bg-gray-100 font-bold text-gray-900">
+                                <td className="p-3 sticky left-0 bg-gray-50 z-10">(=) Receita Projetada (R$)</td>
                                 {driverCalculations.monthlyResults.map((r, i) => <td key={i} className="p-2 text-right">{formatCurrency(r.receitaTotal)}</td>)}
-                                <td className="p-3 text-right sticky right-0 bg-gray-100 z-10">{formatCurrency(driverCalculations.totals.receitaTotal)}</td>
+                                <td className="p-3 text-right sticky right-0 bg-gray-50 z-10">{formatCurrency(driverCalculations.totals.receitaTotal)}</td>
                             </tr>
                         </tbody>
                      </table>
@@ -629,12 +629,12 @@ const CommercialPlanning: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
                             <p className="text-xs text-gray-500 font-semibold uppercase">Opção A: Volume de Leads</p>
-                            <p className="text-sm mt-1">Gerar <strong className="text-brand-dark">{formatNumber(requiredLeads)} leads</strong> no ano.</p>
+                            <p className="text-sm mt-1">Gerar <strong className="text-gray-900">{formatNumber(requiredLeads)} leads</strong> no ano.</p>
                             <p className="text-xs text-gray-400">({formatNumber(requiredLeads - currentLeads)} em relação ao atual)</p>
                         </div>
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
                             <p className="text-xs text-gray-500 font-semibold uppercase">Opção B: Eficiência (Conversão)</p>
-                            <p className="text-sm mt-1">Taxa de Conversão de <strong className="text-brand-dark">{formatPercentage(requiredConversion)}</strong>.</p>
+                            <p className="text-sm mt-1">Taxa de Conversão de <strong className="text-gray-900">{formatPercentage(requiredConversion)}</strong>.</p>
                             <p className="text-xs text-gray-400">({formatPercentage(requiredConversion - driverCalculations.totals.taxaConversao)} pontos percentuais)</p>
                         </div>
                     </div>
@@ -655,8 +655,8 @@ const CommercialPlanning: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">6. Planejamento Comercial & RH</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">6. Planejamento Comercial & RH</h1>
+                <p className="text-gray-500 mt-2">
                     Defina sua estratégia de geração de demanda, estruture seu funil de vendas e projete as contratações necessárias para 2026.
                 </p>
             </header>

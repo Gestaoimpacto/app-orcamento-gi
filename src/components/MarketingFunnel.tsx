@@ -16,7 +16,7 @@ const FunnelStage: React.FC<{ title: string, color: string, children: React.Reac
 const MetricDisplay: React.FC<{ label: string, value: string }> = ({ label, value }) => (
     <div className="flex justify-between items-baseline text-sm">
         <span className="text-gray-600">{label}</span>
-        <span className="font-bold text-brand-dark">{value}</span>
+        <span className="font-bold text-gray-900">{value}</span>
     </div>
 );
 
@@ -95,7 +95,7 @@ const MarketingFunnel: React.FC = () => {
 
     const renderFunnelColumn = (year: string, data: typeof funnelData.data2025) => (
         <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-center text-brand-dark">{year}</h2>
+            <h2 className="text-2xl font-bold text-center text-gray-900">{year}</h2>
             <p className="text-sm text-center text-gray-500 mb-4">{year === '2025' ? 'Realizado' : `Projetado (Cenário ${baseScenario})`}</p>
 
             {/* Topo de Funil */}
@@ -133,23 +133,23 @@ const MarketingFunnel: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">7. Funil de Marketing & Vendas</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">7. Funil de Marketing & Vendas</h1>
+                <p className="text-gray-500 mt-2">
                     Visualize a jornada do seu cliente desde a primeira impressão até a venda, comparando 2025 com a projeção para 2026.
                 </p>
             </header>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {renderFunnelColumn('2025', funnelData.data2025)}
                     {renderFunnelColumn('2026', funnelData.data2026)}
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                  <div className="flex flex-wrap gap-4 justify-between items-center border-b pb-3">
-                    <h2 className="text-2xl font-bold text-brand-blue">Análise do Funil com IA (CMO)</h2>
-                    <button onClick={handleGenerateAnalysis} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400">
+                    <h2 className="text-xl font-bold text-gray-900">Análise do Funil com IA (CMO)</h2>
+                    <button onClick={handleGenerateAnalysis} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
                         {isLoading ? 'Analisando...' : 'Analisar Funil & Gerar Recomendações'}
                     </button>
                 </div>

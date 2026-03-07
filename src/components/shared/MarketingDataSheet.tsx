@@ -132,7 +132,7 @@ const MarketingDataSheet: React.FC<MarketingDataSheetProps> = ({ data, onUpdate,
     });
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
             <table className="min-w-full text-sm">
                 <thead className="bg-gray-100 text-gray-600">
                     <tr>

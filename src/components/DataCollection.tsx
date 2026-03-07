@@ -123,11 +123,11 @@ const DataCollection: React.FC = () => {
 
 
     const renderFinancialSheet = () => (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
             <table className="min-w-full text-sm">
-                 <thead className="bg-gray-100 text-gray-600">
+                 <thead className="bg-gray-50 text-gray-500">
                     <tr>
-                        <th className="sticky left-0 bg-gray-100 z-10 p-3 text-left font-semibold" style={{width: '250px'}}>Indicador</th>
+                        <th className="sticky left-0 bg-gray-50 z-10 p-3 text-left font-semibold" style={{width: '250px'}}>Indicador</th>
                         <th className="p-3 text-left font-semibold">Instruções</th>
                         <th className="p-3 text-right font-semibold">Total 2025</th>
                         {MONTHS.map(m => <th key={`25-${m}`} className="p-2 text-center font-medium">{MONTH_LABELS[m]}</th>)}
@@ -135,7 +135,7 @@ const DataCollection: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                     {/* RECEITA */}
-                    <tr className="bg-orange-50"><td colSpan={15} className="p-2 font-bold text-orange-800">RECEITA</td></tr>
+                    <tr className="bg-orange-50/50"><td colSpan={15} className="p-2.5 font-bold text-orange-700 text-sm">RECEITA</td></tr>
                     <FinancialDataRow label="Receita Bruta Total (R$)" rowData={{ values: financialSheet.receitaBruta.values2025 }} onUpdate={(m, v) => updateSheetValue('receitaBruta', m, v)} onUpdateAll={(v) => updateSheetAllValues('receitaBruta', v)} hint="Faturamento total"/>
                     <FinancialDataRow 
                         label="(-) Impostos (R$)" 
@@ -157,7 +157,7 @@ const DataCollection: React.FC = () => {
                     <FinancialDataRow label="Ticket Médio (R$)" rowData={{ values: ticketMedioRow.values2025 }} calculatedValue={summary2025.ticketMedio} isTotal={true} hint="Receita / Nº Clientes"/>
 
                     {/* CUSTOS FIXOS */}
-                    <tr className="bg-blue-50"><td colSpan={15} className="p-2 font-bold text-blue-800">CUSTOS FIXOS</td></tr>
+                    <tr className="bg-blue-50/50"><td colSpan={15} className="p-2.5 font-bold text-blue-700 text-sm">CUSTOS FIXOS</td></tr>
                     <FinancialDataRow label="Folha de Pagamento (R$)" rowData={{ values: financialSheet.folhaPagamento.values2025 }} onUpdate={(m, v) => updateSheetValue('folhaPagamento', m, v)} onUpdateAll={(v) => updateSheetAllValues('folhaPagamento', v)} hint="Salários + Encargos"/>
                     <FinancialDataRow label="Aluguel (R$)" rowData={{ values: financialSheet.aluguel.values2025 }} onUpdate={(m, v) => updateSheetValue('aluguel', m, v)} onUpdateAll={(v) => updateSheetAllValues('aluguel', v)} hint="Infraestrutura"/>
                     <FinancialDataRow label="Despesas Operacionais (R$)" rowData={{ values: financialSheet.despesasOperacionais.values2025 }} onUpdate={(m, v) => updateSheetValue('despesasOperacionais', m, v)} onUpdateAll={(v) => updateSheetAllValues('despesasOperacionais', v)} hint="Água, luz, internet"/>
@@ -170,7 +170,7 @@ const DataCollection: React.FC = () => {
                     <FinancialDataRow label="Total Custos Fixos (R$)" rowData={{ values: custosFixosRow.values2025 }} calculatedValue={totalCustosFixos2025} isTotal={true}/>
 
                     {/* CUSTOS VARIÁVEIS */}
-                    <tr className="bg-yellow-50"><td colSpan={15} className="p-2 font-bold text-yellow-800">CUSTOS VARIÁVEIS</td></tr>
+                    <tr className="bg-amber-50/50"><td colSpan={15} className="p-2.5 font-bold text-amber-700 text-sm">CUSTOS VARIÁVEIS</td></tr>
                     <FinancialDataRow label="CMV (R$)" rowData={{ values: financialSheet.cmv.values2025 }} onUpdate={(m, v) => updateSheetValue('cmv', m, v)} onUpdateAll={(v) => updateSheetAllValues('cmv', v)} hint="Custo direto prod."/>
                     <FinancialDataRow label="Comissões (R$)" rowData={{ values: financialSheet.comissoes.values2025 }} onUpdate={(m, v) => updateSheetValue('comissoes', m, v)} onUpdateAll={(v) => updateSheetAllValues('comissoes', v)} hint="Comissão de vendas"/>
                     <FinancialDataRow label="Fretes (R$)" rowData={{ values: financialSheet.fretes.values2025 }} onUpdate={(m, v) => updateSheetValue('fretes', m, v)} onUpdateAll={(v) => updateSheetAllValues('fretes', v)} hint="Logística"/>
@@ -181,7 +181,7 @@ const DataCollection: React.FC = () => {
                     <FinancialDataRow label="Total Custos Variáveis (R$)" rowData={{ values: custosVariaveisRow.values2025 }} calculatedValue={totalCustosVariaveis2025} isTotal={true}/>
                     
                     {/* RESULTADOS */}
-                    <tr className="bg-green-50"><td colSpan={15} className="p-2 font-bold text-green-800">RESULTADOS</td></tr>
+                    <tr className="bg-emerald-50/50"><td colSpan={15} className="p-2.5 font-bold text-emerald-700 text-sm">RESULTADOS</td></tr>
                     <FinancialDataRow label="Lucro Bruto (R$)" rowData={{ values: lucroBrutoRow.values2025 }} calculatedValue={lucroBruto2025} isTotal={true} hint="Receita Líquida - Custos Variáveis"/>
                     <FinancialDataRow label="EBITDA (R$)" rowData={{ values: ebitdaRow.values2025 }} calculatedValue={ebitda2025} isTotal={true} hint="Lucro Bruto - Custos Fixos"/>
                     <FinancialDataRow label="Margem EBITDA (%)" rowData={{ values: margemEbitdaRow.values2025 }} calculatedValue={margemEbitda2025} isPercentage={true} isTotal={true} hint="(EBITDA / Receita Líquida)"/>

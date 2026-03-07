@@ -12,7 +12,7 @@ const DiagnosticItem: React.FC<{ label: string; value: string | number; hint?: s
             <dt className="text-sm font-medium text-gray-500">{label}</dt>
             {hint && <dd className="text-xs text-gray-400">{hint}</dd>}
         </div>
-        <dd className="text-base font-semibold text-brand-dark">{value}</dd>
+        <dd className="text-base font-semibold text-gray-900">{value}</dd>
     </div>
 );
 
@@ -41,7 +41,7 @@ const MonthlyGoalInput: React.FC<{
             </div>
             <div className="mt-3 text-right">
                 <span className="text-sm font-semibold">Total Anual: </span>
-                <span className="text-lg font-bold text-brand-dark">
+                <span className="text-lg font-bold text-gray-900">
                     {isCurrency ? formatCurrency(total) : formatNumber(total)}
                 </span>
             </div>
@@ -196,18 +196,18 @@ const GoalSetting: React.FC = () => {
             <header>
                 <div className="flex flex-wrap justify-between items-start gap-4">
                     <div>
-                        <h1 className="text-4xl font-bold text-brand-dark">4. Metas & Objetivos para 2026</h1>
-                        <p className="text-lg text-gray-600 mt-2">Defina as metas macro e os objetivos estratégicos que guiarão seu planejamento.</p>
+                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">4. Metas & Objetivos para 2026</h1>
+                        <p className="text-gray-500 mt-2">Defina as metas macro e os objetivos estratégicos que guiarão seu planejamento.</p>
                     </div>
-                     <button onClick={handleGenerateSuggestions} disabled={isLoading} className="flex-shrink-0 px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400">
+                     <button onClick={handleGenerateSuggestions} disabled={isLoading} className="flex-shrink-0 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm disabled:bg-gray-400 transition-colors">
                         {isLoading ? 'Gerando...' : 'Gerar Sugestões com IA'}
                      </button>
                 </div>
             </header>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Diagnóstico Rápido 2025</h2>
+                <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Diagnostico Rapido 2025</h2>
                     <dl className="space-y-1">
                         <DiagnosticItem label="Receita Líquida" value={formatCurrency(summary2025.receitaTotal)} />
                         <DiagnosticItem label="Margem EBITDA" value={formatPercentage(summary2025.margemEbitda)} />
@@ -219,8 +219,8 @@ const GoalSetting: React.FC = () => {
                 </div>
 
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                        <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Metas de Crescimento 2026</h2>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Metas de Crescimento 2026</h2>
                         <div className="mb-4">
                              <label className="block text-sm font-medium text-gray-700">Inflação Prevista para 2026 (%)</label>
                             <input
@@ -247,8 +247,8 @@ const GoalSetting: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                        <h2 className="text-xl font-bold text-brand-blue border-b pb-2 mb-4">Objetivos Estratégicos</h2>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Objetivos Estrategicos</h2>
                         {renderStrategicObjectives(goals2026.objetivosEstrategicos)}
                     </div>
                 </div>

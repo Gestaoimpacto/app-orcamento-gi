@@ -129,6 +129,7 @@ export interface ProductPortfolioItem {
     id: string;
     name: string;
     revenue2025: number | null;
+    cost2025: number | null;
     quantitySold2025: number | null;
 }
 

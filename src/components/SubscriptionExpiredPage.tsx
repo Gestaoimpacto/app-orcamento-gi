@@ -37,9 +37,9 @@ const SubscriptionExpiredPage: React.FC<{
 
     return (
         <div className="min-h-screen bg-brand-light-gray flex flex-col justify-center items-center p-4">
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-lg text-center">
-                 <h1 className="text-4xl font-bold text-brand-dark tracking-wider">GESTÃO DE IMPACTO</h1>
-                <h2 className="mt-6 text-2xl font-bold text-brand-dark">{content.title}</h2>
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-lg text-center">
+                 <h1 className="text-4xl font-bold text-gray-900 tracking-wider">GESTÃO DE IMPACTO</h1>
+                <h2 className="mt-6 text-2xl font-bold text-gray-900">{content.title}</h2>
                 <p className="mt-4 text-gray-600">{content.body}</p>
                 
                 {status === 'not_found' && (

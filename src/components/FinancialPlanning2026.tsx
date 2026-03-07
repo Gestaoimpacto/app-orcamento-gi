@@ -39,13 +39,13 @@ const FinancialStatementTable = <T extends Record<string, FinancialPlanSheetRow>
     };
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
             <h3 className="p-4 text-lg font-bold text-brand-blue">{title}</h3>
             <table className="min-w-full text-sm">
-                <thead className="bg-gray-100 text-gray-600">
+                <thead className="bg-gray-50 text-gray-500">
                     <tr>
-                        <th className="sticky left-0 bg-gray-100 z-10 p-3 text-left font-semibold" style={{ width: '250px' }}>Indicador</th>
-                        <th className="p-3 text-right font-semibold bg-gray-200 text-brand-dark border-l border-white">
+                        <th className="sticky left-0 bg-gray-50 z-10 p-3 text-left font-semibold" style={{ width: '250px' }}>Indicador</th>
+                        <th className="p-3 text-right font-semibold bg-gray-200 text-gray-900 border-l border-white">
                             {isBalanceSheet ? 'Saldo Dez/26' : 'Total 2026'}
                         </th>
                         {MONTHS.map(m => <th key={m} className="p-2 text-center font-medium">{MONTH_LABELS[m]}</th>)}
@@ -61,7 +61,7 @@ const FinancialStatementTable = <T extends Record<string, FinancialPlanSheetRow>
                         return (
                              <tr key={key as string} className={clsx(isBold && 'font-bold bg-gray-50')}>
                                 <td className="sticky left-0 bg-inherit z-10 p-3 text-gray-800">{label}</td>
-                                <td className="p-3 text-right font-semibold text-brand-dark bg-gray-50 border-l border-gray-200">{formatCurrency(total)}</td>
+                                <td className="p-3 text-right font-semibold text-gray-900 bg-gray-50 border-l border-gray-200">{formatCurrency(total)}</td>
                                 {MONTHS.map(month => (
                                     <td key={month} className="p-2 text-right text-gray-700">{formatCurrency(rowData?.[month])}</td>
                                 ))}
@@ -145,13 +145,13 @@ const FinancialPlanning2026: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">10. Planejamento Financeiro 2026</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">10. Planejamento Financeiro 2026</h1>
+                <p className="text-gray-500 mt-2">
                     Gere as projeções financeiras (DRE, DFC, BP) com base no cenário selecionado e nos dados inseridos.
                 </p>
             </header>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-wrap gap-4 justify-between items-center">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-wrap gap-4 justify-between items-center">
                 <div>
                     <label htmlFor="scenario-select" className="block text-sm font-medium text-gray-700">Selecione o Cenário para Geração:</label>
                     <select
@@ -167,13 +167,13 @@ const FinancialPlanning2026: React.FC = () => {
                 </div>
                 <button 
                     onClick={calculateFinancialPlan2026}
-                    className="px-6 py-3 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm"
+                    className="px-6 py-3 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm"
                 >
                     Gerar/Atualizar Planejamento Financeiro
                 </button>
             </div>
 
-            <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div className="border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                         {TABS.map((tab) => (

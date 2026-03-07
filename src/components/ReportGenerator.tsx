@@ -22,9 +22,9 @@ const ReportCard: React.FC<{
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
             <div>
-                <h3 className="text-xl font-bold text-brand-blue">{title}</h3>
+                <h3 className="text-lg font-bold text-gray-900">{title}</h3>
                 <p className="text-sm text-gray-600 mt-2">{description}</p>
                 {analysisText && (
                     <div className="mt-4 p-3 bg-gray-50 border rounded-md text-xs text-gray-700 max-h-24 overflow-y-auto">
@@ -37,14 +37,14 @@ const ReportCard: React.FC<{
                 <button
                     onClick={handleGenerate}
                     disabled={isLoading}
-                    className="flex-1 px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400"
+                    className="flex-1 px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400"
                 >
                     {isLoading ? 'Gerando Análise...' : (analysisText ? 'Gerar Novamente' : 'Gerar com IA')}
                 </button>
                 <button
                     onClick={onView}
                     disabled={!analysisText}
-                    className="flex-1 px-4 py-2 text-sm font-semibold text-brand-dark bg-gray-200 rounded-md hover:bg-gray-300 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-200 rounded-md hover:bg-gray-300 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                     Visualizar Relatório
                 </button>
@@ -61,8 +61,8 @@ const ReportGenerator: React.FC = () => {
     return (
         <div className="space-y-8">
             <header>
-                <h1 className="text-4xl font-bold text-brand-dark">Relatórios & Impressão</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Relatórios & Impressão</h1>
+                <p className="text-gray-500 mt-2">
                     Gere relatórios profissionais e consolidados do seu planejamento, enriquecidos com análises da IA.
                 </p>
             </header>

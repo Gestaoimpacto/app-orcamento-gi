@@ -54,15 +54,15 @@ const Settings: React.FC = () => {
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
             <header className="text-center">
-                <h1 className="text-4xl font-bold text-brand-dark">Configurações</h1>
-                <p className="text-lg text-gray-600 mt-2">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Configurações</h1>
+                <p className="text-gray-500 mt-2">
                     Gerencie os dados da sua empresa e as integrações do sistema.
                 </p>
             </header>
             
             {/* GEMINI AI CONFIG SECTION */}
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6">
-                <h2 className="text-xl font-bold text-brand-blue border-b pb-3">Configuração de IA (Google Gemini)</h2>
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Configuração de IA (Google Gemini)</h2>
                 
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800">
                     <p>Para utilizar as análises inteligentes, sugestões de metas e edição de imagens, você precisa de uma <strong>Chave de API do Google</strong>. </p>
@@ -111,8 +111,8 @@ const Settings: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6">
-                <h2 className="text-xl font-bold text-brand-blue border-b pb-3">Informações da Empresa</h2>
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Informações da Empresa</h2>
                 
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome da Empresa</label>
@@ -143,7 +143,7 @@ const Settings: React.FC = () => {
                          <button
                             onClick={handleCnpjSearch}
                             disabled={isSearching || !planData.companyProfile.cnpj}
-                            className="flex-shrink-0 px-4 py-2 h-11 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                            className="flex-shrink-0 px-4 py-2 h-11 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                             {isSearching ? (
                                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
