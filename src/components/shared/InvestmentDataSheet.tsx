@@ -2,6 +2,7 @@
 import React from 'react';
 import type { InvestmentData2025 } from '../../types';
 import { formatCurrency, formatNumber } from '../../utils/formatters';
+import CurrencyInput from './CurrencyInput';
 
 interface InvestmentDataSheetProps {
   data: InvestmentData2025;
@@ -18,28 +19,24 @@ const InvestmentDataSheet: React.FC<InvestmentDataSheetProps> = ({ data, onUpdat
         unit: 'R$' | 'dias' | 'none' = 'R$',
         disabled: boolean = false
     ) => {
-        const value = (data[section][metric] as number | undefined) ?? '';
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            onUpdate(section, metric as string, e.target.value);
+        const value = (data[section][metric] as number | undefined) ?? null;
+        const handleChange = (v: string) => {
+            onUpdate(section, metric as string, v);
         }
 
         return (
             <div>
                 <label htmlFor={`${section}-${metric as string}`} className="block text-sm font-medium text-gray-700">{label}</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
-                    {unit === 'R$' && <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span className="text-gray-500 sm:text-sm">R$</span></div>}
-                    <input
-                        type="number"
-                        name={`${section}-${metric as string}`}
-                        id={`${section}-${metric as string}`}
-                        className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 ${unit === 'R$' ? 'pl-8' : ''} ${unit === 'dias' ? 'pr-12' : ''} ${disabled ? 'bg-gray-100' : ''}`}
-                        placeholder="0"
+                    {unit === 'R$' && <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 z-10"><span className="text-gray-500 sm:text-sm">R$</span></div>}
+                    <CurrencyInput
                         value={value}
                         onChange={handleChange}
-                        step="any"
+                        className={`block w-full rounded-xl border border-gray-300 shadow-sm focus:border-brand-orange focus:ring-1 focus:ring-brand-orange sm:text-sm p-2.5 ${unit === 'R$' ? 'pl-8' : ''} ${unit === 'dias' ? 'pr-12' : ''} ${disabled ? 'bg-gray-100' : 'bg-white'}`}
+                        placeholder="0"
                         disabled={disabled}
                     />
-                    {unit === 'dias' && <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span className="text-gray-500 sm:text-sm">dias</span></div>}
+                    {unit === 'dias' && <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 z-10"><span className="text-gray-500 sm:text-sm">dias</span></div>}
                 </div>
                 {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
             </div>
@@ -66,35 +63,35 @@ const InvestmentDataSheet: React.FC<InvestmentDataSheetProps> = ({ data, onUpdat
             {/* CAPEX */}
             <div className="space-y-4 p-4 border rounded-lg bg-gray-50/50">
                 <h3 className="font-bold text-lg text-gray-800">CAPEX (Investimentos em Ativos)</h3>
-                {renderInput('CAPEX - Máquinas e Equipamentos', 'capex', 'maquinasEquipamentos', 'Compra de novos equipamentos.')}
-                {renderInput('CAPEX - Software', 'capex', 'software', 'Licenças, desenvolvimento.')}
+                {renderInput('CAPEX - Maquinas e Equipamentos', 'capex', 'maquinasEquipamentos', 'Compra de novos equipamentos.')}
+                {renderInput('CAPEX - Software', 'capex', 'software', 'Licencas, desenvolvimento.')}
                 {renderInput('CAPEX - P&D', 'capex', 'pesquisaDesenvolvimento', 'Pesquisa e Desenvolvimento.')}
                 <div className="pt-2 border-t mt-4">
                     <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total CAPEX 2025</p>
                     <p className="text-2xl font-black text-brand-orange">{formatCurrency(totalCapex)}</p>
-                    <p className="text-[10px] text-gray-400 mt-1 italic">*Soma automática dos itens acima</p>
+                    <p className="text-[10px] text-gray-400 mt-1 italic">*Soma automatica dos itens acima</p>
                 </div>
             </div>
 
             {/* Capital de Giro */}
             <div className="space-y-4 p-4 border rounded-lg bg-gray-50/50">
                 <h3 className="font-bold text-lg text-gray-800">Capital de Giro</h3>
-                {renderInput('Prazo Médio Recebimento (PMR)', 'workingCapital', 'prazoMedioRecebimento', 'Dias para receber de clientes.', 'dias')}
-                {renderInput('Prazo Médio Estocagem (PME)', 'workingCapital', 'prazoMedioEstocagem', 'Dias que o produto fica em estoque.', 'dias')}
-                {renderInput('Prazo Médio Pagamento (PMP)', 'workingCapital', 'prazoMedioPagamento', 'Dias para pagar fornecedores.', 'dias')}
+                {renderInput('Prazo Medio Recebimento (PMR)', 'workingCapital', 'prazoMedioRecebimento', 'Dias para receber de clientes.', 'dias')}
+                {renderInput('Prazo Medio Estocagem (PME)', 'workingCapital', 'prazoMedioEstocagem', 'Dias que o produto fica em estoque.', 'dias')}
+                {renderInput('Prazo Medio Pagamento (PMP)', 'workingCapital', 'prazoMedioPagamento', 'Dias para pagar fornecedores.', 'dias')}
                 <div className="pt-2 border-t mt-4">
                     <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Ciclo Financeiro</p>
                     <p className="text-2xl font-black text-brand-blue">{formatNumber(cicloFinanceiro)} dias</p>
-                    <p className="text-[10px] text-gray-400 mt-1 italic">Cálculo: PMR + PME - PMP</p>
+                    <p className="text-[10px] text-gray-400 mt-1 italic">Calculo: PMR + PME - PMP</p>
                 </div>
             </div>
 
             {/* Financiamento */}
             <div className="space-y-4 p-4 border rounded-lg bg-gray-50/50">
                 <h3 className="font-bold text-lg text-gray-800">Fontes de Financiamento</h3>
-                {renderInput('Financiamento Curto Prazo', 'financing', 'financiamentoCurtoPrazo', 'Empréstimos, capital de giro.')}
+                {renderInput('Financiamento Curto Prazo', 'financing', 'financiamentoCurtoPrazo', 'Emprestimos, capital de giro.')}
                 {renderInput('Financiamento Longo Prazo', 'financing', 'financiamentoLongoPrazo', 'Para investimentos.')}
-                {renderInput('Aporte de Capital', 'financing', 'aporteCapital', 'Investimento dos sócios.')}
+                {renderInput('Aporte de Capital', 'financing', 'aporteCapital', 'Investimento dos socios.')}
                 
                 <div className="pt-4 border-t mt-2">
                     <h4 className="font-bold text-sm text-brand-blue mb-2">Saldo Inicial para 2026</h4>

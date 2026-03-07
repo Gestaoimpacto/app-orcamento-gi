@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { formatNumber, formatPercentage, formatCurrency } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import type { MarketCompetitionData, SWOTData, BlueOceanFourActions, BowmanClockProduct, ProductPortfolioItem } from '../types';
 import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ScatterChart, Scatter, ReferenceArea, Label, LabelList } from 'recharts';
 import clsx from 'clsx';
@@ -180,8 +181,8 @@ const BlueOcean: React.FC = () => {
                                     return (
                                         <tr key={factor.id}>
                                             <td className="px-2 py-1"><input type="text" value={factor.name} onChange={e => updateBlueOceanFactor(factor.id, 'name', e.target.value)} className="w-full p-1 border-gray-300 rounded-md bg-white text-gray-900" /></td>
-                                            <td className="px-2 py-1"><input type="number" min="1" max="5" value={factor.yourCompanyScore ?? ''} onChange={e => updateBlueOceanFactor(factor.id, 'yourCompanyScore', e.target.value)} className="w-20 p-1 text-center border-gray-300 rounded-md bg-white text-gray-900" /></td>
-                                            <td className="px-2 py-1"><input type="number" min="1" max="5" value={factor.competitorScore ?? ''} onChange={e => updateBlueOceanFactor(factor.id, 'competitorScore', e.target.value)} className="w-20 p-1 text-center border-gray-300 rounded-md bg-white text-gray-900" /></td>
+                                            <td className="px-2 py-1"><CurrencyInput value={factor.yourCompanyScore ?? null} onChange={(v) => updateBlueOceanFactor(factor.id, 'yourCompanyScore', v)} className="w-20 p-1 text-center border border-gray-300 rounded-md bg-white text-gray-900" /></td>
+                                            <td className="px-2 py-1"><CurrencyInput value={factor.competitorScore ?? null} onChange={(v) => updateBlueOceanFactor(factor.id, 'competitorScore', v)} className="w-20 p-1 text-center border border-gray-300 rounded-md bg-white text-gray-900" /></td>
                                             <td className={clsx("px-2 py-1 text-center font-bold text-sm", diff > 0 ? "text-green-600" : diff < 0 ? "text-red-600" : "text-gray-400")}>
                                                 {diff > 0 ? '+' : ''}{diff}
                                             </td>
@@ -286,8 +287,8 @@ const BowmanClock: React.FC = () => {
                                     return (
                                         <tr key={p.id}>
                                             <td className="px-2 py-1"><input type="text" value={p.name} onChange={e => updateBowmanClockProduct(p.id, 'name', e.target.value)} className="w-full p-1 border-gray-300 rounded-md bg-white text-gray-900" /></td>
-                                            <td className="px-2 py-1"><input type="number" min="1" max="5" value={p.priceLevel ?? ''} onChange={e => updateBowmanClockProduct(p.id, 'priceLevel', e.target.value)} className="w-20 p-1 text-center border-gray-300 rounded-md bg-white text-gray-900" /></td>
-                                            <td className="px-2 py-1"><input type="number" min="1" max="5" value={p.perceivedValue ?? ''} onChange={e => updateBowmanClockProduct(p.id, 'perceivedValue', e.target.value)} className="w-20 p-1 text-center border-gray-300 rounded-md bg-white text-gray-900" /></td>
+                                            <td className="px-2 py-1"><CurrencyInput value={p.priceLevel ?? null} onChange={(v) => updateBowmanClockProduct(p.id, 'priceLevel', v)} className="w-20 p-1 text-center border border-gray-300 rounded-md bg-white text-gray-900" /></td>
+                                            <td className="px-2 py-1"><CurrencyInput value={p.perceivedValue ?? null} onChange={(v) => updateBowmanClockProduct(p.id, 'perceivedValue', v)} className="w-20 p-1 text-center border border-gray-300 rounded-md bg-white text-gray-900" /></td>
                                             <td className={clsx("px-2 py-1 text-center font-bold text-xs", posColor)}>{posLabel}</td>
                                             <td className="px-2 py-1 text-center"><button onClick={() => removeBowmanClockProduct(p.id)} className="text-red-500 hover:text-red-700">&times;</button></td>
                                         </tr>

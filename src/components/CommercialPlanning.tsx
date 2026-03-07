@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { SalesFunnelData, HiringProjectionItem, DriverBasedPlanningData, Month, MONTHS, MONTH_LABELS, MonthlyData, DemandChannel } from '../types';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
@@ -39,13 +40,11 @@ const InputField: React.FC<{
         <label className="block text-sm font-medium text-gray-700">{label}</label>
         <div className="mt-1 relative rounded-md shadow-sm">
             {prefix && <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><span className="text-gray-500 sm:text-sm">{prefix}</span></div>}
-            <input
-                type="number"
-                step="any"
-                className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 ${prefix ? 'pl-8' : ''} ${suffix ? 'pr-12' : ''}`}
+            <CurrencyInput
+                value={value ?? null}
+                onChange={(v) => onChange({ target: { value: v } } as any)}
+                className={`block w-full rounded-xl border border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 ${prefix ? 'pl-8' : ''} ${suffix ? 'pr-12' : ''}`}
                 placeholder="0"
-                value={value ?? ''}
-                onChange={onChange}
             />
             {suffix && <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"><span className="text-gray-500 sm:text-sm">{suffix}</span></div>}
         </div>
@@ -317,9 +316,9 @@ const CommercialPlanning: React.FC = () => {
                                     return (
                                         <tr key={ch.id}>
                                             <td><input type="text" value={ch.name} onChange={e => updateDemandChannel(ch.id, 'name', e.target.value)} className="w-full p-2 bg-transparent border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
-                                            <td><input type="number" value={ch.budget ?? ''} onChange={e => updateDemandChannel(ch.id, 'budget', e.target.value)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
-                                            <td><input type="number" value={ch.leads ?? ''} onChange={e => updateDemandChannel(ch.id, 'leads', e.target.value)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
-                                            <td><input type="number" value={ch.expectedRevenue ?? ''} onChange={e => updateDemandChannel(ch.id, 'expectedRevenue', e.target.value)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
+                                            <td><CurrencyInput value={ch.budget ?? null} onChange={(v) => updateDemandChannel(ch.id, 'budget', v)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
+                                            <td><CurrencyInput value={ch.leads ?? null} onChange={(v) => updateDemandChannel(ch.id, 'leads', v)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
+                                            <td><CurrencyInput value={ch.expectedRevenue ?? null} onChange={(v) => updateDemandChannel(ch.id, 'expectedRevenue', v)} className="w-full p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
                                             <td className="px-4 py-2 text-right text-gray-600 font-semibold">{formatCurrency(cpl)}</td>
                                             <td className="px-4 py-2 text-right text-gray-600 font-semibold">{formatNumber(roi)}x</td>
                                             <td className="text-center"><button onClick={() => removeDemandChannel(ch.id)} className="text-red-400 hover:text-red-600">&times;</button></td>
@@ -474,10 +473,10 @@ const CommercialPlanning: React.FC = () => {
                             return (
                                 <tr key={item.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-2"><input type="text" value={item.department} onChange={(e) => updateHiringProjectionItem(item.id, 'department', e.target.value)} className="w-full bg-transparent border-b border-transparent focus:border-brand-orange focus:outline-none" /></td>
-                                    <td className="px-4 py-2"><input type="number" value={item.currentHeadcount ?? ''} onChange={(e) => updateHiringProjectionItem(item.id, 'currentHeadcount', e.target.value)} className="w-28 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
-                                    <td className="px-4 py-2"><input type="number" value={item.newHires ?? ''} onChange={(e) => updateHiringProjectionItem(item.id, 'newHires', e.target.value)} className="w-28 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
+                                    <td className="px-4 py-2"><CurrencyInput value={item.currentHeadcount ?? null} onChange={(v) => updateHiringProjectionItem(item.id, 'currentHeadcount', v)} className="w-28 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
+                                    <td className="px-4 py-2"><CurrencyInput value={item.newHires ?? null} onChange={(v) => updateHiringProjectionItem(item.id, 'newHires', v)} className="w-28 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
                                     <td className="px-4 py-2 text-right font-semibold text-gray-700">{formatNumber(headcount2026)}</td>
-                                    <td className="px-4 py-2"><input type="number" value={item.avgAnnualCost ?? ''} onChange={(e) => updateHiringProjectionItem(item.id, 'avgAnnualCost', e.target.value)} className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
+                                    <td className="px-4 py-2"><CurrencyInput value={item.avgAnnualCost ?? null} onChange={(v) => updateHiringProjectionItem(item.id, 'avgAnnualCost', v)} className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset rounded-md" /></td>
                                     <td className="px-4 py-2 text-right font-semibold text-gray-900">{formatCurrency(budgetTotal, true)}</td>
                                     <td className="px-2 py-2 text-center"><button onClick={() => removeHiringProjectionItem(item.id)} className="text-red-400 hover:text-red-600 font-bold text-lg">&times;</button></td>
                                 </tr>
@@ -579,10 +578,9 @@ const CommercialPlanning: React.FC = () => {
                                         <td className="p-3 font-medium sticky left-0 bg-white z-10">{labelMap[key]}</td>
                                         {MONTHS.map(m => (
                                             <td key={m} className="p-0 text-right">
-                                                <input
-                                                    type="number"
-                                                    value={driverBasedPlanning?.[key]?.[m] ?? ''}
-                                                    onChange={(e) => updateDriverBasedPlanning(key, m, e.target.value)}
+                                                <CurrencyInput
+                                                    value={driverBasedPlanning?.[key]?.[m] ?? null}
+                                                    onChange={(v) => updateDriverBasedPlanning(key, m, v)}
                                                     className="w-24 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset"
                                                     placeholder="0"
                                                 />

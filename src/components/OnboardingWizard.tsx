@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { formatCurrency } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 
 const OnboardingWizard: React.FC = () => {
     const { planData, updateCompanyProfile, updateSheetValue, goals2026, updateInflation, updateScenarioGrowthPercentage, updateGoal } = usePlan();
@@ -134,25 +135,22 @@ const OnboardingWizard: React.FC = () => {
                                     <label className="block text-sm font-medium text-gray-700">Faturamento Anual 2025 (Aprox.)</label>
                                     <div className="relative mt-1">
                                         <span className="absolute left-3 top-3 text-gray-500">R$</span>
-                                        <input 
-                                            type="number" 
+                                        <CurrencyInput 
+                                            value={revenue2025 ? parseFloat(revenue2025) : null}
+                                            onChange={(v) => setRevenue2025(v)}
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange p-3 pl-10 border"
                                             placeholder="0,00"
-                                            value={revenue2025}
-                                            onChange={e => setRevenue2025(e.target.value)}
-                                            autoFocus
                                         />
                                     </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Margem de Lucro Estimada (%)</label>
                                     <div className="relative mt-1">
-                                        <input 
-                                            type="number" 
+                                        <CurrencyInput 
+                                            value={margin2025 ? parseFloat(margin2025) : null}
+                                            onChange={(v) => setMargin2025(v)}
                                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange p-3 pr-10 border"
                                             placeholder="Ex: 20"
-                                            value={margin2025}
-                                            onChange={e => setMargin2025(e.target.value)}
                                         />
                                         <span className="absolute right-3 top-3 text-gray-500">%</span>
                                     </div>
@@ -196,12 +194,11 @@ const OnboardingWizard: React.FC = () => {
                                         </button>
                                     </div>
                                     <div className="mt-4 text-center">
-                                        <input 
-                                            type="number" 
-                                            placeholder="Outro valor..." 
+                                        <CurrencyInput 
+                                            value={growthGoal ? parseFloat(growthGoal) : null}
+                                            onChange={(v) => setGrowthGoal(v)}
                                             className="w-32 p-2 border-b text-center focus:outline-none focus:border-brand-orange"
-                                            value={growthGoal}
-                                            onChange={e => setGrowthGoal(e.target.value)}
+                                            placeholder="Outro valor..."
                                         />
                                         <span className="text-gray-500 ml-1">%</span>
                                     </div>

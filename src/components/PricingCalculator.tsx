@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import { v4 as uuidv4 } from 'uuid';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, CartesianGrid, ReferenceLine } from 'recharts';
 import type { PricingItem, DetailedCostBreakdown } from '../types';
@@ -20,16 +21,14 @@ const InputGroup: React.FC<{ label: string; value: number; onChange: (v: number)
     <div className="mb-4">
         <label className="block text-xs font-bold text-gray-600 uppercase mb-1">{label}</label>
         <div className="relative">
-            {prefix && <span className="absolute left-3 top-2 text-gray-500 text-sm">{prefix}</span>}
-            <input 
-                type="number" 
+            {prefix && <span className="absolute left-3 top-2.5 text-gray-500 text-sm z-10">{prefix}</span>}
+            <CurrencyInput 
                 value={value} 
-                onChange={e => onChange(Number(e.target.value))} 
-                max={max}
+                onChange={(v) => onChange(parseFloat(v) || 0)} 
                 disabled={disabled}
-                className={clsx("w-full p-2 border border-gray-300 rounded-md font-medium focus:ring-2 focus:ring-brand-orange focus:border-brand-orange disabled:bg-gray-100 disabled:text-gray-500", prefix && "pl-8", suffix && "pr-8")}
+                className={clsx("w-full p-2 border border-gray-300 rounded-xl font-medium focus:ring-2 focus:ring-brand-orange focus:border-brand-orange disabled:bg-gray-100 disabled:text-gray-500", prefix && "pl-8", suffix && "pr-8")}
             />
-            {suffix && <span className="absolute right-3 top-2 text-gray-500 text-sm">{suffix}</span>}
+            {suffix && <span className="absolute right-3 top-2.5 text-gray-500 text-sm z-10">{suffix}</span>}
         </div>
         {hint && <p className="text-[10px] text-gray-400 mt-1">{hint}</p>}
     </div>

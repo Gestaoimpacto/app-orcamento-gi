@@ -2,6 +2,7 @@
 import React from 'react';
 import { MarketingData2025, Month, MONTHS, MONTH_LABELS, Summary2025, FinancialSheetData, CommercialData2025 } from '../../types';
 import { formatCurrency, formatNumber, formatPercentage } from '../../utils/formatters';
+import CurrencyInput from './CurrencyInput';
 
 interface MarketingDataSheetProps {
   data: MarketingData2025;
@@ -26,11 +27,9 @@ const MarketingDataSheet: React.FC<MarketingDataSheetProps> = ({ data, onUpdate,
                 <td className="p-3 text-right font-semibold text-gray-600">{formatFn(total)}</td>
                 {MONTHS.map(month => (
                     <td key={month} className="p-0">
-                        <input
-                            type="number"
-                            step="any"
-                            value={metricData?.[month] ?? ''}
-                            onChange={(e) => onUpdate(section, metric, month, e.target.value)}
+                        <CurrencyInput
+                            value={metricData?.[month] ?? null}
+                            onChange={(v) => onUpdate(section, metric, month, v)}
                             className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset"
                             placeholder="0"
                         />

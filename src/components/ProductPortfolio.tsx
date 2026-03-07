@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { formatCurrency, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 const ProductPortfolio: React.FC = () => {
@@ -86,28 +87,25 @@ const ProductPortfolio: React.FC = () => {
                                     />
                                 </td>
                                 <td className="px-2">
-                                    <input 
-                                        type="number" 
-                                        value={item.revenue2025 ?? ''} 
-                                        onChange={e => updateProductPortfolioItem(item.id, 'revenue2025', e.target.value)}
+                                    <CurrencyInput 
+                                        value={item.revenue2025 ?? null} 
+                                        onChange={(v) => updateProductPortfolioItem(item.id, 'revenue2025', v)}
                                         placeholder="0"
                                         className="w-full bg-transparent p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-lg text-sm"
                                     />
                                 </td>
                                 <td className="px-2">
-                                    <input 
-                                        type="number" 
-                                        value={item.cost2025 ?? ''} 
-                                        onChange={e => updateProductPortfolioItem(item.id, 'cost2025', e.target.value)}
+                                    <CurrencyInput 
+                                        value={item.cost2025 ?? null} 
+                                        onChange={(v) => updateProductPortfolioItem(item.id, 'cost2025', v)}
                                         placeholder="0"
                                         className="w-full bg-transparent p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-lg text-sm"
                                     />
                                 </td>
                                 <td className="px-2">
-                                    <input 
-                                        type="number" 
-                                        value={item.quantitySold2025 ?? ''} 
-                                        onChange={e => updateProductPortfolioItem(item.id, 'quantitySold2025', e.target.value)}
+                                    <CurrencyInput 
+                                        value={item.quantitySold2025 ?? null} 
+                                        onChange={(v) => updateProductPortfolioItem(item.id, 'quantitySold2025', v)}
                                         placeholder="0"
                                         className="w-full bg-transparent p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-lg text-sm"
                                     />

@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { ScenarioName, ScenarioData, Month, MONTHS, MONTH_LABELS, ScenarioInputMode, MonthlyData } from '../types';
 import { formatCurrency, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 import FinancialDataRow from './shared/FinancialDataRow';
 
@@ -258,11 +259,10 @@ const ScenarioPlanning: React.FC = () => {
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 text-center">Crescimento Base</label>
                                     <div className="relative mt-1">
-                                        <input
-                                            type="number"
-                                            value={scenarios2026[scenarioName].growthPercentage ?? ''}
-                                            onChange={e => updateScenarioGrowthPercentage(scenarioName, e.target.value)}
-                                            className="w-28 p-2 text-center border border-gray-300 rounded-md focus:ring-brand-orange focus:border-brand-orange bg-white text-gray-900"
+                                        <CurrencyInput
+                                            value={scenarios2026[scenarioName].growthPercentage ?? null}
+                                            onChange={(v) => updateScenarioGrowthPercentage(scenarioName, v)}
+                                            className="w-28 p-2 text-center border border-gray-300 rounded-xl focus:ring-brand-orange focus:border-brand-orange bg-white text-gray-900"
                                         />
                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                                     </div>

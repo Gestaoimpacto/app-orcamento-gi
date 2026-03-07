@@ -2,6 +2,7 @@
 import React from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { ActionPlanItem, ActionPlanStatus } from '../types';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 const ActionPlan: React.FC = () => {
@@ -67,12 +68,11 @@ const ActionPlan: React.FC = () => {
                                     <td className="p-0">{renderInput(item, 'where')}</td>
                                     <td className="p-0">{renderTextarea(item, 'how')}</td>
                                     <td className="p-0">
-                                        <input
-                                            type="number"
-                                            value={item.howMuch ?? ''}
-                                            onChange={(e) => updateActionPlanItem(item.id, 'howMuch', e.target.value)}
-                                            className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-md focus:ring-2 focus:ring-brand-orange focus:border-brand-orange"
-                                            placeholder="0.00"
+                                        <CurrencyInput
+                                            value={item.howMuch ?? null}
+                                            onChange={(v) => updateActionPlanItem(item.id, 'howMuch', v)}
+                                            className="w-full p-2 bg-white text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange focus:border-brand-orange"
+                                            placeholder="0,00"
                                         />
                                     </td>
                                     <td className="p-0">

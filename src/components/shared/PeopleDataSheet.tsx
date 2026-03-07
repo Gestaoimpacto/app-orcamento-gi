@@ -2,6 +2,7 @@
 import React from 'react';
 import { PeopleData2025, Month, MONTHS, MONTH_LABELS } from '../../types';
 import { formatCurrency, formatNumber, formatPercentage } from '../../utils/formatters';
+import CurrencyInput from './CurrencyInput';
 
 interface PeopleDataSheetProps {
   data: PeopleData2025;
@@ -50,11 +51,9 @@ const PeopleDataSheet: React.FC<PeopleDataSheetProps> = ({ data, onUpdate }) => 
                 </td>
                 {MONTHS.map(month => (
                     <td key={month} className="p-0">
-                        <input
-                            type="number"
-                            step="any"
-                            value={metricData?.[month] ?? ''}
-                            onChange={(e) => onUpdate(section, metric, month, e.target.value)}
+                        <CurrencyInput
+                            value={metricData?.[month] ?? null}
+                            onChange={(v) => onUpdate(section, metric, month, v)}
                             className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset"
                             placeholder="0"
                         />

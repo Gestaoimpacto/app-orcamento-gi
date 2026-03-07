@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import type { OKR, KeyResult, KPI, OkrsAndKpis } from '../types';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 type KpiDepartment = keyof OkrsAndKpis['kpis'];
@@ -63,15 +64,15 @@ const KeyResultRow: React.FC<{
                 </div>
                  <div>
                     <label className="font-semibold text-gray-500">Início</label>
-                    <input type="number" value={kr.startValue ?? ''} onChange={(e) => onUpdate(okrId, kr.id, 'startValue', e.target.value)} className="w-full p-1 border-gray-300 rounded-md"/>
+                    <CurrencyInput value={kr.startValue ?? null} onChange={(v) => onUpdate(okrId, kr.id, 'startValue', v)} className="w-full p-1 border border-gray-300 rounded-md text-sm"/>
                  </div>
                  <div>
                     <label className="font-semibold text-gray-500">Atual</label>
-                    <input type="number" value={kr.currentValue ?? ''} onChange={(e) => onUpdate(okrId, kr.id, 'currentValue', e.target.value)} className="w-full p-1 border-gray-300 rounded-md"/>
+                    <CurrencyInput value={kr.currentValue ?? null} onChange={(v) => onUpdate(okrId, kr.id, 'currentValue', v)} className="w-full p-1 border border-gray-300 rounded-md text-sm"/>
                  </div>
                  <div>
                     <label className="font-semibold text-gray-500">Meta</label>
-                     <input type="number" value={kr.targetValue ?? ''} onChange={(e) => onUpdate(okrId, kr.id, 'targetValue', e.target.value)} className="w-full p-1 border-gray-300 rounded-md"/>
+                     <CurrencyInput value={kr.targetValue ?? null} onChange={(v) => onUpdate(okrId, kr.id, 'targetValue', v)} className="w-full p-1 border border-gray-300 rounded-md text-sm"/>
                  </div>
             </div>
         </div>
@@ -121,7 +122,7 @@ const KpiDashboard: React.FC = () => {
                                         </select>
                                     </td>
                                     <td className="text-right p-2 text-gray-600 font-semibold">{formatter(kpi.value2025)}</td>
-                                    <td><input type="number" value={kpi.target2026 ?? ''} onChange={e => updateKpi(activeTab, kpi.id, 'target2026', e.target.value)} className="w-full bg-transparent p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
+                                    <td><CurrencyInput value={kpi.target2026 ?? null} onChange={(v) => updateKpi(activeTab, kpi.id, 'target2026', v)} className="w-full bg-transparent p-2 text-right border-0 focus:ring-1 focus:ring-brand-orange rounded-md"/></td>
                                     <td className="text-center"><button onClick={() => removeKpi(activeTab, kpi.id)} className="text-red-400 hover:text-red-600">&times;</button></td>
                                 </tr>
                             )

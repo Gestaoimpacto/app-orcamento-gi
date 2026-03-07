@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from 'recharts';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 const KpiCard: React.FC<{
@@ -108,9 +109,9 @@ const SimInput: React.FC<{ label: string, value: number, onChange: (v: number) =
     <div>
         <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
         <div className="relative">
-            {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{prefix}</span>}
-            <input type="number" value={value} onChange={e => onChange(e.target.valueAsNumber || 0)} disabled={disabled} className={clsx("w-full p-2.5 border border-gray-200 rounded-xl text-sm text-center bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-brand-orange", prefix && 'pl-8', suffix && 'pr-12')} />
-            {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">{suffix}</span>}
+            {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10">{prefix}</span>}
+            <CurrencyInput value={value} onChange={(v) => onChange(parseFloat(v) || 0)} disabled={disabled} className={clsx("w-full p-2.5 border border-gray-200 rounded-xl text-sm text-center bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-brand-orange", prefix && 'pl-8', suffix && 'pr-12')} />
+            {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs z-10">{suffix}</span>}
         </div>
     </div>
 );

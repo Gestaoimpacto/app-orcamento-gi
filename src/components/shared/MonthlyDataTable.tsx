@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MonthlyData, Month, MONTHS, MONTH_LABELS, CommercialData2025, PeopleData2025 } from '../../types';
+import CurrencyInput from './CurrencyInput';
 
 interface MonthlyDataTableProps {
   title: string;
@@ -36,13 +37,11 @@ const MonthlyDataTable: React.FC<MonthlyDataTableProps> = ({ title, data, labels
               </td>
               {MONTHS.map((month) => (
                 <td key={month} className="whitespace-nowrap">
-                  <input
-                    type="number"
-                    step="any"
+                  <CurrencyInput
+                    value={data[metric]?.[month] ?? null}
+                    onChange={(v) => onUpdate(category, metric, month, v)}
                     className="w-32 p-2 text-right border-none focus:ring-2 focus:ring-brand-orange focus:ring-inset"
                     placeholder="0"
-                    value={data[metric]?.[month] ?? ''}
-                    onChange={(e) => onUpdate(category, metric, month, e.target.value)}
                   />
                 </td>
               ))}

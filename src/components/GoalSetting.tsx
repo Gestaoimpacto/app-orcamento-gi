@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { FinancialGoals, CommercialGoals, PeopleGoals, StrategicObjectives, MonthlyData, Month, MONTHS, MONTH_LABELS } from '../types';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 
 const sumMonthlyData = (data: MonthlyData): number => Object.values(data).reduce((sum, val) => sum + (val || 0), 0);
 
@@ -30,11 +31,10 @@ const MonthlyGoalInput: React.FC<{
                 {MONTHS.map(month => (
                     <div key={month}>
                         <label className="text-xs text-gray-500">{MONTH_LABELS[month]}</label>
-                        <input
-                            type="number"
-                            value={monthlyData[month] ?? ''}
-                            onChange={(e) => onUpdate(month, e.target.value)}
-                            className="w-full p-1 border-gray-300 rounded-md text-sm bg-white text-gray-900"
+                        <CurrencyInput
+                            value={monthlyData[month] ?? null}
+                            onChange={(v) => onUpdate(month, v)}
+                            className="w-full p-1 border border-gray-300 rounded-md text-sm bg-white text-gray-900 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange"
                         />
                     </div>
                 ))}
@@ -60,6 +60,8 @@ const GoalSetting: React.FC = () => {
         setIsLoading(false);
     };
 
+    const inputClass = "mt-1 block w-full rounded-xl border border-gray-300 shadow-sm focus:border-brand-orange focus:ring-1 focus:ring-brand-orange sm:text-sm p-2.5 bg-white text-gray-900";
+
     const renderFinancialGoals = (goals: FinancialGoals) => (
         <div className="space-y-4">
             <MonthlyGoalInput
@@ -70,22 +72,20 @@ const GoalSetting: React.FC = () => {
             />
             <div>
                 <label className="block text-sm font-medium text-gray-700">Meta de Margem EBITDA (%)</label>
-                <input
-                    type="number"
-                    value={goals.metaMargemEbitda ?? ''}
-                    onChange={(e) => updateGoal('financeiras', 'metaMargemEbitda', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                <CurrencyInput
+                    value={goals.metaMargemEbitda ?? null}
+                    onChange={(v) => updateGoal('financeiras', 'metaMargemEbitda', v)}
+                    className={inputClass}
                     placeholder="Ex: 25"
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Meta de Lucro Líquido (R$)</label>
-                <input
-                    type="number"
-                    value={goals.metaLucroLiquido ?? ''}
-                    onChange={(e) => updateGoal('financeiras', 'metaLucroLiquido', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
-                    placeholder="Ex: 500000"
+                <label className="block text-sm font-medium text-gray-700">Meta de Lucro Liquido (R$)</label>
+                <CurrencyInput
+                    value={goals.metaLucroLiquido ?? null}
+                    onChange={(v) => updateGoal('financeiras', 'metaLucroLiquido', v)}
+                    className={inputClass}
+                    placeholder="Ex: 500.000"
                 />
             </div>
         </div>
@@ -94,27 +94,25 @@ const GoalSetting: React.FC = () => {
     const renderCommercialGoals = (goals: CommercialGoals) => (
          <div className="space-y-4">
             <MonthlyGoalInput
-                label="Meta de Nº de Clientes"
+                label="Meta de Numero de Clientes"
                 monthlyData={goals.metaNumClientes}
                 onUpdate={(month, value) => updateGoal('comerciais', 'metaNumClientes', value, month)}
             />
             <div>
-                <label className="block text-sm font-medium text-gray-700">Meta de Ticket Médio (R$)</label>
-                <input
-                    type="number"
-                    value={goals.metaTicketMedio ?? ''}
-                    onChange={(e) => updateGoal('comerciais', 'metaTicketMedio', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
-                    placeholder="Ex: 3000"
+                <label className="block text-sm font-medium text-gray-700">Meta de Ticket Medio (R$)</label>
+                <CurrencyInput
+                    value={goals.metaTicketMedio ?? null}
+                    onChange={(v) => updateGoal('comerciais', 'metaTicketMedio', v)}
+                    className={inputClass}
+                    placeholder="Ex: 3.000"
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Meta de Taxa de Conversão (%)</label>
-                <input
-                    type="number"
-                    value={goals.metaTaxaConversao ?? ''}
-                    onChange={(e) => updateGoal('comerciais', 'metaTaxaConversao', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                <label className="block text-sm font-medium text-gray-700">Meta de Taxa de Conversao (%)</label>
+                <CurrencyInput
+                    value={goals.metaTaxaConversao ?? null}
+                    onChange={(v) => updateGoal('comerciais', 'metaTaxaConversao', v)}
+                    className={inputClass}
                     placeholder="Ex: 5"
                 />
             </div>
@@ -125,32 +123,29 @@ const GoalSetting: React.FC = () => {
         <div className="space-y-4">
             <div>
                 <label className="block text-sm font-medium text-gray-700">Meta de Headcount</label>
-                <input
-                    type="number"
-                    value={goals.metaHeadcount ?? ''}
-                    onChange={(e) => updateGoal('pessoas', 'metaHeadcount', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                <CurrencyInput
+                    value={goals.metaHeadcount ?? null}
+                    onChange={(v) => updateGoal('pessoas', 'metaHeadcount', v)}
+                    className={inputClass}
                     placeholder="Ex: 25"
                 />
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700">Meta de Turnover (%)</label>
-                <input
-                    type="number"
-                    value={goals.metaTurnover ?? ''}
-                    onChange={(e) => updateGoal('pessoas', 'metaTurnover', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                <CurrencyInput
+                    value={goals.metaTurnover ?? null}
+                    onChange={(v) => updateGoal('pessoas', 'metaTurnover', v)}
+                    className={inputClass}
                     placeholder="Ex: 10"
                 />
             </div>
              <div>
                 <label className="block text-sm font-medium text-gray-700">Meta de Investimento T&D (R$)</label>
-                <input
-                    type="number"
-                    value={goals.metaInvestimentoTD ?? ''}
-                    onChange={(e) => updateGoal('pessoas', 'metaInvestimentoTD', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
-                    placeholder="Ex: 50000"
+                <CurrencyInput
+                    value={goals.metaInvestimentoTD ?? null}
+                    onChange={(v) => updateGoal('pessoas', 'metaInvestimentoTD', v)}
+                    className={inputClass}
+                    placeholder="Ex: 50.000"
                 />
             </div>
         </div>
@@ -159,32 +154,32 @@ const GoalSetting: React.FC = () => {
      const renderStrategicObjectives = (objectives: StrategicObjectives) => (
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 1</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 1</label>
                 <input
                     type="text"
                     value={objectives.objective1}
                     onChange={(e) => updateObjective('objective1', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                    className={inputClass}
                     placeholder="Ex: Expandir para o mercado do Sudeste"
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 2</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 2</label>
                 <input
                     type="text"
                     value={objectives.objective2}
                     onChange={(e) => updateObjective('objective2', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
-                    placeholder="Ex: Lançar novo produto X"
+                    className={inputClass}
+                    placeholder="Ex: Lancar novo produto X"
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 3</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 3</label>
                 <input
                     type="text"
                     value={objectives.objective3}
                     onChange={(e) => updateObjective('objective3', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
+                    className={inputClass}
                     placeholder="Ex: Atingir NPS 80"
                 />
             </div>
@@ -197,10 +192,10 @@ const GoalSetting: React.FC = () => {
                 <div className="flex flex-wrap justify-between items-start gap-4">
                     <div>
                         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">4. Metas & Objetivos para 2026</h1>
-                        <p className="text-gray-500 mt-2">Defina as metas macro e os objetivos estratégicos que guiarão seu planejamento.</p>
+                        <p className="text-gray-500 mt-2">Defina as metas macro e os objetivos estrategicos que guiarao seu planejamento.</p>
                     </div>
                      <button onClick={handleGenerateSuggestions} disabled={isLoading} className="flex-shrink-0 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm disabled:bg-gray-400 transition-colors">
-                        {isLoading ? 'Gerando...' : 'Gerar Sugestões com IA'}
+                        {isLoading ? 'Gerando...' : 'Gerar Sugestoes com IA'}
                      </button>
                 </div>
             </header>
@@ -209,10 +204,10 @@ const GoalSetting: React.FC = () => {
                 <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Diagnostico Rapido 2025</h2>
                     <dl className="space-y-1">
-                        <DiagnosticItem label="Receita Líquida" value={formatCurrency(summary2025.receitaTotal)} />
+                        <DiagnosticItem label="Receita Liquida" value={formatCurrency(summary2025.receitaTotal)} />
                         <DiagnosticItem label="Margem EBITDA" value={formatPercentage(summary2025.margemEbitda)} />
                         <DiagnosticItem label="Novos Clientes" value={formatNumber(summary2025.novosClientesTotal)} />
-                        <DiagnosticItem label="Ticket Médio" value={formatCurrency(summary2025.ticketMedio)} />
+                        <DiagnosticItem label="Ticket Medio" value={formatCurrency(summary2025.ticketMedio)} />
                         <DiagnosticItem label="Turnover Anual" value={formatPercentage(summary2025.turnoverPercent)} hint="Rotatividade de pessoal" />
                         <DiagnosticItem label="Headcount Final" value={formatNumber(summary2025.headcountFinal)} hint="Total de colaboradores" />
                     </dl>
@@ -222,13 +217,12 @@ const GoalSetting: React.FC = () => {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Metas de Crescimento 2026</h2>
                         <div className="mb-4">
-                             <label className="block text-sm font-medium text-gray-700">Inflação Prevista para 2026 (%)</label>
-                            <input
-                                type="number"
-                                value={goals2026.inflacaoPrevista ?? ''}
-                                onChange={(e) => updateInflation(e.target.value)}
-                                className="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-2 bg-white text-gray-900"
-                                placeholder="Ex: 4.5"
+                             <label className="block text-sm font-medium text-gray-700">Inflacao Prevista para 2026 (%)</label>
+                            <CurrencyInput
+                                value={goals2026.inflacaoPrevista ?? null}
+                                onChange={(v) => updateInflation(v)}
+                                className="mt-1 block w-full max-w-xs rounded-xl border border-gray-300 shadow-sm focus:border-brand-orange focus:ring-1 focus:ring-brand-orange sm:text-sm p-2.5 bg-white text-gray-900"
+                                placeholder="Ex: 4,5"
                             />
                             <p className="text-xs text-gray-500 mt-1">Isso ajuda a calcular o crescimento real desejado.</p>
                         </div>
