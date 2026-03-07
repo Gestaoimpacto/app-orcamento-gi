@@ -2,18 +2,50 @@
 
 @theme {
   --font-sans: 'Montserrat', sans-serif;
-  --color-brand-dark: #1a202c;
-  --color-brand-blue: #2d3748;
-  --color-brand-orange: #dd6b20;
-  --color-brand-gray: #e2e8f0;
-  --color-brand-optimistic: #38a169;
-  --color-brand-conservative: #dd6b20;
-  --color-brand-disruptive: #e53e3e;
-  --color-brand-light-gray: #f7fafc;
+  --color-brand-dark: #111827;
+  --color-brand-blue: #1f2937;
+  --color-brand-orange: #ea580c;
+  --color-brand-gray: #e5e7eb;
+  --color-brand-optimistic: #16a34a;
+  --color-brand-conservative: #ea580c;
+  --color-brand-disruptive: #dc2626;
+  --color-brand-light-gray: #f9fafb;
 }
 
 body {
   font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Main content scrollbar */
+main::-webkit-scrollbar {
+  width: 6px;
+}
+main::-webkit-scrollbar-track {
+  background: transparent;
+}
+main::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 6px;
+}
+main::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 /* Hide number input arrows (spinners) */
@@ -24,6 +56,35 @@ input[type=number]::-webkit-outer-spin-button {
 }
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Better focus styles */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+}
+
+/* Smooth transitions for all interactive elements */
+button, a, input, textarea, select {
+  transition: all 0.15s ease;
+}
+
+/* Card hover effect */
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Table improvements */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 #error-display {

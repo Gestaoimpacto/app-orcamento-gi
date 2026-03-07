@@ -20,19 +20,19 @@ const Login: React.FC = () => {
     try {
         if (isSignUp) {
             if (name.trim() === '') {
-                throw new Error("O nome é obrigatório para o cadastro.");
+                throw new Error("O nome e obrigatorio para o cadastro.");
             }
             await authService.signup(email, password, name);
-            setMessage("Conta criada com sucesso! Você será redirecionado.");
+            setMessage("Conta criada com sucesso! Voce sera redirecionado.");
         } else {
             await authService.login(email, password);
         }
     } catch (error: any) {
         console.error(error);
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-             setError('Usuário não encontrado ou senha incorreta. Se é seu primeiro acesso, clique em "Não tem uma conta? Cadastre-se" abaixo.');
+             setError('Usuario nao encontrado ou senha incorreta. Se e seu primeiro acesso, clique em "Cadastre-se" abaixo.');
         } else if (error.code === 'auth/email-already-in-use') {
-             setError('Este email já está cadastrado. Tente fazer login.');
+             setError('Este email ja esta cadastrado. Tente fazer login.');
         } else {
              setError(error.message || 'Ocorreu um erro. Verifique suas credenciais.');
         }
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
     try {
         await authService.loginWithGoogle();
     } catch (error: any) {
-        setError(error.message || 'Falha no login com Google. Verifique se o Firebase está configurado corretamente.');
+        setError(error.message || 'Falha no login com Google.');
         setIsLoading(false);
     }
   }
@@ -62,142 +62,170 @@ const Login: React.FC = () => {
     setMessage('');
     try {
         await authService.resetPassword(email);
-        setMessage("E-mail de recuperação de senha enviado! Verifique sua caixa de entrada.");
+        setMessage("E-mail de recuperacao enviado! Verifique sua caixa de entrada.");
     } catch (error: any) {
-        setError(error.message || "Falha ao enviar e-mail de recuperação.");
+        setError(error.message || "Falha ao enviar e-mail de recuperacao.");
     } finally {
         setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-brand-light-gray flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 className="text-4xl font-bold text-brand-dark tracking-wider text-center">GESTÃO DE IMPACTO</h1>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-dark">
-          {isSignUp ? 'Crie sua conta Grátis' : 'Acesse sua conta'}
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          para iniciar seu planejamento estratégico
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex">
+      {/* Left side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-brand-orange rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="relative z-10 text-center max-w-md">
+          <div className="w-20 h-20 bg-brand-orange rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-brand-orange/30">
+            <span className="text-white font-black text-3xl">GI</span>
+          </div>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight mb-4">
+            GESTAO DE<br/><span className="text-brand-orange">IMPACTO</span>
+          </h1>
+          <p className="text-gray-400 text-lg leading-relaxed">
+            Planejamento estrategico inteligente para transformar sua empresa em 2026.
+          </p>
+          
+          <div className="mt-12 grid grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-extrabold text-white">21</div>
+              <div className="text-xs text-gray-500 mt-1">Modulos</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-extrabold text-brand-orange">IA</div>
+              <div className="text-xs text-gray-500 mt-1">Integrada</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-extrabold text-white">360</div>
+              <div className="text-xs text-gray-500 mt-1">Visao completa</div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl ring-1 ring-black ring-opacity-5 sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleAuthAction}>
+      {/* Right side - Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-16">
+        {/* Mobile logo */}
+        <div className="lg:hidden text-center mb-8">
+          <div className="w-14 h-14 bg-brand-orange rounded-xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-black text-xl">GI</span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-white">GESTAO DE <span className="text-brand-orange">IMPACTO</span></h1>
+        </div>
+
+        <div className="w-full max-w-md mx-auto">
+          <h2 className="text-2xl font-extrabold text-white mb-1">
+            {isSignUp ? 'Crie sua conta' : 'Bem-vindo de volta'}
+          </h2>
+          <p className="text-gray-400 mb-8">
+            {isSignUp ? 'Comece seu planejamento estrategico agora' : 'Acesse seu planejamento estrategico'}
+          </p>
+
+          {/* Google Sign In */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Continuar com Google
+          </button>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-700" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-3 bg-gray-900 text-gray-500">ou</span>
+            </div>
+          </div>
+
+          <form className="space-y-4" onSubmit={handleAuthAction}>
             {isSignUp && (
                 <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                    Seu Nome Completo
-                </label>
-                <div className="mt-1">
-                    <input
-                    id="name"
-                    name="name"
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">Nome completo</label>
+                  <input
                     type="text"
                     autoComplete="name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-orange focus:border-brand-orange sm:text-sm bg-white text-gray-900"
-                    />
-                </div>
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange text-sm"
+                    placeholder="Seu nome"
+                  />
                 </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Endereço de e-mail
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-orange focus:border-brand-orange sm:text-sm bg-white text-gray-900"
-                />
-              </div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">E-mail</label>
+              <input
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange text-sm"
+                placeholder="seu@email.com"
+              />
             </div>
 
             <div>
-              <label htmlFor="password"className="block text-sm font-medium text-gray-700">
-                Senha
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-orange focus:border-brand-orange sm:text-sm bg-white text-gray-900"
-                />
-              </div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Senha</label>
+              <input
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange text-sm"
+                placeholder="••••••••"
+              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                 <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="font-medium text-brand-orange hover:text-orange-500">
-                    {isSignUp ? 'Já tem uma conta? Entrar' : 'Não tem uma conta? Cadastre-se'}
+            {!isSignUp && (
+              <div className="text-right">
+                <button type="button" onClick={handlePasswordReset} className="text-sm text-brand-orange hover:text-orange-400 font-medium">
+                  Esqueceu a senha?
                 </button>
               </div>
-
-              {!isSignUp && (
-                <div className="text-sm">
-                    <button type="button" onClick={handlePasswordReset} className="font-medium text-brand-orange hover:text-orange-500">
-                    Esqueceu sua senha?
-                    </button>
-                </div>
-              )}
-            </div>
+            )}
             
             {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-sm text-red-600 text-center font-medium">{error}</p>
+                <div className="p-3 bg-red-900/30 border border-red-800 rounded-xl">
+                    <p className="text-sm text-red-400 text-center">{error}</p>
                 </div>
             )}
-            {message && <p className="text-sm text-green-600 text-center">{message}</p>}
+            {message && (
+                <div className="p-3 bg-green-900/30 border border-green-800 rounded-xl">
+                    <p className="text-sm text-green-400 text-center">{message}</p>
+                </div>
+            )}
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-orange hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-orange disabled:bg-gray-400"
-              >
-                {isLoading ? 'Aguarde...' : (isSignUp ? 'Cadastrar' : 'Entrar')}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 px-4 bg-brand-orange text-white font-bold rounded-xl hover:bg-orange-700 focus:ring-2 focus:ring-offset-2 focus:ring-brand-orange focus:ring-offset-gray-900 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors text-sm shadow-lg shadow-brand-orange/20"
+            >
+              {isLoading ? 'Aguarde...' : (isSignUp ? 'Criar conta' : 'Entrar')}
+            </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Ou continue com</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <button
-                onClick={handleGoogleSignIn}
-                disabled={isLoading}
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-200"
-              >
-                <span className="sr-only">Entrar com Google</span>
-                <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
+          <p className="text-center mt-6 text-sm text-gray-500">
+            {isSignUp ? 'Ja tem uma conta?' : 'Nao tem uma conta?'}{' '}
+            <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); setMessage(''); }} className="text-brand-orange hover:text-orange-400 font-semibold">
+              {isSignUp ? 'Fazer login' : 'Cadastre-se'}
+            </button>
+          </p>
         </div>
       </div>
     </div>

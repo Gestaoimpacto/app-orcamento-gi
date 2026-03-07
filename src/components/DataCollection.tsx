@@ -29,7 +29,8 @@ const DataCollection: React.FC = () => {
         updateInvestmentData, 
         summary2025, 
         importFinancialDataFromTsv, 
-        taxes 
+        taxes,
+        applyTaxesTo2025
     } = usePlan();
 
     const { financialSheet } = planData;
@@ -201,16 +202,16 @@ const DataCollection: React.FC = () => {
             <header>
                  <div className="flex flex-wrap gap-4 justify-between items-center">
                     <div>
-                        <h1 className="text-4xl font-bold text-brand-dark">1. Coleta de Dados 2025</h1>
-                        <p className="text-lg text-gray-600 mt-2">
-                            Insira os dados históricos de 2025. Esta é a base para a análise estratégica e todo o planejamento de 2026.
+                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Coleta de Dados 2025</h1>
+                        <p className="text-gray-500 mt-1">
+                            Insira os dados historicos de 2025. Esta e a base para a analise estrategica e todo o planejamento de 2026.
                         </p>
                     </div>
-                    {activeTab === 'financialSheet' && <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm">Colar Dados do Excel</button>}
+                    {activeTab === 'financialSheet' && <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm text-sm transition-colors"><svg className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' /></svg>Colar Dados do Excel</button>}
                 </div>
             </header>
 
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div className="border-b border-gray-200">
                     <nav className="-mb-px flex space-x-4 sm:space-x-8" aria-label="Tabs">
                         {TABS.map((tab) => (

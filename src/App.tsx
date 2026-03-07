@@ -28,6 +28,17 @@ import { User, View } from './types';
 import { PlanProvider, authService, usePlan } from './hooks/usePlanData';
 import SubscriptionExpiredPage from './components/SubscriptionExpiredPage';
 
+const LoadingScreen: React.FC<{ message?: string }> = ({ message = 'Carregando...' }) => (
+    <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+        <div className="text-center">
+            <div className="w-12 h-12 bg-brand-orange rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <span className="text-white font-black text-lg">GI</span>
+            </div>
+            <p className="text-gray-500 font-medium text-sm">{message}</p>
+        </div>
+    </div>
+);
+
 const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLogout }) => {
     const [currentView, setCurrentView] = useState<View>('dashboard');
     const { subscriptionStatus } = usePlan();
@@ -60,11 +71,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
     };
 
     if (subscriptionStatus === 'loading') {
-        return (
-            <div className="flex h-screen w-full items-center justify-center bg-brand-light-gray">
-                <div className="text-brand-dark font-semibold">Verificando assinatura...</div>
-            </div>
-        );
+        return <LoadingScreen message="Verificando assinatura..." />;
     }
 
     if (subscriptionStatus === 'expired' || subscriptionStatus === 'not_found' || subscriptionStatus === 'inactive') {
@@ -73,7 +80,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
 
     if (subscriptionStatus === 'active') {
         return (
-            <div className="flex h-screen bg-brand-light-gray text-gray-800 relative">
+            <div className="flex h-screen bg-gray-50 text-gray-800 relative">
                 <OnboardingWizard />
                 <Sidebar 
                     currentView={currentView} 
@@ -81,21 +88,26 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
                     user={user}
                     onLogout={onLogout}
                 />
-                <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-                    {renderView()}
+                <main className="flex-1 p-6 lg:p-8 xl:p-10 overflow-y-auto">
+                    <div className="max-w-7xl mx-auto">
+                        {renderView()}
+                    </div>
                 </main>
             </div>
         );
     }
 
     return (
-        <div className="flex h-screen w-full items-center justify-center bg-brand-light-gray">
-            <div className="text-red-500 font-semibold text-center p-4">
-                <h2 className="text-xl">Ocorreu um erro</h2>
-                <p className="mt-2">Não foi possível verificar o estado da sua conta. Por favor, tente sair e entrar novamente.</p>
-                 <button 
+        <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+            <div className="text-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-md">
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Ocorreu um erro</h2>
+                <p className="mt-2 text-sm text-gray-500">Nao foi possivel verificar o estado da sua conta. Por favor, tente sair e entrar novamente.</p>
+                <button 
                     onClick={onLogout}
-                    className="mt-4 px-4 py-2 bg-brand-orange text-white rounded-md"
+                    className="mt-6 px-6 py-2.5 bg-brand-orange text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors text-sm"
                 >
                     Sair
                 </button>
@@ -110,7 +122,6 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Use the authService wrapper instead of direct Firebase auth
     const unsubscribe = authService.subscribe((firebaseUser: any) => {
       if (firebaseUser) {
         setUser({
@@ -138,11 +149,7 @@ const App: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-        <div className="flex h-screen w-full items-center justify-center bg-brand-light-gray">
-            <div className="text-brand-dark font-semibold">Carregando...</div>
-        </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!user) {

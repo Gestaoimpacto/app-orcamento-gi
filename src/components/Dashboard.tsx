@@ -1,7 +1,7 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from 'recharts';
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
 import clsx from 'clsx';
 
@@ -11,28 +11,26 @@ const KpiCard: React.FC<{
     icon: React.ReactNode;
     color: 'orange' | 'blue' | 'green' | 'red' | 'purple' | 'yellow';
     note?: string;
-    className?: string;
-}> = ({ title, value, icon, color, note, className = '' }) => {
-    const colorClasses = {
-        orange: 'bg-orange-100 text-orange-600',
-        blue: 'bg-blue-100 text-blue-600',
-        green: 'bg-green-100 text-green-600',
-        red: 'bg-red-100 text-red-600',
-        purple: 'bg-purple-100 text-purple-600',
-        yellow: 'bg-yellow-100 text-yellow-600',
+}> = ({ title, value, icon, color, note }) => {
+    const colorMap = {
+        orange: { bg: 'bg-orange-50', icon: 'bg-orange-100 text-orange-600', border: 'border-orange-100' },
+        blue: { bg: 'bg-blue-50', icon: 'bg-blue-100 text-blue-600', border: 'border-blue-100' },
+        green: { bg: 'bg-emerald-50', icon: 'bg-emerald-100 text-emerald-600', border: 'border-emerald-100' },
+        red: { bg: 'bg-red-50', icon: 'bg-red-100 text-red-600', border: 'border-red-100' },
+        purple: { bg: 'bg-purple-50', icon: 'bg-purple-100 text-purple-600', border: 'border-purple-100' },
+        yellow: { bg: 'bg-amber-50', icon: 'bg-amber-100 text-amber-600', border: 'border-amber-100' },
     };
+    const c = colorMap[color];
     return (
-        <div className={clsx("bg-white p-5 rounded-xl shadow-md border border-gray-200 flex flex-col justify-between", className)}>
-            <div className="flex items-start justify-between">
-                <h3 className="text-sm font-semibold text-gray-500 truncate">{title}</h3>
-                <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
+        <div className={clsx("bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition-shadow", c.border)}>
+            <div className="flex items-center justify-between mb-3">
+                <div className={clsx("p-2.5 rounded-xl", c.icon)}>
                     {icon}
                 </div>
             </div>
-            <div>
-                <p className="mt-2 text-3xl font-bold text-brand-dark">{value}</p>
-                {note && <p className="text-xs text-gray-400 mt-1 truncate">{note}</p>}
-            </div>
+            <p className="text-3xl font-extrabold text-gray-900 tracking-tight">{value}</p>
+            <p className="text-sm font-medium text-gray-500 mt-1">{title}</p>
+            {note && <p className="text-xs text-gray-400 mt-0.5">{note}</p>}
         </div>
     );
 };
@@ -40,76 +38,94 @@ const KpiCard: React.FC<{
 const MarketComparison: React.FC = () => {
     const { summary2025 } = usePlan();
 
-    const benchmarks = {
-        ebitdaMargin: { user: summary2025.margemEbitda, avg: 25, top10: 40 },
-        cac: { user: summary2025.cac, avg: 1200, top10: 800 },
-        ltvCac: { user: summary2025.relacaoLtvCac, avg: 3, top10: 10 },
-    };
-
-    const getComparison = (userValue: number, avg: number, top10: number, isHigherBetter: boolean) => {
-        if (userValue === 0) return { text: "Preencha seus dados para comparar.", color: "text-gray-500"};
-        
-        if(isHigherBetter){
-            if(userValue >= top10) return { text: `🏆 Excelente! Você está entre os Top 10% do setor.`, color: "text-green-600 font-bold" };
-            if(userValue >= avg) return { text: `✅ Bom! ${formatPercentage(((userValue / avg) - 1) * 100, 0)} acima da média.`, color: "text-green-600" };
-            return { text: `⚠️ Atenção! ${formatPercentage(100 - (userValue / avg) * 100, 0)} abaixo da média.`, color: "text-red-600" };
-        } else { // Lower is better
-            if(userValue <= top10) return { text: `🏆 Excelente! Você está entre os Top 10% do setor.`, color: "text-green-600 font-bold" };
-            if(userValue <= avg) return { text: `✅ Bom! ${formatPercentage(100 - (userValue / avg) * 100, 0)} abaixo da média.`, color: "text-green-600" };
-            return { text: `⚠️ Atenção! ${formatPercentage(((userValue / avg) - 1) * 100, 0)} acima da média.`, color: "text-red-600" };
-        }
-    };
-    
-    const ebitdaComp = getComparison(benchmarks.ebitdaMargin.user, benchmarks.ebitdaMargin.avg, benchmarks.ebitdaMargin.top10, true);
-    const cacComp = getComparison(benchmarks.cac.user, benchmarks.cac.avg, benchmarks.cac.top10, false);
-    const ltvCacComp = getComparison(benchmarks.ltvCac.user, benchmarks.ltvCac.avg, benchmarks.ltvCac.top10, true);
-
+    const benchmarks = [
+        { 
+            label: 'Margem EBITDA', 
+            user: summary2025.margemEbitda, 
+            avg: 25, top10: 40, 
+            format: (v: number) => formatPercentage(v),
+            higherBetter: true 
+        },
+        { 
+            label: 'Custo de Aquisicao (CAC)', 
+            user: summary2025.cac, 
+            avg: 1200, top10: 800, 
+            format: (v: number) => formatCurrency(v),
+            higherBetter: false 
+        },
+        { 
+            label: 'LTV / CAC', 
+            user: summary2025.relacaoLtvCac, 
+            avg: 3, top10: 10, 
+            format: (v: number) => `${formatNumber(v)}x`,
+            higherBetter: true 
+        },
+    ];
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-            <h2 className="text-lg font-bold text-brand-blue mb-3">Seu Desempenho vs. Mercado</h2>
-            <div className="space-y-4">
-                <div>
-                    <h4 className="font-semibold text-sm">Margem EBITDA</h4>
-                    <p className="text-xs text-gray-500">Você: <span className="font-bold">{formatPercentage(benchmarks.ebitdaMargin.user)}</span> | Média: {formatPercentage(benchmarks.ebitdaMargin.avg)} | Top 10%: {formatPercentage(benchmarks.ebitdaMargin.top10)}</p>
-                    <p className={`text-xs mt-1 ${ebitdaComp.color}`}>{ebitdaComp.text}</p>
-                </div>
-                 <div>
-                    <h4 className="font-semibold text-sm">CAC (Custo de Aquisição)</h4>
-                    <p className="text-xs text-gray-500">Você: <span className="font-bold">{formatCurrency(benchmarks.cac.user)}</span> | Média: {formatCurrency(benchmarks.cac.avg)} | Top 10%: {formatCurrency(benchmarks.cac.top10)}</p>
-                     <p className={`text-xs mt-1 ${cacComp.color}`}>{cacComp.text}</p>
-                </div>
-                 <div>
-                    <h4 className="font-semibold text-sm">LTV / CAC</h4>
-                    <p className="text-xs text-gray-500">Você: <span className="font-bold">{formatNumber(benchmarks.ltvCac.user)}x</span> | Ideal: &gt;{benchmarks.ltvCac.avg}x | Top 10%: &gt;{benchmarks.ltvCac.top10}x</p>
-                     <p className={`text-xs mt-1 ${ltvCacComp.color}`}>{ltvCacComp.text}</p>
-                </div>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full">
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Desempenho vs. Mercado</h2>
+            <p className="text-xs text-gray-400 mb-5">Compare seus indicadores com benchmarks do setor</p>
+            <div className="space-y-5">
+                {benchmarks.map(b => {
+                    const maxVal = Math.max(b.user, b.avg, b.top10) * 1.2 || 1;
+                    const userPct = (Math.abs(b.user) / maxVal) * 100;
+                    const avgPct = (Math.abs(b.avg) / maxVal) * 100;
+                    const isGood = b.higherBetter ? b.user >= b.avg : b.user <= b.avg;
+                    
+                    return (
+                        <div key={b.label}>
+                            <div className="flex justify-between items-baseline mb-1.5">
+                                <span className="text-sm font-semibold text-gray-700">{b.label}</span>
+                                <span className={clsx("text-sm font-bold", isGood ? "text-emerald-600" : "text-red-500")}>
+                                    {b.format(b.user)}
+                                </span>
+                            </div>
+                            <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div 
+                                    className={clsx("absolute h-full rounded-full transition-all", isGood ? "bg-emerald-400" : "bg-red-400")}
+                                    style={{ width: `${Math.min(userPct, 100)}%` }}
+                                />
+                                <div 
+                                    className="absolute h-full w-0.5 bg-gray-400"
+                                    style={{ left: `${Math.min(avgPct, 100)}%` }}
+                                    title={`Media: ${b.format(b.avg)}`}
+                                />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                                <span>Media do setor: {b.format(b.avg)}</span>
+                                <span>Top 10%: {b.format(b.top10)}</span>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
-             <p className="text-right text-[10px] text-gray-400 mt-3">Fonte: Dados agregados e anonimizados do setor.</p>
         </div>
     );
 };
 
 const SimInput: React.FC<{ label: string, value: number, onChange: (v: number) => void, prefix?: string, suffix?: string, disabled: boolean }> = ({ label, value, onChange, prefix, suffix, disabled }) => (
     <div>
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
-        <div className="relative mt-1">
-            {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{prefix}</span>}
-            <input type="number" value={value} onChange={e => onChange(e.target.valueAsNumber || 0)} disabled={disabled} className={`w-full p-2 border-gray-300 rounded-md text-sm text-center disabled:bg-gray-200 disabled:cursor-not-allowed ${prefix ? 'pl-8' : ''} ${suffix ? 'pr-8' : ''}`} />
-            {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">{suffix}</span>}
+        <label className="block text-xs font-semibold text-gray-600 mb-1">{label}</label>
+        <div className="relative">
+            {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{prefix}</span>}
+            <input type="number" value={value} onChange={e => onChange(e.target.valueAsNumber || 0)} disabled={disabled} className={clsx("w-full p-2.5 border border-gray-200 rounded-xl text-sm text-center bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-brand-orange", prefix && 'pl-8', suffix && 'pr-12')} />
+            {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">{suffix}</span>}
         </div>
     </div>
 );
 
 const ResultRow: React.FC<{ label: string, baseValue: string, simValue: string, growth: number, higherIsBetter: boolean }> = ({ label, baseValue, simValue, growth, higherIsBetter }) => {
      const isPositive = growth >= 0;
-     const color = (higherIsBetter && isPositive) || (!higherIsBetter && !isPositive) ? 'text-green-600' : 'text-red-600';
+     const isGood = (higherIsBetter && isPositive) || (!higherIsBetter && !isPositive);
      return (
-         <tr className="border-t">
-            <td className="py-2 font-medium text-gray-600">{label}</td>
-            <td className="py-2 text-right text-gray-500">{baseValue}</td>
-            <td className="py-2 text-right font-bold text-brand-dark">{simValue}</td>
-            <td className={`py-2 text-right font-bold ${color}`}>{isPositive ? '▲' : '▼'} {formatPercentage(Math.abs(growth))}</td>
+         <tr className="border-t border-gray-100">
+            <td className="py-3 font-medium text-gray-600 text-sm">{label}</td>
+            <td className="py-3 text-right text-gray-400 text-sm">{baseValue}</td>
+            <td className="py-3 text-right font-bold text-gray-900 text-sm">{simValue}</td>
+            <td className={clsx("py-3 text-right font-bold text-sm", isGood ? 'text-emerald-600' : 'text-red-500')}>
+                {isPositive ? '+' : ''}{formatPercentage(growth)}
+            </td>
          </tr>
      );
 };
@@ -126,77 +142,71 @@ const WhatIfSimulator: React.FC = () => {
 
     const simulation = useMemo(() => {
         if (!isEnabled) return null;
-        
         const base = summary2025;
-        
         const newCustomersFromMarketing = base.cac > 0 ? simMarketing / base.cac : 0;
         const newTicketMedio = base.ticketMedio * (1 + simTicket / 100);
-        
         const simulatedGrossRevenue = base.receitaBrutaTotal * (1 + simTicket / 100) + (newCustomersFromMarketing * newTicketMedio);
-
         const baseVarCostRate = base.custosVariaveisTotal / base.receitaBrutaTotal;
         const newVarCostRate = baseVarCostRate * (1 - simVarCostReduction / 100);
         const simulatedVarCosts = simulatedGrossRevenue * newVarCostRate;
-
         const simulatedFixedCosts = base.custosFixosTotal + (simNewHires * (base.custoColaboradorAno || 90000)) + simMarketing;
-        
         const taxRate = base.receitaBrutaTotal > 0 ? (base.receitaBrutaTotal - base.receitaTotal) / base.receitaBrutaTotal : 0;
         const simulatedNetRevenue = simulatedGrossRevenue * (1 - taxRate);
         const simulatedEBITDA = simulatedNetRevenue - simulatedVarCosts - simulatedFixedCosts;
         const simulatedEBITDAMargin = simulatedNetRevenue > 0 ? (simulatedEBITDA / simulatedNetRevenue) * 100 : 0;
-        
         const totalNewCustomers = base.novosClientesTotal + newCustomersFromMarketing;
         const totalMarketingInvestment = base.investimentoMarketingTotal + simMarketing;
         const simulatedCAC = totalNewCustomers > 0 ? totalMarketingInvestment / totalNewCustomers : 0;
-
-        return {
-            simulatedNetRevenue,
-            simulatedEBITDA,
-            simulatedEBITDAMargin,
-            simulatedCAC,
-            totalNewCustomers,
-        };
+        return { simulatedNetRevenue, simulatedEBITDA, simulatedEBITDAMargin, simulatedCAC, totalNewCustomers };
     }, [isEnabled, summary2025, simTicket, simNewHires, simMarketing, simVarCostReduction]);
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-            <h2 className="text-xl font-bold text-brand-blue mb-1">Simulador What-If</h2>
-            <p className="text-sm text-gray-600 mb-4">Analise o impacto de diferentes alavancas no seu resultado de 2026.</p>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-3 mb-1">
+                <div className="p-2 bg-purple-100 rounded-xl">
+                    <svg className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                </div>
+                <div>
+                    <h2 className="text-lg font-bold text-gray-900">Simulador What-If</h2>
+                    <p className="text-xs text-gray-400">Analise o impacto de diferentes alavancas no resultado de 2026</p>
+                </div>
+            </div>
             {!isEnabled && (
-                <div className="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed">
-                    <p className="font-semibold text-gray-700">Preencha os dados de Receita de 2025 para ativar o simulador.</p>
-                    <p className="text-sm text-gray-500 mt-1">Vá para a aba "Coleta de Dados" e insira a Receita Bruta.</p>
+                <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 mt-4">
+                    <svg className="h-10 w-10 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <p className="font-semibold text-gray-600">Preencha os dados de Receita de 2025</p>
+                    <p className="text-sm text-gray-400 mt-1">Va para "Coleta de Dados" e insira a Receita Bruta</p>
                 </div>
             )}
-            <div className={clsx("grid grid-cols-1 lg:grid-cols-2 gap-6", !isEnabled && "opacity-40")}>
-                <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
-                    <h3 className="font-semibold text-center">Alavancas de Crescimento</h3>
+            <div className={clsx("grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4", !isEnabled && "opacity-30 pointer-events-none")}>
+                <div className="space-y-4 p-5 bg-gray-50 rounded-xl border border-gray-100">
+                    <h3 className="font-bold text-sm text-gray-700">Alavancas de Crescimento</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <SimInput label="Aumentar Ticket Médio" value={simTicket} onChange={setSimTicket} suffix="%" disabled={!isEnabled} />
-                        <SimInput label="Reduzir Custo Variável (CMV)" value={simVarCostReduction} onChange={setSimVarCostReduction} suffix="%" disabled={!isEnabled} />
-                        <SimInput label="Novas Contratações" value={simNewHires} onChange={setSimNewHires} suffix="pessoas" disabled={!isEnabled} />
-                        <SimInput label="Investimento Adicional em MKT" value={simMarketing} onChange={setSimMarketing} prefix="R$" disabled={!isEnabled} />
+                        <SimInput label="Aumentar Ticket Medio" value={simTicket} onChange={setSimTicket} suffix="%" disabled={!isEnabled} />
+                        <SimInput label="Reduzir Custo Variavel" value={simVarCostReduction} onChange={setSimVarCostReduction} suffix="%" disabled={!isEnabled} />
+                        <SimInput label="Novas Contratacoes" value={simNewHires} onChange={setSimNewHires} suffix="pessoas" disabled={!isEnabled} />
+                        <SimInput label="Investimento em Marketing" value={simMarketing} onChange={setSimMarketing} prefix="R$" disabled={!isEnabled} />
                     </div>
                 </div>
-                 <div className="space-y-2">
-                    <h3 className="font-semibold text-center">Resultados Projetados</h3>
+                 <div>
+                    <h3 className="font-bold text-sm text-gray-700 mb-2">Resultados Projetados</h3>
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="text-gray-500">
-                                <th className="text-left font-normal py-1">Métrica</th>
-                                <th className="text-right font-normal py-1">2025</th>
-                                <th className="text-right font-normal py-1">Simulado</th>
-                                <th className="text-right font-normal py-1">Variação</th>
+                            <tr className="text-gray-400 text-xs">
+                                <th className="text-left font-medium py-2">Metrica</th>
+                                <th className="text-right font-medium py-2">2025</th>
+                                <th className="text-right font-medium py-2">Simulado</th>
+                                <th className="text-right font-medium py-2">Variacao</th>
                             </tr>
                         </thead>
                         <tbody>
                             {simulation && (
                                 <>
-                                    <ResultRow label="Receita Líquida" baseValue={formatCurrency(summary2025.receitaTotal, true)} simValue={formatCurrency(simulation.simulatedNetRevenue, true)} growth={(simulation.simulatedNetRevenue / summary2025.receitaTotal - 1) * 100} higherIsBetter={true} />
-                                    <ResultRow label="EBITDA" baseValue={formatCurrency(summary2025.ebitda, true)} simValue={formatCurrency(simulation.simulatedEBITDA, true)} growth={(simulation.simulatedEBITDA / summary2025.ebitda - 1) * 100} higherIsBetter={true} />
+                                    <ResultRow label="Receita Liquida" baseValue={formatCurrency(summary2025.receitaTotal, true)} simValue={formatCurrency(simulation.simulatedNetRevenue, true)} growth={summary2025.receitaTotal > 0 ? (simulation.simulatedNetRevenue / summary2025.receitaTotal - 1) * 100 : 0} higherIsBetter={true} />
+                                    <ResultRow label="EBITDA" baseValue={formatCurrency(summary2025.ebitda, true)} simValue={formatCurrency(simulation.simulatedEBITDA, true)} growth={summary2025.ebitda !== 0 ? (simulation.simulatedEBITDA / summary2025.ebitda - 1) * 100 : 0} higherIsBetter={true} />
                                     <ResultRow label="Margem EBITDA" baseValue={formatPercentage(summary2025.margemEbitda)} simValue={formatPercentage(simulation.simulatedEBITDAMargin)} growth={simulation.simulatedEBITDAMargin - summary2025.margemEbitda} higherIsBetter={true} />
-                                    <ResultRow label="Novos Clientes" baseValue={formatNumber(summary2025.novosClientesTotal)} simValue={formatNumber(simulation.totalNewCustomers)} growth={(simulation.totalNewCustomers / summary2025.novosClientesTotal - 1) * 100} higherIsBetter={true} />
-                                    <ResultRow label="CAC" baseValue={formatCurrency(summary2025.cac)} simValue={formatCurrency(simulation.simulatedCAC)} growth={(simulation.simulatedCAC / summary2025.cac - 1) * 100} higherIsBetter={false} />
+                                    <ResultRow label="Novos Clientes" baseValue={formatNumber(summary2025.novosClientesTotal)} simValue={formatNumber(simulation.totalNewCustomers)} growth={summary2025.novosClientesTotal > 0 ? (simulation.totalNewCustomers / summary2025.novosClientesTotal - 1) * 100 : 0} higherIsBetter={true} />
+                                    <ResultRow label="CAC" baseValue={formatCurrency(summary2025.cac)} simValue={formatCurrency(simulation.simulatedCAC)} growth={summary2025.cac > 0 ? (simulation.simulatedCAC / summary2025.cac - 1) * 100 : 0} higherIsBetter={false} />
                                 </>
                             )}
                         </tbody>
@@ -218,64 +228,113 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <header>
-                <h1 className="text-4xl font-bold text-brand-dark">Dashboard Estratégico</h1>
-                <p className="text-lg text-gray-600 mt-2">Visão consolidada da performance de 2025 e insights para 2026.</p>
+        <div className="space-y-6 max-w-7xl">
+            {/* Header */}
+            <header className="flex items-end justify-between">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard Estrategico</h1>
+                    <p className="text-gray-500 mt-1">Visao consolidada da performance de 2025 e insights para 2026</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-xs text-gray-400">Ano base</p>
+                    <p className="text-lg font-bold text-brand-orange">2025</p>
+                </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KpiCard title="Receita Líquida 2025" value={formatCurrency(summary2025.receitaTotal, true)} note="Faturamento total do ano" color="blue" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>} />
-                <KpiCard title="Margem EBITDA" value={formatPercentage(summary2025.margemEbitda)} note={`Total: ${formatCurrency(summary2025.ebitda, true)}`} color="green" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>} />
-                <KpiCard title="LTV / CAC" value={`${formatNumber(summary2025.relacaoLtvCac)}x`} note="Ideal: > 3x" color="orange" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>} />
-                <KpiCard title="Ponto de Equilíbrio" value={formatCurrency(summary2025.pontoEquilibrioContabil, true)} note="Receita mínima/mês" color="yellow" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2" /></svg>} />
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <KpiCard 
+                    title="Receita Liquida 2025" 
+                    value={formatCurrency(summary2025.receitaTotal, true)} 
+                    note="Faturamento total do ano" 
+                    color="blue" 
+                    icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" /></svg>} 
+                />
+                <KpiCard 
+                    title="Margem EBITDA" 
+                    value={formatPercentage(summary2025.margemEbitda)} 
+                    note={`EBITDA: ${formatCurrency(summary2025.ebitda, true)}`} 
+                    color="green" 
+                    icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>} 
+                />
+                <KpiCard 
+                    title="LTV / CAC" 
+                    value={`${formatNumber(summary2025.relacaoLtvCac)}x`} 
+                    note="Ideal: acima de 3x" 
+                    color="orange" 
+                    icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>} 
+                />
+                <KpiCard 
+                    title="Ponto de Equilibrio" 
+                    value={formatCurrency(summary2025.pontoEquilibrioContabil, true)} 
+                    note="Receita minima mensal" 
+                    color="yellow" 
+                    icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2" /></svg>} 
+                />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
-                    <h2 className="text-xl font-bold text-brand-blue mb-4">Performance Mensal 2025</h2>
-                        <div style={{ width: '100%', height: 300 }}>
+            {/* Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-bold text-gray-900 mb-1">Performance Mensal 2025</h2>
+                    <p className="text-xs text-gray-400 mb-4">Receita, custos e EBITDA ao longo do ano</p>
+                    <div style={{ width: '100%', height: 280 }}>
                         <ResponsiveContainer>
-                            <LineChart data={summary2025.monthlySummary} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 12 }} />
-                                <YAxis tickFormatter={(value) => formatCurrency(value, true)} tick={{ fill: '#6B7280', fontSize: 12 }} />
-                                <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                                <Legend />
-                                <Line type="monotone" dataKey="receita" name="Receita" stroke="#EE7533" strokeWidth={2} />
-                                <Line type="monotone" dataKey="custos" name="Custos" stroke="#DC3545" strokeWidth={2} />
-                                <Line type="monotone" dataKey="ebitda" name="EBITDA" stroke="#28A745" strokeWidth={2} />
-                            </LineChart>
+                            <AreaChart data={summary2025.monthlySummary} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                                <defs>
+                                    <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#ea580c" stopOpacity={0.15}/>
+                                        <stop offset="95%" stopColor="#ea580c" stopOpacity={0}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorEbitda" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#16a34a" stopOpacity={0.15}/>
+                                        <stop offset="95%" stopColor="#16a34a" stopOpacity={0}/>
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                                <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+                                <YAxis tickFormatter={(value) => formatCurrency(value, true)} tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+                                <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                                <Legend wrapperStyle={{ fontSize: '12px' }} />
+                                <Area type="monotone" dataKey="receita" name="Receita" stroke="#ea580c" strokeWidth={2} fill="url(#colorReceita)" />
+                                <Area type="monotone" dataKey="ebitda" name="EBITDA" stroke="#16a34a" strokeWidth={2} fill="url(#colorEbitda)" />
+                                <Line type="monotone" dataKey="custos" name="Custos" stroke="#ef4444" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+                            </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-                <div>
-                    <MarketComparison />
-                </div>
+                <MarketComparison />
             </div>
             
             {/* What-If Simulator */}
-            <div className="w-full">
-                <WhatIfSimulator />
-            </div>
+            <WhatIfSimulator />
 
             {/* AI Analysis */}
-            <div className="space-y-6 bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                <div className="flex flex-wrap gap-4 justify-between items-center">
-                    <h2 className="text-lg font-bold text-brand-blue">Análise de Mercado com IA</h2>
-                    <button onClick={handleGenerateAnalysis} disabled={isLoading || !planData.companyProfile.industry} className="flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-md hover:opacity-80 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        {isLoading ? 'Analisando...' : 'Gerar Análise com IA'}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-xl">
+                            <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-900">Analise de Mercado com Inteligencia Artificial</h2>
+                            <p className="text-xs text-gray-400">Compare seus indicadores com o mercado. Preencha o Ramo de Atividade nas Configuracoes.</p>
+                        </div>
+                    </div>
+                    <button onClick={handleGenerateAnalysis} disabled={isLoading || !planData.companyProfile.industry} className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                        {isLoading ? (
+                            <><span className="animate-spin">&#9696;</span> Analisando...</>
+                        ) : (
+                            <><svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Gerar Analise</>
+                        )}
                     </button>
                 </div>
-                <p className="text-xs text-gray-500 -mt-2">Compare seus KPIs com o mercado. Preencha o Ramo de Atividade nas Configurações.</p>
-                <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md mt-4 min-h-[150px]">
-                    {planData.analysis?.benchmarkAnalysis || "A análise da IA sobre seu posicionamento de mercado aparecerá aqui."}
+                <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-5 rounded-xl border border-gray-100 min-h-[120px] leading-relaxed">
+                    {planData.analysis?.benchmarkAnalysis || "A analise da Inteligencia Artificial sobre seu posicionamento de mercado aparecera aqui apos clicar em 'Gerar Analise'."}
                 </div>
             </div>
-
         </div>
     );
 };
 
 export default Dashboard;
-    
