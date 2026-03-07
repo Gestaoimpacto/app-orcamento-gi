@@ -4,34 +4,66 @@ import React, { useState, useMemo } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { Month, MONTHS, MONTH_LABELS } from '../types';
 import { formatCurrency, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
-const ForecastCard: React.FC<{ title: string; value: number; ebitda: number; margin: number }> = ({ title, value, ebitda, margin }) => (
-    <div className="bg-gray-50 p-4 rounded-lg border text-center">
-        <h3 className="text-base font-bold text-brand-blue">{title}</h3>
-        <p className="text-3xl font-extrabold text-brand-dark my-2">{formatCurrency(value, true)}</p>
-        <div className="text-sm text-gray-600">
-            <span>EBITDA: {formatCurrency(ebitda, true)}</span>
-            <span className="mx-2">|</span>
-            <span>Margem: {formatPercentage(margin)}</span>
+const ForecastCard: React.FC<{ title: string; subtitle: string; value: number; ebitda: number; margin: number; color: string }> = ({ title, subtitle, value, ebitda, margin, color }) => (
+    <div className={`p-5 rounded-xl border-2 ${color} text-center`}>
+        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">{title}</h3>
+        <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>
+        <p className="text-3xl font-extrabold text-brand-dark my-3">{formatCurrency(value, true)}</p>
+        <div className="flex justify-center gap-4 text-sm text-gray-600">
+            <div>
+                <span className="text-xs text-gray-400">EBITDA</span>
+                <p className="font-semibold">{formatCurrency(ebitda, true)}</p>
+            </div>
+            <div className="border-l border-gray-200 pl-4">
+                <span className="text-xs text-gray-400">Margem</span>
+                <p className="font-semibold">{formatPercentage(margin)}</p>
+            </div>
         </div>
     </div>
 );
+
+const BarComparison: React.FC<{ label: string; projected: number; actual: number | null | undefined }> = ({ label, projected, actual }) => {
+    const maxVal = Math.max(projected || 0, actual || 0, 1);
+    const projWidth = projected > 0 ? (projected / maxVal) * 100 : 0;
+    const actWidth = (actual || 0) > 0 ? ((actual || 0) / maxVal) * 100 : 0;
+    
+    return (
+        <div className="mb-3">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                <span className="font-medium">{label}</span>
+                <span>{actual != null ? formatCurrency(actual, true) : '-'} / {formatCurrency(projected, true)}</span>
+            </div>
+            <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div className="absolute h-full bg-blue-200 rounded-full transition-all" style={{ width: `${projWidth}%` }} />
+                <div className={`absolute h-full rounded-full transition-all ${(actual || 0) > projected ? 'bg-green-400' : 'bg-orange-400'}`} style={{ width: `${actWidth}%` }} />
+            </div>
+            <div className="flex gap-3 text-[10px] text-gray-400 mt-0.5">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-200 rounded-full inline-block"></span>Projetado</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block"></span>Realizado</span>
+            </div>
+        </div>
+    );
+};
 
 const MonthlyTracking: React.FC = () => {
     const { tracking2026, scenarios2026, baseScenario, updateTracking2026, generateMonthlyAnalysis } = usePlan();
     const [selectedMonth, setSelectedMonth] = useState<Month>(MONTHS[0]);
     const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
 
-    // FIX: Provide a default object for `actual` to avoid errors when `tracking2026[selectedMonth]` is undefined.
     const actual = tracking2026[selectedMonth] || { receitaRealizada: null, custosRealizados: null, despesasRealizadas: null, analysisText: null };
+    const scenarioData = scenarios2026[baseScenario];
+    const hasScenarioData = scenarioData && scenarioData.receitaProjetada && Object.keys(scenarioData.receitaProjetada).length > 0;
+    
     const projected = {
-        receita: scenarios2026[baseScenario]?.receitaProjetada?.[selectedMonth],
-        custos: scenarios2026[baseScenario]?.custosProjetados?.[selectedMonth], // Variáveis
-        despesas: scenarios2026[baseScenario]?.despesasProjetadas?.[selectedMonth], // Fixas
+        receita: scenarioData?.receitaProjetada?.[selectedMonth] || 0,
+        custos: scenarioData?.custosProjetados?.[selectedMonth] || 0,
+        despesas: scenarioData?.despesasProjetadas?.[selectedMonth] || 0,
     };
     
-    const projectedEbitda = (projected.receita || 0) - (projected.custos || 0) - (projected.despesas || 0);
+    const projectedEbitda = projected.receita - projected.custos - projected.despesas;
     const actualEbitda = (actual.receitaRealizada || 0) - (actual.custosRealizados || 0) - (actual.despesasRealizadas || 0);
 
     const getVariance = (actualVal?: number | null, projectedVal?: number | null) => {
@@ -56,13 +88,12 @@ const MonthlyTracking: React.FC = () => {
 
     const varianceEbitda = getVariance(actualEbitda, projectedEbitda);
 
-    // New Indicator Calculations
-    const projectedMC = (projected.receita || 0) - (projected.custos || 0);
+    const projectedMC = projected.receita - projected.custos;
     const actualMC = (actual.receitaRealizada || 0) - (actual.custosRealizados || 0);
     const varianceMC = getVariance(actualMC, projectedMC);
 
-    const projectedIMC = (projected.receita || 0) > 0 ? projectedMC / (projected.receita || 1) : 0;
-    const projectedPE = projectedIMC > 0 ? (projected.despesas || 0) / projectedIMC : 0;
+    const projectedIMC = projected.receita > 0 ? projectedMC / projected.receita : 0;
+    const projectedPE = projectedIMC > 0 ? projected.despesas / projectedIMC : 0;
 
     const actualIMC = (actual.receitaRealizada || 0) > 0 ? actualMC / (actual.receitaRealizada || 1) : 0;
     const actualPE = actualIMC > 0 ? (actual.despesasRealizadas || 0) / actualIMC : 0;
@@ -80,17 +111,15 @@ const MonthlyTracking: React.FC = () => {
     ];
     
     const yearEndSummary = useMemo(() => {
-        const projected = { receita: 0, custos: 0, despesas: 0 };
+        const proj = { receita: 0, custos: 0, despesas: 0 };
         const actualYTD = { receita: 0, custos: 0, despesas: 0 };
         const forecast = { receita: 0, custos: 0, despesas: 0 };
         const selectedMonthIndex = MONTHS.indexOf(selectedMonth);
 
-        const scenarioMonthData = scenarios2026[baseScenario];
-
-        if (!scenarioMonthData) {
+        if (!hasScenarioData) {
              const zeroMetrics = { ebitda: 0, margin: 0 };
              return {
-                projected: { ...projected, ...zeroMetrics },
+                projected: { ...proj, ...zeroMetrics },
                 actualYTD: { ...actualYTD, ...zeroMetrics },
                 forecast: { ...forecast, ...zeroMetrics }
             };
@@ -99,27 +128,24 @@ const MonthlyTracking: React.FC = () => {
         MONTHS.forEach((month, index) => {
             const trackingMonthData = tracking2026[month];
 
-            // Projected totals
-            projected.receita += scenarioMonthData.receitaProjetada?.[month] || 0;
-            projected.custos += scenarioMonthData.custosProjetados?.[month] || 0;
-            projected.despesas += scenarioMonthData.despesasProjetadas?.[month] || 0;
+            proj.receita += scenarioData.receitaProjetada?.[month] || 0;
+            proj.custos += scenarioData.custosProjetados?.[month] || 0;
+            proj.despesas += scenarioData.despesasProjetadas?.[month] || 0;
 
-            // Actual YTD totals
             if (trackingMonthData?.receitaRealizada != null) {
                  actualYTD.receita += trackingMonthData.receitaRealizada || 0;
                  actualYTD.custos += trackingMonthData.custosRealizados || 0;
                  actualYTD.despesas += trackingMonthData.despesasRealizadas || 0;
             }
 
-            // Forecast totals
             if (index <= selectedMonthIndex && trackingMonthData?.receitaRealizada != null) {
                 forecast.receita += trackingMonthData.receitaRealizada || 0;
                 forecast.custos += trackingMonthData.custosRealizados || 0;
                 forecast.despesas += trackingMonthData.despesasRealizadas || 0;
             } else {
-                forecast.receita += scenarioMonthData.receitaProjetada?.[month] || 0;
-                forecast.custos += scenarioMonthData.custosProjetados?.[month] || 0;
-                forecast.despesas += scenarioMonthData.despesasProjetadas?.[month] || 0;
+                forecast.receita += scenarioData.receitaProjetada?.[month] || 0;
+                forecast.custos += scenarioData.custosProjetados?.[month] || 0;
+                forecast.despesas += scenarioData.despesasProjetadas?.[month] || 0;
             }
         });
 
@@ -130,12 +156,12 @@ const MonthlyTracking: React.FC = () => {
         };
 
         return {
-            projected: { ...projected, ...calcMetrics(projected) },
+            projected: { ...proj, ...calcMetrics(proj) },
             actualYTD: { ...actualYTD, ...calcMetrics(actualYTD) },
             forecast: { ...forecast, ...calcMetrics(forecast) }
         };
 
-    }, [selectedMonth, tracking2026, scenarios2026, baseScenario]);
+    }, [selectedMonth, tracking2026, scenarios2026, baseScenario, hasScenarioData]);
 
     const handleGenerateAnalysis = async () => {
         setIsAnalysisLoading(true);
@@ -143,27 +169,63 @@ const MonthlyTracking: React.FC = () => {
         setIsAnalysisLoading(false);
     };
 
+    // Conta quantos meses têm dados preenchidos
+    const monthsWithData = MONTHS.filter(m => tracking2026[m]?.receitaRealizada != null).length;
+
     return (
         <div className="space-y-8">
             <header>
                 <h1 className="text-4xl font-bold text-brand-dark">12. Acompanhamento & Forecast</h1>
                 <p className="text-lg text-gray-600 mt-2">
-                    Acompanhe o realizado vs. projetado (cenário <span className="font-bold">{baseScenario}</span>), analise desvios e crie uma previsão (Forecast) para o restante do ano.
+                    Acompanhe o realizado vs. projetado (cenário <span className="font-bold text-brand-orange">{baseScenario}</span>), analise desvios e crie uma previsão (Forecast) para o restante do ano.
                 </p>
             </header>
-            
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h2 className="text-xl font-bold text-brand-blue mb-4">Forecast Anual 2026</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <ForecastCard title="Projetado (Ano)" value={yearEndSummary.projected.receita} ebitda={yearEndSummary.projected.ebitda} margin={yearEndSummary.projected.margin} />
-                    <ForecastCard title="Realizado (Acumulado)" value={yearEndSummary.actualYTD.receita} ebitda={yearEndSummary.actualYTD.ebitda} margin={yearEndSummary.actualYTD.margin} />
-                    <ForecastCard title="Forecast (Ano)" value={yearEndSummary.forecast.receita} ebitda={yearEndSummary.forecast.ebitda} margin={yearEndSummary.forecast.margin} />
-                </div>
-                 <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg">
-                    <p className="font-bold">Como funciona o Forecast?</p>
-                    <p className="text-sm mt-1">
-                        O Forecast combina os dados <strong>Realizados</strong> que você inseriu até o mês selecionado com os dados <strong>Projetados</strong> do seu cenário base para os meses futuros. Isso cria uma estimativa de como o ano terminará se a performance futura seguir o plano.
+
+            {/* Alerta se não há dados de cenário */}
+            {!hasScenarioData && (
+                <div className="p-6 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
+                    <h3 className="text-lg font-bold text-yellow-800">Dados de cenário não encontrados</h3>
+                    <p className="text-sm text-yellow-700 mt-2">
+                        Para usar o acompanhamento, você precisa primeiro configurar os cenários na aba <strong>"9. Orçamento & Cenários"</strong>. 
+                        Defina o crescimento e clique em "Recalcular Projeção" para gerar os dados projetados que serão comparados com o realizado aqui.
                     </p>
+                </div>
+            )}
+
+            {/* Status dos meses preenchidos */}
+            <div className="bg-white p-4 rounded-xl shadow border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-bold text-gray-600">Progresso de Preenchimento</h3>
+                    <span className="text-xs text-gray-400">{monthsWithData} de 12 meses preenchidos</span>
+                </div>
+                <div className="flex gap-1">
+                    {MONTHS.map(m => {
+                        const hasData = tracking2026[m]?.receitaRealizada != null;
+                        return (
+                            <button 
+                                key={m} 
+                                onClick={() => setSelectedMonth(m)}
+                                className={clsx(
+                                    "flex-1 py-2 text-xs font-medium rounded transition-all",
+                                    m === selectedMonth && "ring-2 ring-brand-orange ring-offset-1",
+                                    hasData ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"
+                                )}
+                            >
+                                {MONTH_LABELS[m].substring(0, 3)}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+            
+            {/* Forecast Cards */}
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <h2 className="text-xl font-bold text-brand-blue mb-2">Forecast Anual 2026</h2>
+                <p className="text-sm text-gray-500 mb-4">O Forecast combina os dados realizados (até o mês selecionado) com os projetados (meses futuros) para estimar como o ano terminará.</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <ForecastCard title="Projetado (Ano)" subtitle="Meta do cenário base" value={yearEndSummary.projected.receita} ebitda={yearEndSummary.projected.ebitda} margin={yearEndSummary.projected.margin} color="border-blue-200 bg-blue-50/30" />
+                    <ForecastCard title="Realizado (Acumulado)" subtitle={`${monthsWithData} meses preenchidos`} value={yearEndSummary.actualYTD.receita} ebitda={yearEndSummary.actualYTD.ebitda} margin={yearEndSummary.actualYTD.margin} color="border-green-200 bg-green-50/30" />
+                    <ForecastCard title="Forecast (Ano)" subtitle="Realizado + Projeção futura" value={yearEndSummary.forecast.receita} ebitda={yearEndSummary.forecast.ebitda} margin={yearEndSummary.forecast.margin} color="border-orange-300 bg-orange-50/30" />
                 </div>
             </div>
 
@@ -184,17 +246,26 @@ const MonthlyTracking: React.FC = () => {
                     {/* Data Input */}
                     <div className="space-y-4">
                         <h2 className="text-xl font-bold text-brand-blue">Dados Realizados de {MONTH_LABELS[selectedMonth]}</h2>
+                        <p className="text-xs text-gray-500">Preencha os valores reais do mês. Use o formato brasileiro (ex: 1.500,00).</p>
                          <div>
-                            <label htmlFor="receitaRealizada" className="block text-sm font-medium text-gray-700">Receita Realizada</label>
-                            <input type="number" id="receitaRealizada" value={actual.receitaRealizada ?? ''} onChange={e => updateTracking2026(selectedMonth, 'receitaRealizada', e.target.value)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" />
+                            <label className="block text-sm font-medium text-gray-700">Receita Realizada</label>
+                            <CurrencyInput value={actual.receitaRealizada} onChange={v => updateTracking2026(selectedMonth, 'receitaRealizada', v)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" placeholder="0" />
                         </div>
                          <div>
-                            <label htmlFor="custosRealizados" className="block text-sm font-medium text-gray-700">Custos Variáveis Realizados</label>
-                            <input type="number" id="custosRealizados" value={actual.custosRealizados ?? ''} onChange={e => updateTracking2026(selectedMonth, 'custosRealizados', e.target.value)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" />
+                            <label className="block text-sm font-medium text-gray-700">Custos Variáveis Realizados</label>
+                            <CurrencyInput value={actual.custosRealizados} onChange={v => updateTracking2026(selectedMonth, 'custosRealizados', v)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" placeholder="0" />
                         </div>
                          <div>
-                            <label htmlFor="despesasRealizadas" className="block text-sm font-medium text-gray-700">Despesas Fixas Realizadas</label>
-                            <input type="number" id="despesasRealizadas" value={actual.despesasRealizadas ?? ''} onChange={e => updateTracking2026(selectedMonth, 'despesasRealizadas', e.target.value)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" />
+                            <label className="block text-sm font-medium text-gray-700">Despesas Fixas Realizadas</label>
+                            <CurrencyInput value={actual.despesasRealizadas} onChange={v => updateTracking2026(selectedMonth, 'despesasRealizadas', v)} className="mt-1 w-full p-2 border border-gray-300 rounded-md" placeholder="0" />
+                        </div>
+
+                        {/* Gráfico visual de barras */}
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+                            <h3 className="text-sm font-bold text-gray-600 mb-3">Comparativo Visual - {MONTH_LABELS[selectedMonth]}</h3>
+                            <BarComparison label="Receita" projected={projected.receita} actual={actual.receitaRealizada} />
+                            <BarComparison label="Custos Variáveis" projected={projected.custos} actual={actual.custosRealizados} />
+                            <BarComparison label="Despesas Fixas" projected={projected.despesas} actual={actual.despesasRealizadas} />
                         </div>
                     </div>
 
@@ -203,22 +274,22 @@ const MonthlyTracking: React.FC = () => {
                          <h2 className="text-xl font-bold text-brand-blue mb-4">Análise de Desvios Mensal</h2>
                          <table className="min-w-full">
                             <thead>
-                                <tr>
-                                    <th className="text-left py-2">Métrica</th>
-                                    <th className="text-right py-2">Projetado</th>
-                                    <th className="text-right py-2">Realizado</th>
-                                    <th className="text-right py-2">Variação %</th>
+                                <tr className="border-b-2 border-gray-200">
+                                    <th className="text-left py-2 text-xs font-semibold text-gray-500 uppercase">Métrica</th>
+                                    <th className="text-right py-2 text-xs font-semibold text-gray-500 uppercase">Projetado</th>
+                                    <th className="text-right py-2 text-xs font-semibold text-gray-500 uppercase">Realizado</th>
+                                    <th className="text-right py-2 text-xs font-semibold text-gray-500 uppercase">Variação</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {rows.map(row => (
-                                    <tr key={row.label} className={clsx(row.isBold && "font-bold")}>
-                                        <td className="py-2">{row.label}</td>
-                                        <td className="text-right py-2">{formatCurrency(row.projected)}</td>
-                                        <td className="text-right py-2">{formatCurrency(row.actual)}</td>
-                                        <td className={clsx("text-right py-2 font-semibold", {
-                                            'text-brand-optimistic': row.variance.status === 'good',
-                                            'text-brand-disruptive': row.variance.status === 'bad',
+                                    <tr key={row.label} className={clsx(row.isBold && "font-bold bg-gray-50")}>
+                                        <td className="py-2 text-sm">{row.label}</td>
+                                        <td className="text-right py-2 text-sm">{formatCurrency(row.projected)}</td>
+                                        <td className="text-right py-2 text-sm">{row.actual != null ? formatCurrency(row.actual) : <span className="text-gray-300">-</span>}</td>
+                                        <td className={clsx("text-right py-2 font-semibold text-sm", {
+                                            'text-green-600': row.variance.status === 'good',
+                                            'text-red-600': row.variance.status === 'bad',
                                             'text-gray-600': row.variance.status === 'neutral',
                                         })}>
                                             {row.variance.value !== undefined ? (row.variance.value === Infinity ? 'N/A' : formatPercentage(row.variance.value)) : '-'}
@@ -238,7 +309,7 @@ const MonthlyTracking: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[150px] font-sans leading-relaxed">
-                         {actual.analysisText || "Clique no botão para que a IA (atuando como um CFO) analise o desempenho do mês e sugira ações."}
+                         {actual.analysisText || "Preencha os dados realizados do mês e clique em \"Gerar Análise com IA\" para que a IA (atuando como um CFO) analise o desempenho e sugira ações corretivas."}
                     </div>
                  </div>
 

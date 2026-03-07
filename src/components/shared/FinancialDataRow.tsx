@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MONTHS, Month, MonthlyData } from '../../types';
 import { formatCurrency, formatPercentage } from '../../utils/formatters';
+import CurrencyInput from './CurrencyInput';
 
 const DistributeButton: React.FC<{
     total: number;
@@ -16,7 +17,7 @@ const DistributeButton: React.FC<{
             const monthlyValue = total / 12;
             MONTHS.forEach(m => { newValues[m] = monthlyValue; });
         } else if (method === 'progressive') {
-            const base = total * 2 / (12 * (12 + 1)); // Formula for sum of arithmetic series
+            const base = total * 2 / (12 * (12 + 1));
             MONTHS.forEach((m, i) => { newValues[m] = base * (i + 1); });
         } else if (method === 'seasonal' && referenceData) {
             const refTotal = Object.values(referenceData).reduce<number>((s, v) => s + (Number(v) || 0), 0);
@@ -25,7 +26,7 @@ const DistributeButton: React.FC<{
                     const seasonality = (Number(referenceData[m]) || 0) / refTotal;
                     newValues[m] = total * seasonality;
                 });
-            } else { // Fallback to linear if reference is all zero
+            } else {
                  const monthlyValue = total / 12;
                  MONTHS.forEach(m => { newValues[m] = monthlyValue; });
             }
@@ -52,33 +53,19 @@ const DistributeButton: React.FC<{
     );
 };
 
-// This is a complex generic component that can handle updates for either the 2025 financial sheet
-// or one of the 2026 scenario projections.
 export type FinancialDataRowProps = {
     label: string;
     hint?: string;
-    
-    // Data can be for 2025 or a scenario projection. Optional for calculated rows.
     rowData?: { values: MonthlyData }; 
-    
-    // One of these update functions must be provided
     onUpdate?: (month: Month, value: string) => void;
     onUpdateAll?: (newValues: MonthlyData) => void;
     onUpdateName?: (newName: string) => void;
-
-    // For custom rows that can be removed
     onRemove?: () => void;
     isCustom?: boolean;
-
-    // For calculated/display-only rows
     isTotal?: boolean;
     isPercentage?: boolean;
     calculatedValue?: number;
-
-    // Reference data for seasonal distribution
     seasonalReference?: MonthlyData;
-    
-    // Optional action button
     actionButton?: React.ReactNode;
 };
 
@@ -88,8 +75,6 @@ const FinancialDataRow: React.FC<FinancialDataRowProps> = ({
 }) => {
     const [showZeroAlert, setShowZeroAlert] = useState(false);
 
-    // Ensure values object exists to prevent "Cannot read properties of undefined"
-    // Use nullish coalescing or optional chaining with fallback to empty object
     const values = rowData?.values || {};
     const total = calculatedValue !== undefined ? calculatedValue : (rowData ? Object.values(values).reduce((sum: number, m) => sum + (Number(m) || 0), 0) : 0);
 
@@ -151,11 +136,9 @@ const FinancialDataRow: React.FC<FinancialDataRowProps> = ({
             {MONTHS.map(month => (
                 <td key={month} className="p-0">
                     {onUpdate && !isTotal && rowData ? (
-                        <input 
-                            type="number"
-                            step="any"
-                            value={values?.[month] ?? ''}
-                            onChange={(e) => onUpdate(month, e.target.value)}
+                        <CurrencyInput
+                            value={values?.[month] ?? null}
+                            onChange={(v) => onUpdate(month, v)}
                             className="w-32 p-2 text-right border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:ring-inset"
                             placeholder="0"
                         />

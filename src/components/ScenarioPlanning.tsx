@@ -189,7 +189,7 @@ const ScenarioPlanning: React.FC = () => {
 
                     {planData.scenariosInputMode[scenarioName] === 'percentage' && (
                         <div className="bg-gray-50 p-4 rounded-lg border space-y-4">
-                            <div className="flex flex-wrap items-center gap-4">
+                            <div className="flex flex-wrap items-center gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 text-center">Crescimento Base</label>
                                     <div className="relative mt-1">
@@ -211,12 +211,21 @@ const ScenarioPlanning: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <div className="text-2xl font-light text-gray-500 pt-4">+</div>
+                                <div>
+                                    <label className="block text-xs font-medium text-green-600 text-center">Bônus Produtividade</label>
+                                    <div className="relative mt-1">
+                                        <div className="w-28 p-2 border border-green-200 rounded-md bg-green-100 text-center font-bold text-green-700">
+                                            {formatPercentage(productivityGainFactor, 1)}
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="text-2xl font-light text-gray-500 pt-4">=</div>
                                 <div className="flex-1 min-w-[150px]">
-                                    <label className="block text-xs font-medium text-brand-blue text-center">Crescimento Ajustado</label>
+                                    <label className="block text-xs font-medium text-brand-blue text-center">Crescimento Total</label>
                                     <div className="relative mt-1">
                                         <div className="w-full p-2 border-2 border-brand-orange rounded-md bg-orange-50 text-center font-bold text-brand-orange text-lg">
-                                            {formatPercentage((scenarios2026[scenarioName].growthPercentage || 0) + planData.analysis.strategicScore.total, 1)}
+                                            {formatPercentage((scenarios2026[scenarioName].growthPercentage || 0) + planData.analysis.strategicScore.total + productivityGainFactor, 1)}
                                         </div>
                                     </div>
                                 </div>
@@ -235,15 +244,32 @@ const ScenarioPlanning: React.FC = () => {
                                 </div>
                             </div>
                             
-                             <div className="flex items-center p-3 bg-white border border-gray-200 rounded-md mt-4">
-                                <div className="flex-shrink-0 bg-green-100 p-2 rounded-full text-green-600 mr-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-gray-800">Bônus de Produtividade da Equipe: <span className="text-green-600">{formatPercentage(productivityGainFactor)}</span></p>
-                                    <p className="text-xs text-gray-500">Este ganho é calculado com base nas suas metas de redução de turnover e investimento em treinamento (People Analytics), influenciando sua capacidade de receita.</p>
+                             <div className="p-4 bg-green-50 border border-green-200 rounded-lg mt-4">
+                                <div className="flex items-start">
+                                    <div className="flex-shrink-0 bg-green-100 p-2 rounded-full text-green-600 mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-bold text-green-800">Como o Bônus de Produtividade é calculado:</p>
+                                        <p className="text-xs text-green-700 mt-1">O bônus reflete o ganho de eficiência esperado da sua equipe, baseado em 3 fatores:</p>
+                                        <div className="grid grid-cols-3 gap-2 mt-2">
+                                            <div className="bg-white p-2 rounded border border-green-200 text-center">
+                                                <p className="text-[10px] text-gray-500 font-medium">Redução de Turnover</p>
+                                                <p className="text-xs text-green-700 mt-0.5">Cada 1pp de redução = 0,5% de ganho (máx. 3%)</p>
+                                            </div>
+                                            <div className="bg-white p-2 rounded border border-green-200 text-center">
+                                                <p className="text-[10px] text-gray-500 font-medium">ROI de Treinamento</p>
+                                                <p className="text-xs text-green-700 mt-0.5">Melhoria no ROI de T&D = equipe mais produtiva (máx. 3%)</p>
+                                            </div>
+                                            <div className="bg-white p-2 rounded border border-green-200 text-center">
+                                                <p className="text-[10px] text-gray-500 font-medium">Investimento em T&D</p>
+                                                <p className="text-xs text-green-700 mt-0.5">% da folha investido em capacitação (máx. 2%)</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-green-600 mt-2 font-medium">Resultado: {formatPercentage(productivityGainFactor)} de ganho estimado por colaborador, já incluído no Crescimento Total acima.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

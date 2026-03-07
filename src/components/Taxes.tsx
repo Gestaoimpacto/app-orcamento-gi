@@ -1,11 +1,53 @@
 
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import type { TaxesData } from '../types';
+import { formatCurrency, formatPercentage } from '../utils/formatters';
 
 const Taxes: React.FC = () => {
-    const { taxes, updateTaxes } = usePlan();
+    const { taxes, updateTaxes, applyTaxesTo2025, summary2025 } = usePlan();
+    const prevTaxesRef = useRef<string>('');
+
+    // Calcula a alíquota efetiva atual com base nos campos preenchidos
+    const calculatedRate = (() => {
+        const { regimeTributario, simplesNacional, iss, icms, pis, cofins, irpj, csll, aliquotaEfetiva } = taxes;
+        if (aliquotaEfetiva > 0) return aliquotaEfetiva;
+        if (regimeTributario === 'Simples Nacional') return simplesNacional || 0;
+        return (iss || 0) + (icms || 0) + (pis || 0) + (cofins || 0) + (irpj || 0) + (csll || 0);
+    })();
+
+    // Calcula total de encargos sobre folha automaticamente
+    const totalEncargos = (taxes.inssPatronal || 0) + (taxes.fgts || 0) + (taxes.ratTerceiros || 0);
+
+    // Atualiza totalEncargosFolha automaticamente
+    useEffect(() => {
+        if (taxes.totalEncargosFolha !== totalEncargos) {
+            updateTaxes('totalEncargosFolha', totalEncargos.toString());
+        }
+    }, [taxes.inssPatronal, taxes.fgts, taxes.ratTerceiros]);
+
+    // Aplica impostos automaticamente na Coleta de Dados quando alíquotas mudam
+    useEffect(() => {
+        const taxKey = JSON.stringify({
+            regimeTributario: taxes.regimeTributario,
+            aliquotaEfetiva: taxes.aliquotaEfetiva,
+            simplesNacional: taxes.simplesNacional,
+            iss: taxes.iss, icms: taxes.icms, pis: taxes.pis,
+            cofins: taxes.cofins, irpj: taxes.irpj, csll: taxes.csll
+        });
+        
+        if (prevTaxesRef.current && prevTaxesRef.current !== taxKey && calculatedRate > 0) {
+            // Alíquotas mudaram e são > 0, aplica automaticamente
+            applyTaxesTo2025();
+        }
+        prevTaxesRef.current = taxKey;
+    }, [taxes.regimeTributario, taxes.aliquotaEfetiva, taxes.simplesNacional, 
+        taxes.iss, taxes.icms, taxes.pis, taxes.cofins, taxes.irpj, taxes.csll]);
+
+    // Preview do imposto calculado
+    const receitaBruta2025 = summary2025?.receitaBrutaTotal || 0;
+    const impostoCalculado = receitaBruta2025 * (calculatedRate / 100);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -47,7 +89,6 @@ const Taxes: React.FC = () => {
                         />
                     </div>
                 )}
-                 {/* FIX: Removed undefined 'placeholder' variable from condition */}
                  {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
             </div>
         );
@@ -58,9 +99,38 @@ const Taxes: React.FC = () => {
             <header>
                 <h1 className="text-4xl font-bold text-brand-dark">2. Configuração de Impostos</h1>
                 <p className="text-lg text-gray-600 mt-2">
-                    Preencha as informações tributárias da sua empresa. O formulário se ajusta com base no regime selecionado.
+                    Preencha as informações tributárias da sua empresa. Os impostos são aplicados automaticamente na Coleta de Dados quando você altera as alíquotas.
                 </p>
             </header>
+
+            {/* Resumo Visual - Impacto dos Impostos */}
+            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-brand-orange space-y-4">
+                <h2 className="text-xl font-bold text-brand-orange">Resumo do Impacto Tributário</h2>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-orange-50 p-4 rounded-lg text-center">
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Alíquota Efetiva</p>
+                        <p className="text-3xl font-extrabold text-brand-orange mt-1">{formatPercentage(calculatedRate)}</p>
+                    </div>
+                    <div className="bg-blue-50 p-4 rounded-lg text-center">
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Receita Bruta 2025</p>
+                        <p className="text-2xl font-bold text-brand-blue mt-1">{formatCurrency(receitaBruta2025, true)}</p>
+                    </div>
+                    <div className="bg-red-50 p-4 rounded-lg text-center">
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Total Impostos Estimado</p>
+                        <p className="text-2xl font-bold text-red-600 mt-1">{formatCurrency(impostoCalculado, true)}</p>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg text-center">
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Receita Líquida Estimada</p>
+                        <p className="text-2xl font-bold text-green-600 mt-1">{formatCurrency(receitaBruta2025 - impostoCalculado, true)}</p>
+                    </div>
+                </div>
+                <div className="flex items-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <span className="text-green-600 mr-2 text-lg">&#10003;</span>
+                    <p className="text-sm text-green-800">
+                        <strong>Aplicação automática:</strong> Ao alterar as alíquotas acima, os valores de impostos na aba "Coleta de Dados 2025" são recalculados automaticamente com base na sua receita bruta mensal.
+                    </p>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 
@@ -79,7 +149,7 @@ const Taxes: React.FC = () => {
                 <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-4">
                      <h2 className="text-xl font-bold text-brand-blue border-b pb-2">Impostos sobre Faturamento</h2>
                       <div className="space-y-4">
-                        {renderInput('aliquotaEfetiva', 'Alíquota Efetiva Total (%)', 'number', 'Soma das alíquotas')}
+                        {renderInput('aliquotaEfetiva', 'Alíquota Efetiva Total (%)', 'number', 'Se souber a alíquota total, preencha aqui. Caso contrário, preencha os campos abaixo.')}
                         
                         {taxes.regimeTributario === 'Simples Nacional' &&
                             renderInput('simplesNacional', 'Simples Nacional (%)', 'number', 'Alíquota única do Simples')

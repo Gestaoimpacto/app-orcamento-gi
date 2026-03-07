@@ -1,8 +1,9 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { usePlan } from '../hooks/usePlanData';
 import { MONTHS, MONTH_LABELS, Month } from '../types';
 import { formatCurrency, formatPercentage } from '../utils/formatters';
+import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
 
 const SummaryCard: React.FC<{ title: string; planned: number; actual: number; higherIsBetter?: boolean }> = ({ title, planned, actual, higherIsBetter = true }) => {
@@ -36,32 +37,44 @@ const DreRow: React.FC<{
     isBold?: boolean;
     isHeader?: boolean;
     isSubItem?: boolean;
+    isSeparator?: boolean;
     higherIsBetter?: boolean;
     isEditable?: boolean;
-    fieldKey?: string; // Key to update in tracking2026
+    fieldKey?: string;
     onUpdate?: (month: Month, field: string, value: string) => void;
-}> = ({ label, monthData, isBold, isHeader, isSubItem, higherIsBetter = true, isEditable, fieldKey, onUpdate }) => {
+    visibleMonths: Month[];
+}> = ({ label, monthData, isBold, isHeader, isSubItem, isSeparator, higherIsBetter = true, isEditable, fieldKey, onUpdate, visibleMonths }) => {
     
     if (isHeader) {
         return (
             <tr className="bg-gray-100 border-b border-gray-300">
                 <td className="sticky left-0 bg-gray-100 z-20 p-3 font-bold text-gray-800 text-xs uppercase border-r border-gray-300">{label}</td>
-                {MONTHS.map(m => (
+                {visibleMonths.map(m => (
                     <td key={m} colSpan={3} className="p-0 border-r border-gray-300"></td>
                 ))}
             </tr>
         );
     }
 
+    if (isSeparator) {
+        return (
+            <tr className="border-b-2 border-brand-blue">
+                <td className="sticky left-0 bg-blue-50 z-20 p-2 font-bold text-brand-blue text-sm border-r border-gray-300">{label}</td>
+                {visibleMonths.map(m => (
+                    <td key={m} colSpan={3} className="bg-blue-50 border-r border-gray-300"></td>
+                ))}
+            </tr>
+        );
+    }
+
     return (
-        <tr className={clsx("border-b border-gray-100 hover:bg-gray-50 transition-colors", isBold && "bg-gray-50 font-semibold")}>
-            <td className={clsx("sticky left-0 bg-white z-10 p-3 text-sm border-r border-gray-200 whitespace-nowrap", isSubItem ? "pl-8 text-gray-600" : "text-gray-800")}>
+        <tr className={clsx("border-b border-gray-100 hover:bg-gray-50 transition-colors", isBold && "bg-yellow-50/50 font-semibold")}>
+            <td className={clsx("sticky left-0 bg-white z-10 p-3 text-sm border-r border-gray-200 whitespace-nowrap", isSubItem ? "pl-8 text-gray-600" : "text-gray-800", isBold && "bg-yellow-50/50 font-bold text-brand-dark")}>
                 {label}
             </td>
-            {MONTHS.map(m => {
+            {visibleMonths.map(m => {
                 const planned = monthData?.[m]?.planned || 0;
                 const actual = monthData?.[m]?.actual;
-                // We consider "hasActual" true only if it's not null/undefined. 0 is a valid actual.
                 const hasActual = actual !== null && actual !== undefined;
                 
                 let variance = 0;
@@ -81,16 +94,15 @@ const DreRow: React.FC<{
                         </td>
                         <td className="p-0 w-24 border-r border-gray-100 text-right align-middle">
                             {isEditable && onUpdate && fieldKey ? (
-                                <input 
-                                    type="number" 
-                                    value={actual ?? ''} 
-                                    onChange={(e) => onUpdate(m, fieldKey, e.target.value)}
+                                <CurrencyInput 
+                                    value={actual as number | null} 
+                                    onChange={(v) => onUpdate(m, fieldKey, v)}
                                     className="w-full h-full p-2 text-right text-xs font-medium text-brand-dark border-none bg-transparent focus:ring-2 focus:ring-brand-orange focus:bg-white"
                                     placeholder="-"
                                 />
                             ) : (
-                                <div className="p-2 text-xs text-brand-dark font-medium">
-                                    {hasActual ? formatCurrency(actual, true) : '-'}
+                                <div className={clsx("p-2 text-xs font-medium", isBold ? "text-brand-dark" : "text-gray-700")}>
+                                    {hasActual ? formatCurrency(actual, true) : <span className="text-gray-300">-</span>}
                                 </div>
                             )}
                         </td>
@@ -110,6 +122,19 @@ const DreComparison: React.FC = () => {
     const { scenarios2026, tracking2026, updateTracking2026, baseScenario } = usePlan();
     const scenario = scenarios2026[baseScenario];
     const projection = scenario.projection;
+    
+    // Filtro de trimestre para facilitar visualização
+    const [quarterFilter, setQuarterFilter] = useState<'all' | 'q1' | 'q2' | 'q3' | 'q4'>('all');
+    
+    const visibleMonths: Month[] = useMemo(() => {
+        switch (quarterFilter) {
+            case 'q1': return MONTHS.slice(0, 3) as Month[];
+            case 'q2': return MONTHS.slice(3, 6) as Month[];
+            case 'q3': return MONTHS.slice(6, 9) as Month[];
+            case 'q4': return MONTHS.slice(9, 12) as Month[];
+            default: return MONTHS as Month[];
+        }
+    }, [quarterFilter]);
 
     // --- Data Preparation ---
     const preparedData = useMemo(() => {
@@ -118,13 +143,11 @@ const DreComparison: React.FC = () => {
             margemContribuicao: {}, despesasFixasTotal: {}, ebitda: {}, lucroLiquido: {}
         };
 
-        // Initialize structure
         const metrics = Object.keys(data);
         metrics.forEach(key => {
             MONTHS.forEach(m => { if (!data[key]) data[key] = {}; data[key][m] = { planned: 0, actual: null }; });
         });
 
-        // Sub-items preparation
         const subItems: any = {
             cmv: {}, comissoes: {}, fretes: {}, folha: {}, aluguel: {}, mkt: {}, admin: {}, ops: {}
         };
@@ -132,13 +155,11 @@ const DreComparison: React.FC = () => {
              MONTHS.forEach(m => { if (!subItems[key]) subItems[key] = {}; subItems[key][m] = { planned: 0, actual: null }; });
         });
 
-        // Safe access helper for custom items
         const getCustomItemValues = (item: any, month: Month) => {
             if (!item || !item.values) return 0;
             return Number(item.values[month]) || 0;
         };
 
-        // Custom Items Preparation
         const customVariaveis = (projection.customCustosVariaveis || []).map(item => {
             const monthData: any = {};
             MONTHS.forEach(m => {
@@ -163,7 +184,6 @@ const DreComparison: React.FC = () => {
         MONTHS.forEach(m => {
             const track = tracking2026[m];
             
-            // --- PLAN CALCULATIONS ---
             const pRb = projection.receitaBruta?.[m] || 0;
             const pImp = projection.impostosSobreFaturamento?.[m] || 0;
             const pRl = pRb - pImp;
@@ -185,9 +205,8 @@ const DreComparison: React.FC = () => {
             const pDespFixTotal = pFolha + pAluguel + pOps + pMkt + pAdmin + pDespFixCustom;
 
             const pEbitda = pMc - pDespFixTotal;
-            const pLucro = pEbitda * 0.85; // Simplified Net Profit
+            const pLucro = pEbitda * 0.85;
 
-            // --- ACTUAL CALCULATIONS ---
             const getVal = (key: string): number | null => {
                 if (!track) return null;
                 const v = track[key];
@@ -236,7 +255,6 @@ const DreComparison: React.FC = () => {
             const aEbitda = (aMc !== null && aDespFixTotal !== null) ? aMc - aDespFixTotal : null;
             const aLucro = aEbitda !== null ? aEbitda * 0.85 : null;
 
-            // Populate Data Structure
             data.receitaBruta[m] = { planned: pRb, actual: aRb };
             data.impostos[m] = { planned: pImp, actual: aImp };
             data.receitaLiquida[m] = { planned: pRl, actual: aRl };
@@ -283,9 +301,9 @@ const DreComparison: React.FC = () => {
         <div className="space-y-8">
             <header className="flex justify-between items-center no-print">
                 <div>
-                    <h1 className="text-4xl font-bold text-brand-dark">13. Comparativo DRE (Orç x Real)</h1>
+                    <h1 className="text-4xl font-bold text-brand-dark">13. Comparativo DRE (Orçado x Realizado)</h1>
                     <p className="text-lg text-gray-600 mt-2">
-                        Preencha a coluna "Realizado" para monitorar os desvios. Os totais são calculados automaticamente.
+                        Acompanhe mês a mês o desempenho real vs. planejado. Preencha os sub-itens e os totais são calculados automaticamente.
                     </p>
                     <p className="text-xs text-brand-orange font-bold mt-1">Cenário Base: {baseScenario}</p>
                 </div>
@@ -293,9 +311,20 @@ const DreComparison: React.FC = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                     </svg>
-                    Imprimir Relatório
+                    Imprimir
                 </button>
             </header>
+
+            {/* Instruções claras */}
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <h3 className="text-sm font-bold text-blue-800">Como preencher esta aba:</h3>
+                <ol className="text-xs text-blue-700 mt-2 space-y-1 list-decimal list-inside">
+                    <li>Use o <strong>filtro de trimestre</strong> abaixo para facilitar a visualização (em vez de ver 12 meses de uma vez).</li>
+                    <li>Preencha os <strong>sub-itens editáveis</strong> (CMV, Comissões, Folha, etc.) - os totais são calculados automaticamente.</li>
+                    <li>A coluna <strong>Var%</strong> mostra a variação entre orçado e realizado. Verde = favorável, Vermelho = desfavorável.</li>
+                    <li>Os <strong>cards no topo</strong> mostram o acumulado do ano (YTD) para acompanhamento rápido.</li>
+                </ol>
+            </div>
 
             {/* YTD Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -304,15 +333,38 @@ const DreComparison: React.FC = () => {
                 <SummaryCard title="Lucro Líquido (Est.)" planned={ytd.pLucro} actual={ytd.aLucro} higherIsBetter={true} />
             </div>
 
+            {/* Filtro de Trimestre */}
+            <div className="flex items-center gap-2 no-print">
+                <span className="text-sm font-medium text-gray-600">Visualizar:</span>
+                {[
+                    { key: 'all', label: 'Ano Completo' },
+                    { key: 'q1', label: '1T (Jan-Mar)' },
+                    { key: 'q2', label: '2T (Abr-Jun)' },
+                    { key: 'q3', label: '3T (Jul-Set)' },
+                    { key: 'q4', label: '4T (Out-Dez)' },
+                ].map(q => (
+                    <button
+                        key={q.key}
+                        onClick={() => setQuarterFilter(q.key as any)}
+                        className={clsx(
+                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            quarterFilter === q.key ? "bg-brand-orange text-white shadow" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        )}
+                    >
+                        {q.label}
+                    </button>
+                ))}
+            </div>
+
             {/* Main Comparison Table */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
                     <h2 className="text-lg font-bold text-brand-blue">Demonstrativo de Resultados Comparativo</h2>
-                    <div className="text-xs text-gray-500">
-                        <span className="inline-block w-3 h-3 bg-gray-200 mr-1 rounded-sm"></span> Orçado
-                        <span className="inline-block w-3 h-3 bg-white border border-gray-300 ml-3 mr-1 rounded-sm"></span> Realizado (Editável)
-                        <span className="inline-block w-3 h-3 bg-green-100 ml-3 mr-1 rounded-sm"></span> Var Positiva
-                        <span className="inline-block w-3 h-3 bg-red-100 ml-3 mr-1 rounded-sm"></span> Var Negativa
+                    <div className="text-xs text-gray-500 flex items-center gap-3">
+                        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-gray-200 rounded-sm"></span> Orçado</span>
+                        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-white border border-gray-300 rounded-sm"></span> Realizado</span>
+                        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-green-100 rounded-sm"></span> Favorável</span>
+                        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 bg-red-100 rounded-sm"></span> Desfavorável</span>
                     </div>
                 </div>
                 
@@ -321,11 +373,11 @@ const DreComparison: React.FC = () => {
                         <thead>
                             <tr>
                                 <th className="sticky left-0 bg-white z-30 p-4 text-left border-b-2 border-r border-gray-300 min-w-[250px]">Indicador</th>
-                                {MONTHS.map(m => (
+                                {visibleMonths.map(m => (
                                     <th key={m} colSpan={3} className="p-2 text-center border-b-2 border-r border-gray-300 bg-gray-50 min-w-[200px]">
                                         {MONTH_LABELS[m]}
                                         <div className="flex justify-between text-[10px] text-gray-400 font-normal mt-1 px-2">
-                                            <span className="w-1/3 text-right">Orc.</span>
+                                            <span className="w-1/3 text-right">Orç.</span>
                                             <span className="w-1/3 text-right">Real</span>
                                             <span className="w-1/3 text-right">Var%</span>
                                         </div>
@@ -334,44 +386,46 @@ const DreComparison: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Revenue Section */}
-                            <DreRow label="Receita Bruta" monthData={preparedData.main.receitaBruta} isSubItem higherIsBetter={true} isEditable fieldKey="receitaBruta" onUpdate={updateTracking2026} />
-                            <DreRow label="(-) Impostos" monthData={preparedData.main.impostos} isSubItem higherIsBetter={false} isEditable fieldKey="impostos" onUpdate={updateTracking2026} />
-                            <DreRow label="(=) Receita Líquida" monthData={preparedData.main.receitaLiquida} isBold />
+                            {/* === RECEITA === */}
+                            <DreRow label="RECEITA" monthData={preparedData.main.receitaBruta} isSeparator visibleMonths={visibleMonths} />
+                            <DreRow label="Receita Bruta" monthData={preparedData.main.receitaBruta} isEditable fieldKey="receitaBruta" onUpdate={updateTracking2026} higherIsBetter={true} isSubItem visibleMonths={visibleMonths} />
+                            <DreRow label="(-) Impostos s/ Faturamento" monthData={preparedData.main.impostos} isEditable fieldKey="impostos" onUpdate={updateTracking2026} higherIsBetter={false} isSubItem visibleMonths={visibleMonths} />
+                            <DreRow label="(=) Receita Líquida" monthData={preparedData.main.receitaLiquida} isBold visibleMonths={visibleMonths} />
                             
-                            {/* Variable Costs Section */}
-                            <DreRow label="(-) Custos Variáveis" monthData={preparedData.main.custosVariaveisTotal} isHeader />
-                            <DreRow label="Total Custos Variáveis" monthData={preparedData.main.custosVariaveisTotal} isBold higherIsBetter={false} />
-                            <DreRow label="CMV" monthData={preparedData.subs.cmv} isSubItem higherIsBetter={false} isEditable fieldKey="cmv" onUpdate={updateTracking2026} />
-                            <DreRow label="Comissões" monthData={preparedData.subs.comissoes} isSubItem higherIsBetter={false} isEditable fieldKey="comissoes" onUpdate={updateTracking2026} />
-                            <DreRow label="Fretes" monthData={preparedData.subs.fretes} isSubItem higherIsBetter={false} isEditable fieldKey="fretes" onUpdate={updateTracking2026} />
+                            {/* === CUSTOS VARIÁVEIS === */}
+                            <DreRow label="CUSTOS VARIÁVEIS" monthData={preparedData.main.custosVariaveisTotal} isSeparator visibleMonths={visibleMonths} />
+                            <DreRow label="CMV / Custo do Serviço" monthData={preparedData.subs.cmv} isSubItem higherIsBetter={false} isEditable fieldKey="cmv" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Comissões" monthData={preparedData.subs.comissoes} isSubItem higherIsBetter={false} isEditable fieldKey="comissoes" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Fretes" monthData={preparedData.subs.fretes} isSubItem higherIsBetter={false} isEditable fieldKey="fretes" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
                             {preparedData.customVariaveis.map((item: any) => (
-                                <DreRow key={item.id} label={item.name} monthData={item.monthData} isSubItem higherIsBetter={false} isEditable fieldKey={`custom_${item.id}`} onUpdate={updateTracking2026} />
+                                <DreRow key={item.id} label={item.name} monthData={item.monthData} isSubItem higherIsBetter={false} isEditable fieldKey={`custom_${item.id}`} onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
                             ))}
+                            <DreRow label="(=) Total Custos Variáveis" monthData={preparedData.main.custosVariaveisTotal} isBold higherIsBetter={false} visibleMonths={visibleMonths} />
 
-                            {/* Margin Section */}
-                            <DreRow label="(=) Margem de Contribuição" monthData={preparedData.main.margemContribuicao} isBold />
+                            {/* === MARGEM DE CONTRIBUIÇÃO === */}
+                            <DreRow label="(=) MARGEM DE CONTRIBUIÇÃO" monthData={preparedData.main.margemContribuicao} isBold visibleMonths={visibleMonths} />
 
-                            {/* Fixed Costs Section */}
-                            <DreRow label="(-) Despesas Fixas" monthData={preparedData.main.despesasFixasTotal} isHeader />
-                            <DreRow label="Total Despesas Fixas" monthData={preparedData.main.despesasFixasTotal} isBold higherIsBetter={false} />
-                            <DreRow label="Folha de Pagamento" monthData={preparedData.subs.folha} isSubItem higherIsBetter={false} isEditable fieldKey="folha" onUpdate={updateTracking2026} />
-                            <DreRow label="Aluguel" monthData={preparedData.subs.aluguel} isSubItem higherIsBetter={false} isEditable fieldKey="aluguel" onUpdate={updateTracking2026} />
-                            <DreRow label="Marketing" monthData={preparedData.subs.mkt} isSubItem higherIsBetter={false} isEditable fieldKey="marketing" onUpdate={updateTracking2026} />
-                            <DreRow label="Administrativo" monthData={preparedData.subs.admin} isSubItem higherIsBetter={false} isEditable fieldKey="administrativo" onUpdate={updateTracking2026} />
-                            <DreRow label="Operacional" monthData={preparedData.subs.ops} isSubItem higherIsBetter={false} isEditable fieldKey="operacional" onUpdate={updateTracking2026} />
+                            {/* === DESPESAS FIXAS === */}
+                            <DreRow label="DESPESAS FIXAS" monthData={preparedData.main.despesasFixasTotal} isSeparator visibleMonths={visibleMonths} />
+                            <DreRow label="Folha de Pagamento" monthData={preparedData.subs.folha} isSubItem higherIsBetter={false} isEditable fieldKey="folha" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Aluguel" monthData={preparedData.subs.aluguel} isSubItem higherIsBetter={false} isEditable fieldKey="aluguel" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Marketing" monthData={preparedData.subs.mkt} isSubItem higherIsBetter={false} isEditable fieldKey="marketing" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Administrativo" monthData={preparedData.subs.admin} isSubItem higherIsBetter={false} isEditable fieldKey="administrativo" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
+                            <DreRow label="Operacional" monthData={preparedData.subs.ops} isSubItem higherIsBetter={false} isEditable fieldKey="operacional" onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
                             {preparedData.customFixos.map((item: any) => (
-                                <DreRow key={item.id} label={item.name} monthData={item.monthData} isSubItem higherIsBetter={false} isEditable fieldKey={`custom_${item.id}`} onUpdate={updateTracking2026} />
+                                <DreRow key={item.id} label={item.name} monthData={item.monthData} isSubItem higherIsBetter={false} isEditable fieldKey={`custom_${item.id}`} onUpdate={updateTracking2026} visibleMonths={visibleMonths} />
                             ))}
+                            <DreRow label="(=) Total Despesas Fixas" monthData={preparedData.main.despesasFixasTotal} isBold higherIsBetter={false} visibleMonths={visibleMonths} />
 
-                            {/* Result Section */}
-                            <DreRow label="(=) EBITDA" monthData={preparedData.main.ebitda} isBold />
-                            <DreRow label="(=) Lucro Líquido Estimado" monthData={preparedData.main.lucroLiquido} isBold />
+                            {/* === RESULTADO === */}
+                            <DreRow label="RESULTADO" monthData={preparedData.main.ebitda} isSeparator visibleMonths={visibleMonths} />
+                            <DreRow label="(=) EBITDA" monthData={preparedData.main.ebitda} isBold visibleMonths={visibleMonths} />
+                            <DreRow label="(=) Lucro Líquido Estimado" monthData={preparedData.main.lucroLiquido} isBold visibleMonths={visibleMonths} />
                         </tbody>
                     </table>
                 </div>
-                <div className="p-4 bg-blue-50 text-xs text-blue-800 border-t border-blue-200">
-                    <strong>Dica:</strong> Digite os valores realizados diretamente nas células. Os totais (Receita Líquida, Custos Variáveis, EBITDA) são calculados automaticamente conforme você preenche os detalhes (CMV, Folha, etc.).
+                <div className="p-4 bg-yellow-50 text-xs text-yellow-800 border-t border-yellow-200">
+                    <strong>Dica:</strong> Preencha os sub-itens (CMV, Folha, etc.) e os totais serão calculados automaticamente. Use o filtro de trimestre para facilitar o preenchimento.
                 </div>
             </div>
         </div>

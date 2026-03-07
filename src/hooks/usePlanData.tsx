@@ -361,12 +361,21 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         }
         const abcImpact = abcRaw;
 
+        // Bowman: considera a relação valor/preço (não apenas valor)
+        // Valor alto + Preço baixo = excelente posição (diferenciação)
+        // Valor baixo + Preço alto = péssima posição (destinado ao fracasso)
         let clockRaw = 0;
         if (bowmanClockProducts.length > 0) {
             const avgVal = bowmanClockProducts.reduce((s, p) => s + (p.perceivedValue || 0), 0) / bowmanClockProducts.length;
-            clockRaw = avgVal >= 4 ? 2 : (avgVal >= 3 ? 0.5 : -1);
+            const avgPrice = bowmanClockProducts.reduce((s, p) => s + (p.priceLevel || 0), 0) / bowmanClockProducts.length;
+            const relacao = avgVal - avgPrice; // Positivo = valor > preço (bom)
+            if (relacao >= 2) clockRaw = 2;       // Valor muito acima do preço
+            else if (relacao >= 1) clockRaw = 1.5; // Valor acima do preço
+            else if (relacao >= 0) clockRaw = 0.5; // Valor = preço (híbrido)
+            else if (relacao >= -1) clockRaw = -0.5; // Preço acima do valor
+            else clockRaw = -2;                    // Preço muito acima do valor
         }
-        const clockImpact = clockRaw * 1.5; 
+        const clockImpact = clockRaw * 1.2; 
 
         const totalScore = swotImpact + blueOceanImpact + marketImpact + abcImpact + clockImpact;
 
@@ -394,6 +403,83 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         JSON.stringify(planData.marketAnalysis.bowmanClockProducts.map(p => ({ id: p.id, price: p.priceLevel, value: p.perceivedValue })))
     ]);
 
+    // === CÁLCULO AUTOMÁTICO DO BÔNUS DE PRODUTIVIDADE ===
+    // Baseado em: redução de turnover, ROI de treinamento e investimento em T&D
+    useEffect(() => {
+        const { people } = planData;
+        const sumRaw = (data: MonthlyData): number => Object.values(data || {}).reduce((acc: number, val: number | null) => acc + (val || 0), 0);
+        
+        // Dados de People 2025
+        const headcountValues = Object.values(people.headcount.totalColaboradores || {}).filter(v => v !== undefined && v !== null) as number[];
+        const headcountMedio = headcountValues.length > 0 ? headcountValues.reduce((a, b) => a + b, 0) / headcountValues.length : 0;
+        const totalDesligamentos = sumRaw(people.headcount.desligamentosVoluntarios) + sumRaw(people.headcount.desligamentosInvoluntarios);
+        const turnoverAtual = headcountMedio > 0 ? (totalDesligamentos / headcountMedio) * 100 : 0;
+        const investTD = sumRaw(people.treinamento.investimentoTD);
+        const ganhoTD = sumRaw(people.treinamento.ganhoTreinamento);
+        const roiTreinamentoAtual = investTD > 0 ? ganhoTD / investTD : 0;
+        const receitaTotal = (() => {
+            const { financialSheet } = planData;
+            return MONTHS.reduce((acc, m) => acc + (Number(financialSheet.receitaBruta.values2025?.[m]) || 0), 0);
+        })();
+        const receitaPorColab = headcountMedio > 0 ? receitaTotal / headcountMedio : 0;
+
+        // Metas 2026
+        const metaTurnover = goals2026.pessoas.metaTurnover || 0;
+        const metaRoiTD = goals2026.pessoas.metaRoiTreinamento || 0;
+        const metaHeadcount = goals2026.pessoas.metaHeadcount || 0;
+
+        // Componente 1: Redução de Turnover (até 3%)
+        // Cada 1pp de redução de turnover = ~0.5% de ganho de produtividade
+        let turnoverBonus = 0;
+        if (turnoverAtual > 0 && metaTurnover < turnoverAtual) {
+            const reducao = turnoverAtual - metaTurnover;
+            turnoverBonus = Math.min(reducao * 0.5, 3); // Máximo 3%
+        }
+
+        // Componente 2: ROI de Treinamento (até 3%)
+        // Se ROI de treinamento melhora, indica equipe mais capacitada
+        let treinamentoBonus = 0;
+        if (metaRoiTD > roiTreinamentoAtual) {
+            const melhoria = metaRoiTD - roiTreinamentoAtual;
+            treinamentoBonus = Math.min(melhoria * 1.5, 3); // Máximo 3%
+        } else if (roiTreinamentoAtual > 0) {
+            treinamentoBonus = Math.min(roiTreinamentoAtual * 0.5, 2); // Mantém ROI positivo = até 2%
+        }
+
+        // Componente 3: Investimento em T&D como % da folha (até 2%)
+        const folhaTotal = sumRaw(people.custos.folhaTotalAnual);
+        let investTDBonus = 0;
+        if (folhaTotal > 0 && investTD > 0) {
+            const tdPercentFolha = (investTD / folhaTotal) * 100;
+            // Benchmark: empresas top investem 3-5% da folha em T&D
+            investTDBonus = tdPercentFolha >= 5 ? 2 : (tdPercentFolha >= 3 ? 1.5 : (tdPercentFolha >= 1 ? 0.5 : 0));
+        }
+
+        const totalProductivityGain = Math.round((turnoverBonus + treinamentoBonus + investTDBonus) * 10) / 10;
+        const projectedRevenueCalc = receitaPorColab * (1 + totalProductivityGain / 100) * (metaHeadcount || headcountMedio);
+
+        setPlanData(prev => {
+            const prevGain = prev.analysis.peopleAnalytics.productivityGainFactor;
+            const prevRev = prev.analysis.peopleAnalytics.projectedRevenue;
+            if (Math.abs(prevGain - totalProductivityGain) < 0.01 && Math.abs(prevRev - projectedRevenueCalc) < 1) return prev;
+            return {
+                ...prev,
+                analysis: {
+                    ...prev.analysis,
+                    peopleAnalytics: {
+                        productivityGainFactor: totalProductivityGain,
+                        projectedRevenue: projectedRevenueCalc
+                    }
+                }
+            };
+        });
+    }, [
+        JSON.stringify(planData.people),
+        JSON.stringify(planData.financialSheet.receitaBruta.values2025),
+        goals2026.pessoas.metaTurnover,
+        goals2026.pessoas.metaRoiTreinamento,
+        goals2026.pessoas.metaHeadcount
+    ]);
 
     const summary2025: Summary2025 = useMemo(() => {
         const { financialSheet, commercial, people, marketing } = planData;
@@ -916,7 +1002,9 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
     };
 
     const calculateScenarioProjection = (baseSheet: FinancialSheetData, growthPct: number, strategicScore: number): ScenarioProjectionData => {
-        const growthFactor = 1 + ((growthPct + strategicScore) / 100);
+        // Fórmula completa: Crescimento Base + Fator Estratégico + Bônus de Produtividade
+        const productivityBonus = planData.analysis.peopleAnalytics.productivityGainFactor || 0;
+        const growthFactor = 1 + ((growthPct + strategicScore + productivityBonus) / 100);
         
         const applyGrowth = (data: MonthlyData) => {
             const result: MonthlyData = {};
