@@ -25,7 +25,8 @@ const ScenarioPlanning: React.FC = () => {
         updateStrategicAction,
         generateDecisionTriggers,
         getStrategicScoreAnalysis,
-        recalculateScenario
+        recalculateScenario,
+        recalculateAllScenarios
     } = usePlan();
 
     const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
@@ -189,13 +190,23 @@ const ScenarioPlanning: React.FC = () => {
                         Projete o orcamento para 2026 em diferentes cenarios e defina gatilhos e acoes estrategicas.
                     </p>
                 </div>
-                <button 
-                    onClick={() => window.print()}
-                    className="flex items-center gap-2 px-5 py-2.5 font-semibold text-white bg-gray-800 rounded-xl hover:bg-gray-700 shadow-sm text-sm no-print transition-colors"
-                >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                    Imprimir
-                </button>
+                <div className="flex gap-2">
+                    <button 
+                        onClick={() => recalculateAllScenarios()}
+                        className="flex items-center gap-2 px-5 py-2.5 font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm text-sm no-print transition-colors"
+                        title="Recalcular todos os cenários com base nos dados atuais de 2025"
+                    >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        Recalcular Todos
+                    </button>
+                    <button 
+                        onClick={() => window.print()}
+                        className="flex items-center gap-2 px-5 py-2.5 font-semibold text-white bg-gray-800 rounded-xl hover:bg-gray-700 shadow-sm text-sm no-print transition-colors"
+                    >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                        Imprimir
+                    </button>
+                </div>
             </header>
 
             {/* COMPARACAO LADO A LADO DOS 3 CENARIOS */}

@@ -347,7 +347,7 @@ const CommercialPlanning: React.FC = () => {
                         <div style={{width: '100%', height: 250}}>
                             <ResponsiveContainer>
                                 <PieChart>
-                                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
+                                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label={({ name, value }: { name: string; value: number }) => `${name}: ${formatCurrency(value, true)}`}>
                                         {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                                     </Pie>
                                     <Tooltip formatter={(value: number) => formatCurrency(value)} />

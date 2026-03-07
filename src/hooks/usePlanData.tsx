@@ -495,8 +495,7 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
 
         scenarioNames.forEach(name => {
             const scenario = scenarios2026[name];
-            // Só recalcula se estiver em modo percentual (não manual)
-            if (planData.scenariosInputMode[name] === 'manual') return;
+            // Recalcula todos os cenários quando dados base mudam (inclusive manual)
             
             const growthPct = scenario.growthPercentage || 0;
             const newProjection = calculateScenarioProjection(planData.financialSheet, growthPct, strategicScore);
@@ -1091,6 +1090,18 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         }));
     };
 
+    const recalculateAllScenarios = () => {
+        const scenarioNames: ScenarioName[] = ['Otimista', 'Conservador', 'Disruptivo'];
+        const strategicScore = planData.analysis.strategicScore.total || 0;
+        const newScenarios = { ...scenarios2026 };
+        scenarioNames.forEach(name => {
+            const growthPct = scenarios2026[name].growthPercentage || 0;
+            const newProjection = calculateScenarioProjection(planData.financialSheet, growthPct, strategicScore);
+            newScenarios[name] = { ...newScenarios[name], projection: newProjection };
+        });
+        setScenarios2026(newScenarios);
+    };
+
     const updateScenarioGrowthPercentage = (scenario: ScenarioName, value: string) => {
         const val = parseFloat(value) || 0;
         setScenarios2026(prev => ({
@@ -1440,6 +1451,7 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         financialIndicators,
         calculateSensitivityAnalysis,
         recalculateScenario,
+        recalculateAllScenarios,
         applyTaxesTo2025
     };
 
