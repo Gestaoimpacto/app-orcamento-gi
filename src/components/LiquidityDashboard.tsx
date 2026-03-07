@@ -133,7 +133,7 @@ const LiquidityDashboard: React.FC = () => {
                                 </linearGradient>
                             </defs>
                             <XAxis dataKey="month" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
-                            <YAxis tickFormatter={(v) => `R$${(v/1000).toFixed(0)}k`} tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+                            <YAxis tickFormatter={(v) => `R$${Math.round(v/1000).toLocaleString('pt-BR')}k`} tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
                             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                             <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
                             <Legend wrapperStyle={{ fontSize: '12px' }} />

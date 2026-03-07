@@ -304,7 +304,7 @@ const BowmanClock: React.FC = () => {
                                 <p className="text-xs font-bold text-gray-600 uppercase">Posição Estratégica Média</p>
                                 <p className="text-sm font-bold text-gray-900 mt-1">{avgPosition.strategy}</p>
                                 <p className="text-xs text-gray-500 mt-0.5">
-                                    Preço médio: {avgPosition.avgPrice.toFixed(1)} | Valor médio: {avgPosition.avgValue.toFixed(1)}
+                                    Preço médio: {avgPosition.avgPrice.toFixed(1).replace('.', ',')} | Valor médio: {avgPosition.avgValue.toFixed(1).replace('.', ',')}
                                 </p>
                             </div>
                         )}

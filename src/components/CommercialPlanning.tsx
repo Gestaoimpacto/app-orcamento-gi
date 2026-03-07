@@ -237,8 +237,8 @@ const CommercialPlanning: React.FC = () => {
 
         MONTHS.forEach(m => {
             updateDriverBasedPlanning('leadsQualificados', m, (realLeads25 / 12).toFixed(0));
-            updateDriverBasedPlanning('taxaConversao', m, conversion25.toFixed(1));
-            updateDriverBasedPlanning('ticketMedio', m, ticket25.toFixed(2));
+            updateDriverBasedPlanning('taxaConversao', m, conversion25.toFixed(1).replace('.', ','));
+            updateDriverBasedPlanning('ticketMedio', m, ticket25.toFixed(2).replace('.', ','));
             updateDriverBasedPlanning('clientesRecorrentes', m, clients25.toFixed(0)); // Static recurrent base
         });
     };
@@ -275,8 +275,8 @@ const CommercialPlanning: React.FC = () => {
 
         MONTHS.forEach(m => {
             updateDriverBasedPlanning('leadsQualificados', m, monthlyLeads.toFixed(0));
-            updateDriverBasedPlanning('taxaConversao', m, aggregateRate.toFixed(2));
-            updateDriverBasedPlanning('ticketMedio', m, ticket.toFixed(2));
+            updateDriverBasedPlanning('taxaConversao', m, aggregateRate.toFixed(2).replace('.', ','));
+            updateDriverBasedPlanning('ticketMedio', m, ticket.toFixed(2).replace('.', ','));
             
             // Only update recurrent if empty, to not overwrite custom inputs if user already edited
             const currentRecurrent = driverBasedPlanning?.clientesRecorrentes[m];

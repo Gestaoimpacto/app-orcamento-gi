@@ -481,6 +481,46 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         goals2026.pessoas.metaHeadcount
     ]);
 
+    // === AUTO-RECALCULATE CENÁRIOS quando dados base (financialSheet, strategicScore, produtividade) mudam ===
+    useEffect(() => {
+        // Verifica se há dados na financialSheet (receita bruta preenchida)
+        const hasData = MONTHS.some(m => (planData.financialSheet.receitaBruta.values2025?.[m] || 0) > 0);
+        if (!hasData || isInitialLoad.current) return;
+
+        const strategicScore = planData.analysis.strategicScore.total || 0;
+        const scenarioNames: ScenarioName[] = ['Otimista', 'Conservador', 'Disruptivo'];
+        
+        let hasChanges = false;
+        const newScenarios = { ...scenarios2026 };
+
+        scenarioNames.forEach(name => {
+            const scenario = scenarios2026[name];
+            // Só recalcula se estiver em modo percentual (não manual)
+            if (planData.scenariosInputMode[name] === 'manual') return;
+            
+            const growthPct = scenario.growthPercentage || 0;
+            const newProjection = calculateScenarioProjection(planData.financialSheet, growthPct, strategicScore);
+            
+            // Verifica se realmente mudou para evitar loops
+            const oldReceitaTotal = MONTHS.reduce((s, m) => s + (scenario.projection?.receitaBruta?.[m] || 0), 0);
+            const newReceitaTotal = MONTHS.reduce((s, m) => s + (newProjection.receitaBruta?.[m] || 0), 0);
+            
+            if (Math.abs(oldReceitaTotal - newReceitaTotal) > 1) {
+                newScenarios[name] = { ...scenario, projection: newProjection };
+                hasChanges = true;
+            }
+        });
+
+        if (hasChanges) {
+            setScenarios2026(newScenarios);
+        }
+    }, [
+        JSON.stringify(planData.financialSheet.receitaBruta.values2025),
+        JSON.stringify(planData.financialSheet.impostosSobreFaturamento.values2025),
+        planData.analysis.strategicScore.total,
+        planData.analysis.peopleAnalytics.productivityGainFactor
+    ]);
+
     const summary2025: Summary2025 = useMemo(() => {
         const { financialSheet, commercial, people, marketing } = planData;
 

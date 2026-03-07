@@ -62,11 +62,11 @@ const SensitivityAnalysis: React.FC = () => {
         const priceUpVolumeDown = matrix[0]?.[4]?.netProfit || 0;
         
         if (safetyMarginPercent > 30) {
-            result.push({ icon: '🛡️', text: `Margem de segurança robusta (${safetyMarginPercent.toFixed(0)}%). Sua empresa tem boa resiliência a quedas de receita.`, type: 'good' });
+            result.push({ icon: '🛡️', text: `Margem de segurança robusta (${safetyMarginPercent.toFixed(0).replace('.', ',')}%). Sua empresa tem boa resiliência a quedas de receita.`, type: 'good' });
         } else if (safetyMarginPercent > 15) {
-            result.push({ icon: '⚠️', text: `Margem de segurança moderada (${safetyMarginPercent.toFixed(0)}%). Monitore de perto variações de receita.`, type: 'warning' });
+            result.push({ icon: '⚠️', text: `Margem de segurança moderada (${safetyMarginPercent.toFixed(0).replace('.', ',')}%). Monitore de perto variações de receita.`, type: 'warning' });
         } else {
-            result.push({ icon: '🚨', text: `Margem de segurança baixa (${safetyMarginPercent.toFixed(0)}%). Qualquer queda significativa pode gerar prejuízo.`, type: 'danger' });
+            result.push({ icon: '🚨', text: `Margem de segurança baixa (${safetyMarginPercent.toFixed(0).replace('.', ',')}%). Qualquer queda significativa pode gerar prejuízo.`, type: 'danger' });
         }
         
         if (priceUpVolumeDown > priceDownVolumeUp) {

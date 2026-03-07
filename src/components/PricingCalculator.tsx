@@ -190,8 +190,8 @@ const PricingCalculator: React.FC = () => {
                 
                 dailyLeads: Math.ceil(leads / days),
                 dailyMeetings: Math.ceil(meetings / days),
-                dailyProposals: (proposals / days).toFixed(1), // Can be decimal
-                dailySales: (sales / days).toFixed(2)
+                dailyProposals: parseFloat((proposals / days).toFixed(1)), // Can be decimal
+                dailySales: parseFloat((sales / days).toFixed(2))
             };
         } else {
             // Direct Sales
@@ -206,7 +206,7 @@ const PricingCalculator: React.FC = () => {
                 carts: Math.ceil(carts), 
                 traffic: Math.ceil(traffic), 
                 dailyTraffic: Math.ceil(traffic / days),
-                dailySales: (sales / days).toFixed(2)
+                dailySales: parseFloat((sales / days).toFixed(2))
             }
         }
     }, [financialCalc, funnelRates, workingDays, salesModel, estimatedMonthlyVolume]);
@@ -628,7 +628,7 @@ const PricingCalculator: React.FC = () => {
                                     <BarChart data={mixAnalysis.timelineData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                         <XAxis dataKey="day" tick={{fontSize: 10}} interval={2} label={{ value: 'Dia do Mês', position: 'insideBottom', offset: -5, fontSize: 10 }} />
-                                        <YAxis tickFormatter={(val) => `R$${(val/1000).toFixed(0)}k`} tick={{fontSize: 10}} />
+                                        <YAxis tickFormatter={(val) => `R$${Math.round(val/1000).toLocaleString('pt-BR')}k`} tick={{fontSize: 10}} />
                                         <Tooltip 
                                             formatter={(v: number) => [formatCurrency(v), "Saldo Acumulado"]} 
                                             labelFormatter={(l) => `Dia ${l}`} 
