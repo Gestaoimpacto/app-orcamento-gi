@@ -319,7 +319,7 @@ const ExecutionPlanTab: React.FC = () => {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-semibold text-gray-700">
-                                {executionData.gap > 0 ? 'GAP: Sua projecao esta abaixo da meta' : 'Sua projecao supera a meta'}
+                                {executionData.gap > 0 ? 'GAP: Sua projeção esta abaixo da meta' : 'Sua projeção supera a meta'}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
                                 Meta: {formatCurrency(executionData.totalMetaReceita)} | Projecao: {formatCurrency(executionData.driverRevenue)}
@@ -343,7 +343,7 @@ const ExecutionPlanTab: React.FC = () => {
                             <Tooltip formatter={(value: number) => formatCurrency(value)} />
                             <Legend />
                             <Area type="monotone" dataKey="meta" name="Meta" stroke="#EE7533" fill="#EE7533" fillOpacity={0.1} strokeWidth={2} strokeDasharray="5 5" />
-                            <Area type="monotone" dataKey="projecao" name="Projecao" stroke="#213242" fill="#213242" fillOpacity={0.15} strokeWidth={2} />
+                            <Area type="monotone" dataKey="projeção" name="Projeção" stroke="#213242" fill="#213242" fillOpacity={0.15} strokeWidth={2} />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
@@ -419,7 +419,7 @@ const ExecutionPlanTab: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestao Diaria</h4>
+                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestão Diaria</h4>
                         {[
                             { title: 'Reuniao de 15min com a equipe', desc: 'Alinhar metas do dia, revisar pipeline e tirar bloqueios.' },
                             { title: 'Monitorar atividades no CRM', desc: 'Verificar se cada vendedor esta cumprindo a meta de contatos diarios.' },
@@ -437,10 +437,10 @@ const ExecutionPlanTab: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestao Semanal</h4>
+                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestão Semanal</h4>
                         {[
                             { title: 'Reuniao de pipeline (30min)', desc: 'Revisar todas as oportunidades em aberto e definir prioridades.' },
-                            { title: 'Analise de conversao por etapa', desc: 'Identificar onde o funil esta travando e agir na causa raiz.' },
+                            { title: 'Análise de conversao por etapa', desc: 'Identificar onde o funil esta travando e agir na causa raiz.' },
                             { title: 'Treinamento/Roleplay', desc: 'Praticar objecoes, pitch e tecnicas de fechamento com o time.' },
                             { title: 'Revisar metas vs realizado', desc: 'Comparar resultado semanal com a meta e ajustar rota se necessario.' },
                         ].map((item, i) => (
@@ -456,11 +456,11 @@ const ExecutionPlanTab: React.FC = () => {
                 </div>
 
                 <div className="mt-6 p-4 bg-brand-orange/5 border border-brand-orange/20 rounded-xl">
-                    <h4 className="font-bold text-brand-orange text-sm uppercase tracking-wider mb-3">Gestao Mensal (Fechamento)</h4>
+                    <h4 className="font-bold text-brand-orange text-sm uppercase tracking-wider mb-3">Gestão Mensal (Fechamento)</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
-                            { title: 'Analise de Resultado', desc: 'Comparar meta x realizado, identificar desvios e documentar aprendizados.' },
-                            { title: 'Ranking de Performance', desc: 'Reconhecer os melhores vendedores e criar plano de acao para os que ficaram abaixo.' },
+                            { title: 'Análise de Resultado', desc: 'Comparar meta x realizado, identificar desvios e documentar aprendizados.' },
+                            { title: 'Ranking de Performance', desc: 'Reconhecer os melhores vendedores e criar plano de ação para os que ficaram abaixo.' },
                             { title: 'Ajuste de Rota', desc: 'Recalibrar metas, investimento em marketing e estrategia de canais para o proximo mes.' },
                         ].map((item, i) => (
                             <div key={i} className="p-3 bg-white rounded-lg border">
@@ -533,7 +533,7 @@ const PeopleAnalyticsDashboard: React.FC = () => {
                     </span>
                     Indicadores de Pessoas
                 </h2>
-                <p className="text-sm text-gray-500 mb-4">Visao geral da equipe: produtividade, custos e metas de gestao de pessoas.</p>
+                <p className="text-sm text-gray-500 mb-4">Visão geral da equipe: produtividade, custos e metas de gestão de pessoas.</p>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 text-white p-4 rounded-2xl shadow-lg">
@@ -591,7 +591,7 @@ const PeopleAnalyticsDashboard: React.FC = () => {
                     <div className="flex items-start gap-3">
                         <svg className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <div className="text-sm text-blue-800">
-                            <p><strong>Como funciona:</strong> O bonus de produtividade e calculado com base nas suas metas de reducao de turnover, aumento do ROI de treinamento e reducao de absenteismo. Menos rotatividade = equipe mais experiente. Mais treinamento = equipe mais eficiente.</p>
+                            <p><strong>Como funciona:</strong> O bonus de produtividade e calculado com base nas suas metas de redução de turnover, aumento do ROI de treinamento e redução de absenteismo. Menos rotatividade = equipe mais experiente. Mais treinamento = equipe mais eficiente.</p>
                         </div>
                     </div>
                 </div>
@@ -625,7 +625,7 @@ const PeopleAnalyticsDashboard: React.FC = () => {
                                 <p className={clsx("text-xl font-bold", getStatusColor(turnoverMeta2026, turnover2025, true))}>{formatPercentage(turnoverMeta2026)}</p>
                             </div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">Reducao de {formatPercentage(turnover2025 - turnoverMeta2026)} pontos</p>
+                        <p className="text-xs text-gray-500 mt-2">Redução de {formatPercentage(turnover2025 - turnoverMeta2026)} pontos</p>
                     </div>
 
                     {/* ROI Treinamento */}
@@ -673,7 +673,7 @@ const PeopleAnalyticsDashboard: React.FC = () => {
                     </span>
                     Impacto Financeiro do Turnover
                 </h3>
-                <p className="text-sm text-gray-500 mb-6">Quanto custa perder pessoas e quanto voce economiza reduzindo o turnover.</p>
+                <p className="text-sm text-gray-500 mb-6">Quanto custa perder pessoas e quanto você economiza reduzindo o turnover.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="bg-red-50 p-5 rounded-xl border border-red-200 text-center">
@@ -931,8 +931,8 @@ const CommercialPlanning: React.FC = () => {
                         <table className="min-w-full divide-y divide-gray-200 text-sm">
                             <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="px-4 py-2 text-left font-medium text-gray-600 w-1/4">Canal de Aquisicao</th>
-                                    <th className="px-4 py-2 text-right font-medium text-gray-600">Orcamento (R$)</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600 w-1/4">Canal de Aquisição</th>
+                                    <th className="px-4 py-2 text-right font-medium text-gray-600">Orçamento (R$)</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">N Leads</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">Receita Esperada (R$)</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">CPL (R$)</th>
@@ -989,13 +989,13 @@ const CommercialPlanning: React.FC = () => {
                      </div>
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-brand-blue">Analise de Canais com IA</h3>
+                            <h3 className="text-lg font-bold text-brand-blue">Análise de Canais com IA</h3>
                             <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
-                                {isLoading.channel ? 'Analisando...' : 'Gerar Analise'}
+                                {isLoading.channel ? 'Analisando...' : 'Gerar Análise'}
                             </button>
                         </div>
                         <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[220px]">
-                            {demandPlanning?.analysis || "A IA analisara seu mix de canais, eficiencia (CPL, ROI) e sugerira otimizacoes de orcamento."}
+                            {demandPlanning?.analysis || "A IA analisara seu mix de canais, eficiencia (CPL, ROI) e sugerira otimizacoes de orçamento."}
                         </div>
                     </div>
                 </div>
@@ -1025,13 +1025,13 @@ const CommercialPlanning: React.FC = () => {
                              </button>
                          </div>
                          <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[150px]">
-                            {planData.commercialPlanning?.funnelSuggestions || "Clique no botao para que a IA (atuando como um especialista em Growth) analise seu funil e sugira melhorias."}
+                            {planData.commercialPlanning?.funnelSuggestions || "Clique no botao para que a IA (atuando como um especialista em Growth) análise seu funil e sugira melhorias."}
                          </div>
                      </div>
                 </div>
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                        <h3 className="text-lg font-bold text-brand-blue">Projecao do Funil</h3>
+                        <h3 className="text-lg font-bold text-brand-blue">Projeção do Funil</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <InfoBox label="Meta Anual de Leads" value={formatNumber(funnelCalculations.totalLeadsGoal)} hint="Vinda do Plano de Demanda" />
                             <InfoBox label="Meta Anual de Receita" value={formatCurrency(funnelCalculations.totalRevenueGoal)} hint="Vinda do Plano de Demanda" />
@@ -1060,7 +1060,7 @@ const CommercialPlanning: React.FC = () => {
 
     const renderHiringTab = () => (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Projecao de Contratacoes e Orcamento de Pessoal 2026</h2>
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Projeção de Contratações e Orçamento de Pessoal 2026</h2>
             
             <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 text-sm rounded-r-lg">
                 <h4 className="font-bold flex items-center">
@@ -1073,7 +1073,7 @@ const CommercialPlanning: React.FC = () => {
                     Este valor e <strong>Unitario (por colaborador)</strong> e <strong>Anual</strong>.
                 </p>
                 <p className="mt-1">
-                    O sistema multiplica este valor pelo <strong>Headcount Final (Atuais + Contratacoes)</strong> para calcular o orcamento total do departamento.
+                    O sistema multiplica este valor pelo <strong>Headcount Final (Atuais + Contratações)</strong> para calcular o orcamento total do departamento.
                 </p>
                 <p className="mt-2 text-xs text-blue-600">
                     <strong>Como calcular (Estimativa):</strong> (Salario Bruto + Encargos + Beneficios) x 13,3 (inclui 13o e Ferias).
@@ -1089,7 +1089,7 @@ const CommercialPlanning: React.FC = () => {
                         <tr>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Headcount Atual</th>
-                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Novas Contratacoes</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Novas Contratações</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Headcount 2026</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Custo Medio Unitario (R$/ano)</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Budget Total R$</th>
@@ -1160,7 +1160,7 @@ const CommercialPlanning: React.FC = () => {
         return (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6 space-y-4">
                 <div className="flex flex-wrap gap-4 justify-between items-center">
-                    <h2 className="text-lg font-bold text-gray-900">Driver-Based Planning - Projecao 2026</h2>
+                    <h2 className="text-lg font-bold text-gray-900">Driver-Based Planning - Projeção 2026</h2>
                     <div className="flex gap-2">
                         <button onClick={handleImportFromFunnel} className="text-sm text-brand-orange bg-orange-50 px-3 py-1 rounded hover:bg-orange-100 border border-orange-200 font-medium">
                             Importar do Funil & Demanda 2026
@@ -1241,19 +1241,19 @@ const CommercialPlanning: React.FC = () => {
                 
                 <div className={clsx("mt-4 p-4 border rounded-lg", isGap ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200")}>
                     <h4 className={clsx("font-bold mb-2", isGap ? "text-orange-800" : "text-green-800")}>
-                        {isGap ? 'Calculadora de Correcao de Rota (GAP)' : 'Analise de Sensibilidade (O que e necessario para a meta exata?)'}
+                        {isGap ? 'Calculadora de Correcao de Rota (GAP)' : 'Análise de Sensibilidade (O que e necessario para a meta exata?)'}
                     </h4>
                     <p className="text-sm text-gray-700 mb-3">
                         {isGap
-                            ? `Para fechar o GAP de ${formatCurrency(diff)} e atingir a meta, voce precisa ajustar seus drivers. Veja as opcoes:`
-                            : `Voce ja superou a meta em ${formatCurrency(Math.abs(diff))}. Para manter a meta exata (ponto de equilibrio da meta), voce precisaria apenas de:`
+                            ? `Para fechar o GAP de ${formatCurrency(diff)} e atingir a meta, você precisa ajustar seus drivers. Veja as opcoes:`
+                            : `Você ja superou a meta em ${formatCurrency(Math.abs(diff))}. Para manter a meta exata (ponto de equilibrio da meta), você precisaria apenas de:`
                         }
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
                             <p className="text-xs text-gray-500 font-semibold uppercase">Opcao A: Volume de Leads</p>
                             <p className="text-sm mt-1">Gerar <strong className="text-gray-900">{formatNumber(requiredLeads)} leads</strong> no ano.</p>
-                            <p className="text-xs text-gray-400">({formatNumber(requiredLeads - currentLeads)} em relacao ao atual)</p>
+                            <p className="text-xs text-gray-400">({formatNumber(requiredLeads - currentLeads)} em relação ao atual)</p>
                         </div>
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
                             <p className="text-xs text-gray-500 font-semibold uppercase">Opcao B: Eficiencia (Conversao)</p>
@@ -1270,7 +1270,7 @@ const CommercialPlanning: React.FC = () => {
     const TABS: { id: CommercialPlanningTab; label: string; }[] = [
         { id: 'demand', label: '1. Demanda' },
         { id: 'funnel', label: '2. Funil de Vendas' },
-        { id: 'execution', label: '3. Plano de Execucao' },
+        { id: 'execution', label: '3. Plano de Execução' },
         { id: 'hiring', label: '4. Contratacoes' },
         { id: 'people-analytics', label: '5. People Analytics' },
         { id: 'driver-based', label: '6. Drivers' },

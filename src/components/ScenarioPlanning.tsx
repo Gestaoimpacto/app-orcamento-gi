@@ -185,7 +185,7 @@ const ScenarioPlanning: React.FC = () => {
         <div className="space-y-8">
             <header className="flex justify-between items-start gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Orcamento e Cenarios 2026</h1>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Orçamento e Cenários 2026</h1>
                     <p className="text-gray-500 mt-1">
                         Projete o orcamento para 2026 em diferentes cenarios e defina gatilhos e acoes estrategicas.
                     </p>
@@ -211,8 +211,8 @@ const ScenarioPlanning: React.FC = () => {
 
             {/* COMPARACAO LADO A LADO DOS 3 CENARIOS */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
-                <h2 className="text-lg font-bold text-gray-900 mb-1">Comparativo de Cenarios</h2>
-                <p className="text-xs text-gray-400 mb-5">Visao rapida dos 3 cenarios lado a lado</p>
+                <h2 className="text-lg font-bold text-gray-900 mb-1">Comparativo de Cenários</h2>
+                <p className="text-xs text-gray-400 mb-5">Visão rapida dos 3 cenários lado a lado</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {scenarioSummary.map(s => {
                         const colors = scenarioColors[s.name] || scenarioColors['Conservador'];
@@ -254,7 +254,7 @@ const ScenarioPlanning: React.FC = () => {
 
             {(['Otimista', 'Conservador', 'Disruptivo'] as ScenarioName[]).map(scenarioName => (
                 <div key={scenarioName} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                    <h2 className={clsx("text-2xl font-extrabold", scenarioColors[scenarioName]?.text || 'text-blue-700')}>{`Cenario ${scenarioName}`}</h2>
+                    <h2 className={clsx("text-2xl font-extrabold", scenarioColors[scenarioName]?.text || 'text-blue-700')}>{`Cenário ${scenarioName}`}</h2>
                     
                     <div className="flex items-center gap-4 no-print">
                         <label className="text-sm font-medium">Modo de projeção:</label>
@@ -398,7 +398,7 @@ const ScenarioPlanning: React.FC = () => {
                                     </button>
                                 </div>
                                 <div className="mt-2 text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded-md min-h-[70px] border">
-                                    {planData.scenarioRelatedData[scenarioName].scenarioAnalysis || "Clique no botão para que a IA explique como sua pontuação estratégica influencia este cenário."}
+                                    {planData.scenarioRelatedData[scenarioName].scenarioAnalysis || "Clique no botão para que a IA explique como sua pontuação estratégica influência este cenário."}
                                 </div>
                             </div>
                         </div>

@@ -72,7 +72,7 @@ const ActionCard: React.FC<{
                         </div>
                         {/* Title */}
                         <h4 className="text-sm font-bold text-gray-900 leading-snug">
-                            {item.what || <span className="text-gray-400 italic">Clique para definir a acao...</span>}
+                            {item.what || <span className="text-gray-400 italic">Clique para definir a ação...</span>}
                         </h4>
                         {/* Expected Result */}
                         {item.expectedResult && (
@@ -130,13 +130,13 @@ const ActionCard: React.FC<{
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">O Que? (What)</label>
                             <textarea value={item.what} onChange={(e) => updateItem(item.id, 'what', e.target.value)}
                                 className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-sm resize-y min-h-[70px]"
-                                placeholder="Descreva a acao a ser executada..." rows={2} />
+                                placeholder="Descreva a ação a ser executada..." rows={2} />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Por Que? (Why)</label>
                             <textarea value={item.why} onChange={(e) => updateItem(item.id, 'why', e.target.value)}
                                 className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange focus:border-brand-orange text-sm resize-y min-h-[70px]"
-                                placeholder="Qual o motivo e impacto desta acao?" rows={2} />
+                                placeholder="Qual o motivo e impacto desta ação?" rows={2} />
                         </div>
                     </div>
 
@@ -162,7 +162,7 @@ const ActionCard: React.FC<{
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Quem? (Who)</label>
                             <input type="text" value={item.who} onChange={(e) => updateItem(item.id, 'who', e.target.value)}
                                 className="w-full p-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange text-sm"
-                                placeholder="Responsavel" />
+                                placeholder="Responsável" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Quando? (When)</label>
@@ -174,7 +174,7 @@ const ActionCard: React.FC<{
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Onde? (Where)</label>
                             <input type="text" value={item.where} onChange={(e) => updateItem(item.id, 'where', e.target.value)}
                                 className="w-full p-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange text-sm"
-                                placeholder="Local/Area" />
+                                placeholder="Local/Área" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Quanto? (R$)</label>
@@ -192,7 +192,7 @@ const ActionCard: React.FC<{
                         <button onClick={() => removeItem(item.id)}
                             className="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            Remover Acao
+                            Remover Ação
                         </button>
                     </div>
                 </div>
@@ -272,9 +272,9 @@ const ActionPlan: React.FC = () => {
         <div className="space-y-6">
             {/* Header */}
             <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
-                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Plano de Acao</h1>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Plano de Ação</h1>
                 <p className="text-gray-500 mt-2">
-                    Transforme seus objetivos estrategicos em acoes concretas, priorizadas e com resultados mensuraveis.
+                    Transforme seus objetivos estratégicos em ações concretas, priorizadas e com resultados mensuráveis.
                 </p>
             </header>
 
@@ -304,7 +304,7 @@ const ActionPlan: React.FC = () => {
                     </div>
                     <div className="bg-gray-50 p-3 rounded-xl border text-center">
                         <p className="text-2xl font-extrabold text-gray-500">{stats.naoIniciadas}</p>
-                        <p className="text-xs text-gray-500 font-medium">Nao Iniciadas</p>
+                        <p className="text-xs text-gray-500 font-medium">Não Iniciadas</p>
                     </div>
                     <div className="bg-blue-50 p-3 rounded-xl border border-blue-200 text-center">
                         <p className="text-2xl font-extrabold text-blue-600">{stats.emAndamento}</p>
@@ -312,7 +312,7 @@ const ActionPlan: React.FC = () => {
                     </div>
                     <div className="bg-green-50 p-3 rounded-xl border border-green-200 text-center">
                         <p className="text-2xl font-extrabold text-green-600">{stats.concluidas}</p>
-                        <p className="text-xs text-green-600 font-medium">Concluidas</p>
+                        <p className="text-xs text-green-600 font-medium">Concluídas</p>
                     </div>
                     <div className="bg-red-50 p-3 rounded-xl border border-red-200 text-center">
                         <p className="text-2xl font-extrabold text-red-500">{stats.atrasadas}</p>
@@ -372,8 +372,8 @@ const ActionPlan: React.FC = () => {
                 <div className="space-y-6">
                     {Object.keys(groupedByCategory).length === 0 && (
                         <div className="bg-white p-12 rounded-2xl shadow-sm border border-gray-100 text-center">
-                            <p className="text-gray-400 text-lg">Nenhuma acao encontrada com os filtros selecionados.</p>
-                            <p className="text-gray-400 text-sm mt-1">Adicione acoes ou ajuste os filtros.</p>
+                            <p className="text-gray-400 text-lg">Nenhuma ação encontrada com os filtros selecionados.</p>
+                            <p className="text-gray-400 text-sm mt-1">Adicione ações ou ajuste os filtros.</p>
                         </div>
                     )}
                     {Object.entries(groupedByCategory).map(([category, catItems]) => {
@@ -385,8 +385,8 @@ const ActionPlan: React.FC = () => {
                                     <span className={clsx("text-sm font-bold px-3 py-1 rounded-full border", cat.bg, cat.color, cat.border)}>
                                         {cat.icon} {category}
                                     </span>
-                                    <span className="text-xs text-gray-400">{catItems.length} {catItems.length === 1 ? 'acao' : 'acoes'}</span>
-                                    <span className="text-xs text-green-500">{catConcluidas} concluida{catConcluidas !== 1 ? 's' : ''}</span>
+                                    <span className="text-xs text-gray-400">{catItems.length} {catItems.length === 1 ? 'ação' : 'ações'}</span>
+                                    <span className="text-xs text-green-500">{catConcluidas} concluída{catConcluidas !== 1 ? 's' : ''}</span>
                                     <div className="flex-1 h-px bg-gray-200" />
                                 </div>
                                 <div className="space-y-3">
@@ -410,7 +410,7 @@ const ActionPlan: React.FC = () => {
                 <div className="space-y-6">
                     {Object.keys(groupedByPriority).length === 0 && (
                         <div className="bg-white p-12 rounded-2xl shadow-sm border border-gray-100 text-center">
-                            <p className="text-gray-400 text-lg">Nenhuma acao encontrada com os filtros selecionados.</p>
+                            <p className="text-gray-400 text-lg">Nenhuma ação encontrada com os filtros selecionados.</p>
                         </div>
                     )}
                     {Object.entries(groupedByPriority).map(([priority, priItems]) => {
@@ -419,9 +419,9 @@ const ActionPlan: React.FC = () => {
                             <div key={priority}>
                                 <div className="flex items-center gap-3 mb-3">
                                     <span className={clsx("text-sm font-bold px-3 py-1 rounded-full border", pri.bg, pri.color, pri.border)}>
-                                        {pri.label} — Fazer {priority === 'Alta' ? 'PRIMEIRO' : priority === 'Média' ? 'em seguida' : 'quando possivel'}
+                                        {pri.label} — Fazer {priority === 'Alta' ? 'PRIMEIRO' : priority === 'Média' ? 'em seguida' : 'quando possível'}
                                     </span>
-                                    <span className="text-xs text-gray-400">{priItems.length} {priItems.length === 1 ? 'acao' : 'acoes'}</span>
+                                    <span className="text-xs text-gray-400">{priItems.length} {priItems.length === 1 ? 'ação' : 'ações'}</span>
                                     <div className="flex-1 h-px bg-gray-200" />
                                 </div>
                                 <div className="space-y-3">
@@ -447,25 +447,25 @@ const ActionPlan: React.FC = () => {
                 <button onClick={addActionPlanItem}
                     className="bg-brand-orange text-white font-bold px-6 py-3 rounded-2xl shadow-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                    Adicionar Nova Acao
+                    Adicionar Nova Ação
                 </button>
             </div>
 
             {/* Help Box */}
             <div className="bg-blue-50 p-5 rounded-2xl border border-blue-200">
-                <h3 className="font-bold text-blue-800 mb-2">Como usar o Plano de Acao</h3>
+                <h3 className="font-bold text-blue-800 mb-2">Como usar o Plano de Ação</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-700">
                     <div>
                         <p className="font-bold mb-1">1. Priorize</p>
-                        <p>Comece pelas acoes de prioridade <strong>Alta</strong> (borda vermelha). Sao as que trazem mais resultado no menor tempo.</p>
+                        <p>Comece pelas ações de prioridade <strong>Alta</strong> (borda vermelha). Sao as que trazem mais resultado no menor tempo.</p>
                     </div>
                     <div>
                         <p className="font-bold mb-1">2. Execute</p>
-                        <p>Defina responsavel, prazo e resultado esperado. Mude o status conforme avanca. Use a visao "Por Prioridade" para saber o que fazer primeiro.</p>
+                        <p>Defina responsável, prazo e resultado esperado. Mude o status conforme avança. Use a visão "Por Prioridade" para saber o que fazer primeiro.</p>
                     </div>
                     <div>
                         <p className="font-bold mb-1">3. Acompanhe</p>
-                        <p>Use o painel de progresso para monitorar. Acoes atrasadas aparecem em vermelho. O objetivo e chegar a 100% de conclusao.</p>
+                        <p>Use o painel de progresso para monitorar. Ações atrasadas aparecem em vermelho. O objetivo é chegar a 100% de conclusão.</p>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,7 @@ const Login: React.FC = () => {
                 throw new Error("O nome e obrigatorio para o cadastro.");
             }
             await authService.signup(email, password, name);
-            setMessage("Conta criada com sucesso! Voce sera redirecionado.");
+            setMessage("Conta criada com sucesso! Você sera redirecionado.");
         } else {
             await authService.login(email, password);
         }
@@ -98,7 +98,7 @@ const Login: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-extrabold text-white">360</div>
-              <div className="text-xs text-gray-500 mt-1">Visao completa</div>
+              <div className="text-xs text-gray-500 mt-1">Visão completa</div>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@ const Login: React.FC = () => {
             {isSignUp ? 'Crie sua conta' : 'Bem-vindo de volta'}
           </h2>
           <p className="text-gray-400 mb-8">
-            {isSignUp ? 'Comece seu planejamento estrategico agora' : 'Acesse seu planejamento estrategico'}
+            {isSignUp ? 'Comece seu planejamento estratégico agora' : 'Acesse seu planejamento estratégico'}
           </p>
 
           {/* Google Sign In */}

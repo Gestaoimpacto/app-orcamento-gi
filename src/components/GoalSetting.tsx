@@ -154,7 +154,7 @@ const GoalSetting: React.FC = () => {
      const renderStrategicObjectives = (objectives: StrategicObjectives) => (
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 1</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 1</label>
                 <input
                     type="text"
                     value={objectives.objective1}
@@ -164,7 +164,7 @@ const GoalSetting: React.FC = () => {
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 2</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 2</label>
                 <input
                     type="text"
                     value={objectives.objective2}
@@ -174,7 +174,7 @@ const GoalSetting: React.FC = () => {
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Objetivo Estrategico 3</label>
+                <label className="block text-sm font-medium text-gray-700">Objetivo Estratégico 3</label>
                 <input
                     type="text"
                     value={objectives.objective3}
@@ -202,7 +202,7 @@ const GoalSetting: React.FC = () => {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
-                    <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Diagnostico Rapido 2025</h2>
+                    <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Diagnóstico Rápido 2025</h2>
                     <dl className="space-y-1">
                         <DiagnosticItem label="Receita Liquida" value={formatCurrency(summary2025.receitaTotal)} />
                         <DiagnosticItem label="Margem EBITDA" value={formatPercentage(summary2025.margemEbitda)} />

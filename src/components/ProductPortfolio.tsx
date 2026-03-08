@@ -57,8 +57,8 @@ const ProductPortfolio: React.FC = () => {
                     <svg className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                 </div>
                 <div>
-                    <h2 className="text-lg font-bold text-gray-900">Analise de Portfolio (Curva ABC)</h2>
-                    <p className="text-xs text-gray-400">Liste seus produtos/servicos com receita e custo para ver a classificacao ABC e margem de contribuicao</p>
+                    <h2 className="text-lg font-bold text-gray-900">Análise de Portfolio (Curva ABC)</h2>
+                    <p className="text-xs text-gray-400">Liste seus produtos/servicos com receita e custo para ver a classificação ABC e margem de contribuição</p>
                 </div>
             </div>
             
@@ -128,7 +128,7 @@ const ProductPortfolio: React.FC = () => {
             {/* Visualizacao da Curva ABC com Margem */}
             {abcAnalysis.items.length > 0 && (
                 <div className="mt-8 space-y-5">
-                    <h3 className="text-base font-bold text-gray-900">Resultado da Curva ABC + Margem de Contribuicao</h3>
+                    <h3 className="text-base font-bold text-gray-900">Resultado da Curva ABC + Margem de Contribuição</h3>
                     
                     {/* Legenda */}
                     <div className="flex flex-wrap gap-4 text-xs">
@@ -146,7 +146,7 @@ const ProductPortfolio: React.FC = () => {
                                     <th className="px-3 py-2.5 text-left font-semibold text-gray-600">Produto/Servico</th>
                                     <th className="px-3 py-2.5 text-right font-semibold text-gray-600">Receita</th>
                                     <th className="px-3 py-2.5 text-right font-semibold text-gray-600">Custo Direto</th>
-                                    <th className="px-3 py-2.5 text-right font-semibold text-gray-600">Margem de Contribuicao</th>
+                                    <th className="px-3 py-2.5 text-right font-semibold text-gray-600">Margem de Contribuição</th>
                                     <th className="px-3 py-2.5 text-right font-semibold text-gray-600">Margem %</th>
                                     <th className="px-3 py-2.5 text-right font-semibold text-gray-600">% Receita</th>
                                     <th className="px-3 py-2.5 text-center font-semibold text-gray-600">Barra</th>
@@ -212,7 +212,7 @@ const ProductPortfolio: React.FC = () => {
                                             <span className="font-bold text-gray-800">{formatCurrency(revenue, true)} ({formatPercentage(revenuePct, 0)})</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-500">Margem de Contribuicao:</span>
+                                            <span className="text-gray-500">Margem de Contribuição:</span>
                                             <span className="font-bold text-gray-800">{formatCurrency(margin, true)}</span>
                                         </div>
                                         <div className="flex justify-between">
@@ -243,7 +243,7 @@ const ProductPortfolio: React.FC = () => {
                                         if (highMarginC.length > 0) {
                                             return `Oportunidade: ${highMarginC.map(i => `"${i.name}"`).join(', ')} ${highMarginC.length === 1 ? 'e' : 'sao'} Classe C mas ${highMarginC.length === 1 ? 'tem' : 'tem'} margem alta (acima de 40%). Investir em vendas desses produtos pode ser muito lucrativo.`;
                                         }
-                                        return 'Analise a relacao entre classificacao ABC e margem de contribuicao. Produtos Classe A com margem baixa precisam de atencao urgente. Produtos Classe C com margem alta sao oportunidades de crescimento.';
+                                        return 'Análise a relação entre classificação ABC e margem de contribuição. Produtos Classe A com margem baixa precisam de atencao urgente. Produtos Classe C com margem alta sao oportunidades de crescimento.';
                                     })()}
                                 </p>
                             </div>

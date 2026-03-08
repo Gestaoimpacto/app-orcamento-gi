@@ -154,7 +154,7 @@ const MarketingFunnel: React.FC = () => {
                     </button>
                 </div>
                 <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[200px] font-sans leading-relaxed">
-                    {planData.analysis.marketingFunnelAnalysis || "Clique no botão para que a IA (atuando como um CMO) analise a projeção do seu funil para 2026, identifique o principal gargalo e sugira 3 ações para otimizá-lo."}
+                    {planData.analysis.marketingFunnelAnalysis || "Clique no botão para que a IA (atuando como um CMO) análise a projeção do seu funil para 2026, identifique o principal gargalo e sugira 3 ações para otimizá-lo."}
                 </div>
             </div>
         </div>

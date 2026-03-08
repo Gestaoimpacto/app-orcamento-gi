@@ -48,7 +48,7 @@ const MarketComparison: React.FC = () => {
             higherBetter: true 
         },
         { 
-            label: 'Custo de Aquisicao (CAC)', 
+            label: 'Custo de Aquisição (CAC)', 
             user: summary2025.cac, 
             avg: 1200, top10: 800, 
             format: (v: number) => formatCurrency(v),
@@ -169,7 +169,7 @@ const WhatIfSimulator: React.FC = () => {
                 </div>
                 <div>
                     <h2 className="text-lg font-bold text-gray-900">Simulador What-If</h2>
-                    <p className="text-xs text-gray-400">Analise o impacto de diferentes alavancas no resultado de 2026</p>
+                    <p className="text-xs text-gray-400">Análise o impacto de diferentes alavancas no resultado de 2026</p>
                 </div>
             </div>
             {!isEnabled && (
@@ -185,7 +185,7 @@ const WhatIfSimulator: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <SimInput label="Aumentar Ticket Medio" value={simTicket} onChange={setSimTicket} suffix="%" disabled={!isEnabled} />
                         <SimInput label="Reduzir Custo Variavel" value={simVarCostReduction} onChange={setSimVarCostReduction} suffix="%" disabled={!isEnabled} />
-                        <SimInput label="Novas Contratacoes" value={simNewHires} onChange={setSimNewHires} suffix="pessoas" disabled={!isEnabled} />
+                        <SimInput label="Novas Contratações" value={simNewHires} onChange={setSimNewHires} suffix="pessoas" disabled={!isEnabled} />
                         <SimInput label="Investimento em Marketing" value={simMarketing} onChange={setSimMarketing} prefix="R$" disabled={!isEnabled} />
                     </div>
                 </div>
@@ -237,9 +237,9 @@ const FinancialAlerts: React.FC = () => {
 
         // LTV/CAC
         if (summary2025.relacaoLtvCac > 0 && summary2025.relacaoLtvCac < 2) {
-            list.push({ type: 'danger', title: 'LTV/CAC Insustentavel', message: `Relacao LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. Abaixo de 2x significa que voce gasta mais para adquirir clientes do que eles geram de valor.` });
+            list.push({ type: 'danger', title: 'LTV/CAC Insustentavel', message: `Relação LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. Abaixo de 2x significa que você gasta mais para adquirir clientes do que eles geram de valor.` });
         } else if (summary2025.relacaoLtvCac >= 2 && summary2025.relacaoLtvCac < 3) {
-            list.push({ type: 'warning', title: 'LTV/CAC Precisa Melhorar', message: `Relacao LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. O ideal e acima de 3x. Invista em retencao ou reduza o custo de aquisicao.` });
+            list.push({ type: 'warning', title: 'LTV/CAC Precisa Melhorar', message: `Relação LTV/CAC de ${formatNumber(summary2025.relacaoLtvCac)}x. O ideal e acima de 3x. Invista em retencao ou reduza o custo de aquisição.` });
         }
 
         // Ponto de Equilibrio vs Receita Media
@@ -247,7 +247,7 @@ const FinancialAlerts: React.FC = () => {
         if (summary2025.pontoEquilibrioContabil > 0 && receitaMediaMensal > 0) {
             const peRatio = summary2025.pontoEquilibrioContabil / receitaMediaMensal;
             if (peRatio > 1) {
-                list.push({ type: 'danger', title: 'Abaixo do Ponto de Equilibrio', message: `Sua receita media mensal (${formatCurrency(receitaMediaMensal, true)}) esta abaixo do ponto de equilibrio (${formatCurrency(summary2025.pontoEquilibrioContabil, true)}). A empresa esta operando no prejuizo.` });
+                list.push({ type: 'danger', title: 'Abaixo do Ponto de Equilibrio', message: `Sua receita media mensal (${formatCurrency(receitaMediaMensal, true)}) esta abaixo do ponto de equilibrio (${formatCurrency(summary2025.pontoEquilibrioContabil, true)}). A empresa esta operando no prejuízo.` });
             } else if (peRatio > 0.85) {
                 list.push({ type: 'warning', title: 'Proximo do Ponto de Equilibrio', message: `Sua receita media mensal esta apenas ${formatPercentage((1 - peRatio) * 100)} acima do ponto de equilibrio. Margem de seguranca muito baixa.` });
             }
@@ -400,20 +400,20 @@ const Dashboard: React.FC = () => {
                             <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900">Analise de Mercado com Inteligencia Artificial</h2>
-                            <p className="text-xs text-gray-400">Compare seus indicadores com o mercado. Preencha o Ramo de Atividade nas Configuracoes.</p>
+                            <h2 className="text-lg font-bold text-gray-900">Análise de Mercado com Inteligência Artificial</h2>
+                            <p className="text-xs text-gray-400">Compare seus indicadores com o mercado. Preencha o Ramo de Atividade nas Configurações.</p>
                         </div>
                     </div>
                     <button onClick={handleGenerateAnalysis} disabled={isLoading || !planData.companyProfile.industry} className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
                         {isLoading ? (
                             <><span className="animate-spin">&#9696;</span> Analisando...</>
                         ) : (
-                            <><svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Gerar Analise</>
+                            <><svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Gerar Análise</>
                         )}
                     </button>
                 </div>
                 <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-5 rounded-2xl border border-gray-100 min-h-[120px] leading-relaxed">
-                    {planData.analysis?.benchmarkAnalysis || "A analise da Inteligencia Artificial sobre seu posicionamento de mercado aparecera aqui apos clicar em 'Gerar Analise'."}
+                    {planData.analysis?.benchmarkAnalysis || "A análise da Inteligência Artificial sobre seu posicionamento de mercado aparecerá aqui apos clicar em 'Gerar Análise'."}
                 </div>
             </div>
         </div>

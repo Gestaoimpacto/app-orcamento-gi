@@ -128,7 +128,7 @@ const PeopleDataSheet: React.FC<PeopleDataSheetProps> = ({ data, onUpdate }) => 
                     {/* HEADCOUNT */}
                     <tr className="bg-orange-50"><td colSpan={15} className="p-2 font-bold text-orange-800">HEADCOUNT</td></tr>
                     {renderInputRow('headcount', 'totalColaboradores', 'Nº Total Colaboradores', 'Ponto final do mês (Dezembro no Total)')}
-                    {renderInputRow('headcount', 'contratacoes', 'Nº Contratações', 'Entraram no ano')}
+                    {renderInputRow('headcount', 'contratações', 'Nº Contratações', 'Entraram no ano')}
                     {renderInputRow('headcount', 'desligamentosVoluntarios', 'Nº Desligamentos Voluntários', 'Pediram para sair')}
                     {renderInputRow('headcount', 'desligamentosInvoluntarios', 'Nº Desligamentos Involuntários', 'Foram desligados')}
                     {renderCalculatedRow('Taxa Turnover (%)', '(Total Deslig./Headcount Médio)', monthlyTurnover, totalTurnover, (v) => formatPercentage(v))}

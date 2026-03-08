@@ -309,7 +309,7 @@ const MonthlyTracking: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[150px] font-sans leading-relaxed">
-                         {actual.analysisText || "Preencha os dados realizados do mês e clique em \"Gerar Análise com IA\" para que a IA (atuando como um CFO) analise o desempenho e sugira ações corretivas."}
+                         {actual.analysisText || "Preencha os dados realizados do mês e clique em \"Gerar Análise com IA\" para que a IA (atuando como um CFO) análise o desempenho e sugira ações corretivas."}
                     </div>
                  </div>
 

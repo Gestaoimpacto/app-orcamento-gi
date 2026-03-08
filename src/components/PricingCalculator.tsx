@@ -353,7 +353,7 @@ const PricingCalculator: React.FC = () => {
         <div className="space-y-8">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Precificacao Estrategica</h1>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Precificação Estratégica</h1>
                     <p className="text-gray-500 mt-2">
                         Formacao de preco profissional com Markup Divisor, analise de margem, simulador de descontos e curva ABC.
                     </p>
@@ -401,7 +401,7 @@ const PricingCalculator: React.FC = () => {
                             <div className="space-y-2">
                                 {type === 'product' ? (
                                     <>
-                                        <InputGroup label="Custo Aquisicao/Producao" value={detailedCosts.purchasePrice} onChange={v => setDetailedCosts(p => ({...p, purchasePrice: v}))} prefix="R$" />
+                                        <InputGroup label="Custo Aquisição/Produção" value={detailedCosts.purchasePrice} onChange={v => setDetailedCosts(p => ({...p, purchasePrice: v}))} prefix="R$" />
                                         <InputGroup label="Frete Entrada (Unit.)" value={detailedCosts.inboundFreight} onChange={v => setDetailedCosts(p => ({...p, inboundFreight: v}))} prefix="R$" />
                                         <InputGroup label="Embalagem" value={detailedCosts.packaging} onChange={v => setDetailedCosts(p => ({...p, packaging: v}))} prefix="R$" />
                                         <InputGroup label="Outros Custos Diretos" value={detailedCosts.otherDirectCosts} onChange={v => setDetailedCosts(p => ({...p, otherDirectCosts: v}))} prefix="R$" />
@@ -567,7 +567,7 @@ const PricingCalculator: React.FC = () => {
                                                     <p>Preco = {formatCurrency(directCost)} / {financialCalc.divisor.toFixed(4).replace('.', ',')}</p>
                                                     <p className="font-bold text-brand-orange mt-1">Preco = {formatCurrency(financialCalc.suggestedPrice)}</p>
                                                     {behavioralScore !== 5 && (
-                                                        <p className="text-gray-500 mt-1">x Fator Estrategico = {formatCurrency(financialCalc.finalPrice)}</p>
+                                                        <p className="text-gray-500 mt-1">x Fator Estratégico = {formatCurrency(financialCalc.finalPrice)}</p>
                                                     )}
                                                 </div>
                                                 <p className="text-xs mt-2"><strong>Custo Fixo Rateado:</strong> {formatCurrency(financialCalc.fixedValue)} (aluguel, luz, equipe adm...)</p>
@@ -875,7 +875,7 @@ const PricingCalculator: React.FC = () => {
                         {/* Break-even Timeline */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-fit">
                             <h3 className="text-lg font-bold text-brand-blue mb-2">Jornada do Lucro Mensal</h3>
-                            <p className="text-xs text-gray-500 mb-6">Em que dia do mes voce termina de pagar os custos e comeca a lucrar?</p>
+                            <p className="text-xs text-gray-500 mb-6">Em que dia do mes você termina de pagar os custos e comeca a lucrar?</p>
                             
                             <div className="flex h-12 w-full rounded-lg overflow-hidden border border-gray-200 mb-2">
                                 <div 
@@ -916,8 +916,8 @@ const PricingCalculator: React.FC = () => {
                             <div className="mt-4 text-center p-3 bg-gray-50 rounded-lg">
                                 <p className={clsx("text-xl font-bold", mixAnalysis.breakEvenDay > 30 ? "text-red-600" : "text-gray-900")}>
                                     {mixAnalysis.breakEvenDay > 30 
-                                        ? "Sua operacao esta no prejuizo." 
-                                        : `Voce comeca a lucrar no dia ${mixAnalysis.breakEvenDay}.`
+                                        ? "Sua operação esta no prejuízo." 
+                                        : `Você comeca a lucrar no dia ${mixAnalysis.breakEvenDay}.`
                                     }
                                 </p>
                             </div>

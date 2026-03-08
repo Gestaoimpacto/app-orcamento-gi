@@ -100,7 +100,7 @@ const Settings: React.FC = () => {
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
             <header className="text-center">
-                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Configuracoes</h1>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Configurações</h1>
                 <p className="text-gray-500 mt-2">
                     Gerencie os dados da sua empresa e as integracoes do sistema.
                 </p>
@@ -108,10 +108,10 @@ const Settings: React.FC = () => {
             
             {/* GEMINI AI CONFIG SECTION */}
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Configuracao de IA (Google Gemini)</h2>
+                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Configuração de IA (Google Gemini)</h2>
                 
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800">
-                    <p>Para utilizar as analises inteligentes e sugestoes de metas, voce precisa de uma <strong>Chave de API do Google</strong>. </p>
+                    <p>Para utilizar as analises inteligentes e sugestoes de metas, você precisa de uma <strong>Chave de API do Google</strong>. </p>
                     <p className="mt-2">
                         1. Acesse o <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="font-bold underline">Google AI Studio</a>.<br/>
                         2. Clique em "Create API Key".<br/>
@@ -120,7 +120,7 @@ const Settings: React.FC = () => {
                 </div>
 
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-sm text-green-800">
-                    <p><strong>A chave e salva no seu perfil (Firebase).</strong> Voce pode acessar de qualquer dispositivo sem precisar configurar novamente.</p>
+                    <p><strong>A chave e salva no seu perfil (Firebase).</strong> Você pode acessar de qualquer dispositivo sem precisar configurar novamente.</p>
                 </div>
 
                 <div>
@@ -162,7 +162,7 @@ const Settings: React.FC = () => {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Informacoes da Empresa</h2>
+                <h2 className="text-lg font-bold text-gray-900 border-b pb-3">Informações da Empresa</h2>
                 
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome da Empresa</label>
@@ -226,7 +226,7 @@ const Settings: React.FC = () => {
                 <div className="flex items-center justify-between border-b pb-3">
                     <div>
                         <h2 className="text-lg font-bold text-gray-900">Pesquisa de Mercado por CNPJ</h2>
-                        <p className="text-sm text-gray-500 mt-1">Analise automatica do mercado regional usando dados oficiais + IA</p>
+                        <p className="text-sm text-gray-500 mt-1">Análise automática do mercado regional usando dados oficiais + IA</p>
                     </div>
                     <button
                         onClick={handleMarketResearch}
@@ -291,7 +291,7 @@ const Settings: React.FC = () => {
                                     { label: 'Municipio/UF', value: `${cnpjData.municipio}/${cnpjData.uf}` },
                                     { label: 'Capital Social', value: formatCnpjDataValue(cnpjData.capitalSocial) },
                                     { label: 'Data de Abertura', value: cnpjData.dataAbertura },
-                                    { label: 'Situacao', value: cnpjData.situacao },
+                                    { label: 'Situação', value: cnpjData.situacao },
                                 ].map((item, i) => (
                                     <div key={i} className="bg-white/70 p-3 rounded-lg">
                                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{item.label}</span>
@@ -331,7 +331,7 @@ const Settings: React.FC = () => {
                 {!cnpjData && !isResearching && !researchError && planData.companyProfile.cnpj && planData.companyProfile.geminiApiKey && (
                     <div className="text-center py-8 text-gray-400">
                         <svg className="h-12 w-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <p className="text-sm">Clique em <strong>"Pesquisar Mercado"</strong> para gerar uma analise completa do seu setor e regiao.</p>
+                        <p className="text-sm">Clique em <strong>"Pesquisar Mercado"</strong> para gerar uma análise completa do seu setor e região.</p>
                     </div>
                 )}
             </div>

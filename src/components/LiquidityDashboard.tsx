@@ -85,7 +85,7 @@ const LiquidityDashboard: React.FC = () => {
                 <MetricCard 
                     title="Saldo Final de Caixa (Dezembro)" 
                     value={formatCurrency(liquidity.cashBalanceProjection?.['dez'])} 
-                    subtext="Projecao acumulada no fim do ano" 
+                    subtext="Projeção acumulada no fim do ano" 
                     color="blue" 
                     icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" /></svg>}
                     explanation="E quanto dinheiro sobrara na conta da empresa no ultimo dia do ano, considerando todas as receitas, despesas, investimentos e emprestimos planejados. E seu colchao de seguranca."
@@ -96,7 +96,7 @@ const LiquidityDashboard: React.FC = () => {
                     subtext="Media mensal de queima de caixa" 
                     color="red" 
                     icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" /></svg>}
-                    explanation="Indica a velocidade com que a empresa 'queima' dinheiro em meses de prejuizo ou alto investimento. Se for R$ 50k, significa que voce precisa injetar ou ter R$ 50k guardado todo mes para nao quebrar."
+                    explanation="Indica a velocidade com que a empresa 'queima' dinheiro em meses de prejuízo ou alto investimento. Se for R$ 50k, significa que você precisa injetar ou ter R$ 50k guardado todo mes para nao quebrar."
                 />
                 <MetricCard 
                     title="Pista de Sobrevivencia (Runway)" 
@@ -104,7 +104,7 @@ const LiquidityDashboard: React.FC = () => {
                     subtext="Sobrevivencia sem novas receitas" 
                     color={liquidity.runwayMonths < 6 ? 'red' : 'green'} 
                     icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                    explanation="Tempo de vida da empresa. Se voce parasse de vender hoje, quantos meses seu caixa atual aguentaria pagando as contas fixas? Menos de 6 meses e zona de perigo."
+                    explanation="Tempo de vida da empresa. Se você parasse de vender hoje, quantos meses seu caixa atual aguentaria pagando as contas fixas? Menos de 6 meses e zona de perigo."
                 />
                 <MetricCard 
                     title="Ciclo Financeiro" 
@@ -112,7 +112,7 @@ const LiquidityDashboard: React.FC = () => {
                     subtext={`Receber: ${liquidity.cycleSummary.pmr}d + Estoque: ${liquidity.cycleSummary.pme}d - Pagar: ${liquidity.cycleSummary.pmp}d`} 
                     color="orange" 
                     icon={<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
-                    explanation="O tempo que seu dinheiro fica 'preso' na operacao. E o intervalo entre pagar o fornecedor e receber do cliente. Quanto maior, mais caixa voce precisa ter guardado para girar a operacao."
+                    explanation="O tempo que seu dinheiro fica 'preso' na operação. E o intervalo entre pagar o fornecedor e receber do cliente. Quanto maior, mais caixa você precisa ter guardado para girar a operação."
                 />
             </div>
 
@@ -148,9 +148,9 @@ const LiquidityDashboard: React.FC = () => {
                         <div className="text-sm text-blue-800">
                             <p className="font-bold mb-1">Como interpretar este grafico?</p>
                             <div className="space-y-1 text-xs leading-relaxed">
-                                <p><strong>Linha Verde (Caixa):</strong> E o dinheiro real no banco. Se cair abaixo de zero, voce entrou no cheque especial.</p>
-                                <p><strong>Linha Laranja (NCG):</strong> E quanto dinheiro a operacao "pede" para rodar (Estoques + Contas a Receber - Fornecedores).</p>
-                                <p><strong>O Perigo (Efeito Tesoura):</strong> Se a linha Laranja cresce mais rapido que a Verde, voce esta vendendo muito mas recebendo pouco/tarde. Isso pode quebrar a empresa mesmo com lucro.</p>
+                                <p><strong>Linha Verde (Caixa):</strong> E o dinheiro real no banco. Se cair abaixo de zero, você entrou no cheque especial.</p>
+                                <p><strong>Linha Laranja (NCG):</strong> E quanto dinheiro a operação "pede" para rodar (Estoques + Contas a Receber - Fornecedores).</p>
+                                <p><strong>O Perigo (Efeito Tesoura):</strong> Se a linha Laranja cresce mais rápido que a Verde, você esta vendendo muito mas recebendo pouco/tarde. Isso pode quebrar a empresa mesmo com lucro.</p>
                             </div>
                         </div>
                     </div>

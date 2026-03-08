@@ -69,7 +69,7 @@ const InvestmentDataSheet: React.FC<InvestmentDataSheetProps> = ({ data, onUpdat
                 <div className="pt-2 border-t mt-4">
                     <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total CAPEX 2025</p>
                     <p className="text-2xl font-black text-brand-orange">{formatCurrency(totalCapex)}</p>
-                    <p className="text-[10px] text-gray-400 mt-1 italic">*Soma automatica dos itens acima</p>
+                    <p className="text-[10px] text-gray-400 mt-1 italic">*Soma automática dos itens acima</p>
                 </div>
             </div>
 

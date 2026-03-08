@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-type PhaseKey = 'diagnostico' | 'direcao' | 'plano' | 'orcamento' | 'execucao' | 'cfo' | 'ferramentas';
+type PhaseKey = 'diagnóstico' | 'direcao' | 'plano' | 'orçamento' | 'execução' | 'cfo' | 'ferramentas';
 
 interface GuideSection {
   id: string;
@@ -15,18 +15,18 @@ interface GuideSection {
 }
 
 const PHASES: { key: PhaseKey; label: string; color: string; bgColor: string; borderColor: string; description: string }[] = [
-  { key: 'diagnostico', label: 'Fase 1: Diagnóstico', color: 'text-orange-700', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', description: 'Onde estamos? Colete e analise os dados de 2025.' },
+  { key: 'diagnóstico', label: 'Fase 1: Diagnóstico', color: 'text-orange-700', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', description: 'Onde estamos? Colete e análise os dados de 2025.' },
   { key: 'direcao', label: 'Fase 2: Direção', color: 'text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', description: 'Para onde vamos? Defina metas e objetivos para 2026.' },
   { key: 'plano', label: 'Fase 3: Plano de Ação', color: 'text-emerald-700', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200', description: 'Como chegaremos lá? Planeje as ações comerciais, de marketing e operacionais.' },
-  { key: 'orcamento', label: 'Fase 4: Orçamento', color: 'text-purple-700', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', description: 'Quanto custará? Projete cenários e monte o planejamento financeiro.' },
-  { key: 'execucao', label: 'Fase 5: Execução e Controle', color: 'text-amber-700', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', description: 'Acompanhe o realizado vs. planejado mês a mês.' },
+  { key: 'orçamento', label: 'Fase 4: Orçamento', color: 'text-purple-700', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', description: 'Quanto custará? Projete cenários e monte o planejamento financeiro.' },
+  { key: 'execução', label: 'Fase 5: Execução e Controle', color: 'text-amber-700', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', description: 'Acompanhe o realizado vs. planejado mês a mês.' },
   { key: 'cfo', label: 'Análise CFO', color: 'text-red-700', bgColor: 'bg-red-50', borderColor: 'border-red-200', description: 'Visão financeira avançada: liquidez, KPIs e simulações.' },
   { key: 'ferramentas', label: 'Ferramentas de Apoio', color: 'text-gray-700', bgColor: 'bg-gray-50', borderColor: 'border-gray-200', description: 'Calculadoras, relatórios e configurações.' },
 ];
 
 const GUIDE_SECTIONS: GuideSection[] = [
   {
-    id: 'coleta', number: 1, title: 'Coleta de Dados 2025', phase: 'diagnostico',
+    id: 'coleta', number: 1, title: 'Coleta de Dados 2025', phase: 'diagnóstico',
     icon: '📊',
     whatIs: 'O ponto de partida de todo o planejamento. Aqui você insere todos os dados financeiros e operacionais reais da sua empresa em 2025. É a base que alimenta TODAS as outras ferramentas do sistema.',
     howTo: [
@@ -48,7 +48,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'impostos', number: 2, title: 'Impostos', phase: 'diagnostico',
+    id: 'impostos', number: 2, title: 'Impostos', phase: 'diagnóstico',
     icon: '🏛️',
     whatIs: 'Ferramenta para calcular a carga tributária da sua empresa em 2025. O imposto é fundamental para calcular a Receita Líquida, que é a base de todo o planejamento financeiro.',
     howTo: [
@@ -66,7 +66,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'estrategica', number: 3, title: 'Análise Estratégica', phase: 'diagnostico',
+    id: 'estratégica', number: 3, title: 'Análise Estratégica', phase: 'diagnóstico',
     icon: '🎯',
     whatIs: 'Um conjunto de 3 ferramentas clássicas de estratégia para analisar o posicionamento da sua empresa no mercado: Análise SWOT, Estratégia do Oceano Azul e Relógio Estratégico de Bowman.',
     howTo: [
@@ -154,7 +154,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'acao', number: 8, title: 'Plano de Ação (5W2H)', phase: 'plano',
+    id: 'ação', number: 8, title: 'Plano de Ação (5W2H)', phase: 'plano',
     icon: '✅',
     whatIs: 'Ferramenta para criar um plano de ação detalhado usando a metodologia 5W2H: O Quê, Por Quê, Onde, Quando, Quem, Como e Quanto Custa.',
     howTo: [
@@ -172,7 +172,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'cenarios', number: 9, title: 'Orçamento e Cenários', phase: 'orcamento',
+    id: 'cenários', number: 9, title: 'Orçamento e Cenários', phase: 'orçamento',
     icon: '💰',
     whatIs: 'A ferramenta mais poderosa do sistema. Projeta a receita para 2026 em 3 cenários diferentes (Otimista, Conservador e Disruptivo), usando a fórmula: Crescimento Base + Fator Estratégico + Bônus de Produtividade.',
     howTo: [
@@ -193,7 +193,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'financeiro', number: 10, title: 'Planejamento Financeiro 2026', phase: 'orcamento',
+    id: 'financeiro', number: 10, title: 'Planejamento Financeiro 2026', phase: 'orçamento',
     icon: '📋',
     whatIs: 'Projeção financeira completa para 2026, incluindo DRE (Demonstração do Resultado do Exercício), DFC (Demonstrativo de Fluxo de Caixa) e BP (Balanço Patrimonial). É o resultado final do planejamento orçamentário.',
     howTo: [
@@ -211,7 +211,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'resumo', number: 11, title: 'Resumo do Plano', phase: 'execucao',
+    id: 'resumo', number: 11, title: 'Resumo do Plano', phase: 'execução',
     icon: '📑',
     whatIs: 'Dashboard executivo que consolida todos os números do plano 2026 em uma única tela. Ideal para apresentar ao conselho ou sócios.',
     howTo: [
@@ -223,7 +223,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     tips: ['Use esta tela para apresentações ao conselho ou investidores.'],
   },
   {
-    id: 'acompanhamento', number: 12, title: 'Acompanhamento Mensal', phase: 'execucao',
+    id: 'acompanhamento', number: 12, title: 'Acompanhamento Mensal', phase: 'execução',
     icon: '📅',
     whatIs: 'Ferramenta de controle para comparar o que foi PLANEJADO vs. o que foi REALIZADO mês a mês durante 2026. Mostra desvios e tendências.',
     howTo: [
@@ -240,7 +240,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
   {
-    id: 'dre', number: 13, title: 'Comparativo DRE', phase: 'execucao',
+    id: 'dre', number: 13, title: 'Comparativo DRE', phase: 'execução',
     icon: '📊',
     whatIs: 'Comparativo detalhado do DRE (Demonstração do Resultado do Exercício) entre 2025 (real) e 2026 (projetado). Permite entender as variações linha a linha.',
     howTo: [
@@ -324,7 +324,7 @@ const GUIDE_SECTIONS: GuideSection[] = [
   },
 
   {
-    id: 'relatorios', number: 19, title: 'Relatórios', phase: 'ferramentas',
+    id: 'relatórios', number: 19, title: 'Relatórios', phase: 'ferramentas',
     icon: '📄',
     whatIs: 'Gera um relatório completo em texto com a análise estratégica e financeira do seu plano 2026, usando Inteligência Artificial.',
     howTo: [
