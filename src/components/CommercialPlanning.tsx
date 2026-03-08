@@ -480,40 +480,260 @@ const PeopleAnalyticsDashboard: React.FC = () => {
     
     const revenuePerEmployee2025 = summary2025.headcountMedio > 0 ? summary2025.receitaTotal / summary2025.headcountMedio : 0;
     const { productivityGainFactor, projectedRevenue } = planData.analysis.peopleAnalytics;
+    const revenuePerEmployee2026 = revenuePerEmployee2025 * (1 + productivityGainFactor / 100);
+    const headcount2026 = goals2026.pessoas.metaHeadcount || 0;
+    const salarioMedio2025 = summary2025.salarioMedioMensal || 0;
+    const custoAnualColab2025 = summary2025.custoColaboradorAno || 0;
+    const turnover2025 = summary2025.turnoverPercent || 0;
+    const turnoverMeta2026 = goals2026.pessoas.metaTurnover || 0;
+    const roi2025 = summary2025.roiTreinamento || 0;
+    const roiMeta2026 = goals2026.pessoas.metaRoiTreinamento || 0;
+    const absenteismoMeta = goals2026.pessoas.metaAbsenteismo || 0;
 
-    const metricsRows = [
-        { label: "Receita por Colaborador 2025", value: formatCurrency(revenuePerEmployee2025), hint: "Linha de base de produtividade." },
-        { label: "Meta de Reducao de Turnover", value: `${formatPercentage(summary2025.turnoverPercent)} > ${formatPercentage(goals2026.pessoas.metaTurnover)}`, hint: "Menos turnover aumenta a produtividade." },
-        { label: "Meta de ROI de Treinamento", value: `${formatNumber(summary2025.roiTreinamento)}x > ${formatNumber(goals2026.pessoas.metaRoiTreinamento)}x`, hint: "Equipes mais treinadas sao mais eficientes." },
-        { label: "Bonus de Produtividade Calculado", value: formatPercentage(productivityGainFactor), hint: "Ganho percentual estimado com base nas metas de RH.", isHighlight: true, color: 'text-green-600' },
-        { label: "Receita/Colaborador Projetada 2026", value: formatCurrency(revenuePerEmployee2025 * (1 + productivityGainFactor / 100)), hint: "Produtividade base + Bonus." },
-        { label: "Headcount Projetado 2026", value: formatNumber(goals2026.pessoas.metaHeadcount), hint: "Vindo da sua Meta de Pessoas." },
-        { label: "Projecao de Receita (Bottom-Up)", value: formatCurrency(projectedRevenue), hint: "Receita/Colab. 2026 x Headcount 2026.", isHighlight: true, color: 'text-brand-orange' },
+    // Custo estimado de turnover (SHRM: 50-200% do salario anual)
+    const custoTurnoverPorPessoa = custoAnualColab2025 * 0.75;
+    const pessoasPerdidas2025 = Math.round(summary2025.headcountMedio * (turnover2025 / 100));
+    const custoTurnoverTotal2025 = pessoasPerdidas2025 * custoTurnoverPorPessoa;
+    const pessoasPerdidas2026Meta = Math.round(headcount2026 * (turnoverMeta2026 / 100));
+    const custoTurnoverTotal2026Meta = pessoasPerdidas2026Meta * custoTurnoverPorPessoa;
+    const economiaTurnover = custoTurnoverTotal2025 - custoTurnoverTotal2026Meta;
+
+    // Comparativo chart data
+    const comparisonData = [
+        { name: 'Receita/Colab.', atual: revenuePerEmployee2025, meta: revenuePerEmployee2026 },
     ];
 
+    const headcountData = [
+        { name: '2025', value: summary2025.headcountFinal || summary2025.headcountMedio, fill: '#94a3b8' },
+        { name: '2026', value: headcount2026, fill: '#f97316' },
+    ];
+
+    const turnoverData = [
+        { name: '2025', value: turnover2025, fill: '#ef4444' },
+        { name: 'Meta 2026', value: turnoverMeta2026, fill: '#10b981' },
+    ];
+
+    const getStatusColor = (current: number, target: number, lowerIsBetter: boolean) => {
+        if (lowerIsBetter) return current <= target ? 'text-green-600' : 'text-red-600';
+        return current >= target ? 'text-green-600' : 'text-amber-600';
+    };
+
+    const getStatusBg = (current: number, target: number, lowerIsBetter: boolean) => {
+        if (lowerIsBetter) return current <= target ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
+        return current >= target ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200';
+    };
+
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Dashboard de People Analytics</h2>
-            <p className="text-sm text-gray-600 mb-4">
-                Esta analise conecta suas metas de gestao de pessoas a um resultado financeiro tangivel: a projecao de receita que sua equipe e capaz de gerar (Bottom-Up).
-                Use este numero para validar as metas de crescimento (Top-Down) nos seus cenarios.
-            </p>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {metricsRows.map(row => (
-                            <tr key={row.label} className={clsx("hover:bg-gray-50", row.isHighlight && "bg-yellow-50")}>
-                                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800 w-1/3">
-                                    {row.label}
-                                    <p className="text-xs text-gray-500 font-normal">{row.hint}</p>
-                                </td>
-                                <td className={`px-4 py-3 whitespace-nowrap text-lg font-bold text-right ${row.color || 'text-gray-900'}`}>
-                                    {row.value}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+        <div className="space-y-6 mt-6">
+            {/* SECTION 1: KPI Cards */}
+            <div>
+                <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    </span>
+                    Indicadores de Pessoas
+                </h2>
+                <p className="text-sm text-gray-500 mb-4">Visao geral da equipe: produtividade, custos e metas de gestao de pessoas.</p>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 text-white p-4 rounded-2xl shadow-lg">
+                        <p className="text-xs font-medium opacity-80 uppercase">Headcount 2025</p>
+                        <p className="text-2xl font-extrabold mt-1">{formatNumber(summary2025.headcountFinal || summary2025.headcountMedio)}</p>
+                        <p className="text-xs opacity-60">colaboradores</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-brand-orange to-orange-600 text-white p-4 rounded-2xl shadow-lg">
+                        <p className="text-xs font-medium opacity-80 uppercase">Meta Headcount 2026</p>
+                        <p className="text-2xl font-extrabold mt-1">{formatNumber(headcount2026)}</p>
+                        <p className="text-xs opacity-60">colaboradores</p>
+                    </div>
+                    <div className="bg-white p-4 rounded-2xl shadow-sm border">
+                        <p className="text-xs font-medium text-gray-500 uppercase">Salario Medio</p>
+                        <p className="text-xl font-extrabold text-gray-900 mt-1">{formatCurrency(salarioMedio2025)}</p>
+                        <p className="text-xs text-gray-400">/mes por colaborador</p>
+                    </div>
+                    <div className="bg-white p-4 rounded-2xl shadow-sm border">
+                        <p className="text-xs font-medium text-gray-500 uppercase">Custo Anual/Colab.</p>
+                        <p className="text-xl font-extrabold text-gray-900 mt-1">{formatCurrency(custoAnualColab2025, true)}</p>
+                        <p className="text-xs text-gray-400">salario + encargos + beneficios</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* SECTION 2: Produtividade */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </span>
+                    Produtividade da Equipe
+                </h3>
+                <p className="text-sm text-gray-500 mb-6">Quanto cada colaborador gera de receita e como isso evolui com as metas de RH.</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-gray-50 p-5 rounded-xl border text-center">
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-1">Receita/Colaborador 2025</p>
+                        <p className="text-2xl font-extrabold text-gray-900">{formatCurrency(revenuePerEmployee2025, true)}</p>
+                        <p className="text-xs text-gray-400 mt-1">Linha de base atual</p>
+                    </div>
+                    <div className="bg-green-50 p-5 rounded-xl border border-green-200 text-center">
+                        <p className="text-xs font-bold text-green-700 uppercase mb-1">Bonus de Produtividade</p>
+                        <p className="text-2xl font-extrabold text-green-600">+{formatPercentage(productivityGainFactor)}</p>
+                        <p className="text-xs text-green-600/70 mt-1">Ganho estimado com metas de RH</p>
+                    </div>
+                    <div className="bg-brand-orange/5 p-5 rounded-xl border border-brand-orange/20 text-center">
+                        <p className="text-xs font-bold text-brand-orange uppercase mb-1">Receita/Colaborador 2026</p>
+                        <p className="text-2xl font-extrabold text-brand-orange">{formatCurrency(revenuePerEmployee2026, true)}</p>
+                        <p className="text-xs text-gray-400 mt-1">Base + Bonus de produtividade</p>
+                    </div>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <div className="flex items-start gap-3">
+                        <svg className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div className="text-sm text-blue-800">
+                            <p><strong>Como funciona:</strong> O bonus de produtividade e calculado com base nas suas metas de reducao de turnover, aumento do ROI de treinamento e reducao de absenteismo. Menos rotatividade = equipe mais experiente. Mais treinamento = equipe mais eficiente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* SECTION 3: Metas de RH - Comparativo */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    </span>
+                    Metas de Gestao de Pessoas (2025 vs 2026)
+                </h3>
+                <p className="text-sm text-gray-500 mb-6">Comparativo entre o realizado em 2025 e as metas definidas para 2026.</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Turnover */}
+                    <div className={clsx("p-5 rounded-xl border", getStatusBg(turnoverMeta2026, turnover2025, true))}>
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-sm font-bold text-gray-800">Turnover</p>
+                            <span className="text-xs bg-white px-2 py-0.5 rounded-full border">Menor = Melhor</span>
+                        </div>
+                        <div className="flex items-end gap-4">
+                            <div>
+                                <p className="text-xs text-gray-500">2025</p>
+                                <p className="text-xl font-bold text-red-500">{formatPercentage(turnover2025)}</p>
+                            </div>
+                            <svg className="h-5 w-5 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            <div>
+                                <p className="text-xs text-gray-500">Meta 2026</p>
+                                <p className={clsx("text-xl font-bold", getStatusColor(turnoverMeta2026, turnover2025, true))}>{formatPercentage(turnoverMeta2026)}</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Reducao de {formatPercentage(turnover2025 - turnoverMeta2026)} pontos</p>
+                    </div>
+
+                    {/* ROI Treinamento */}
+                    <div className={clsx("p-5 rounded-xl border", getStatusBg(roiMeta2026, roi2025, false))}>
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-sm font-bold text-gray-800">ROI de Treinamento</p>
+                            <span className="text-xs bg-white px-2 py-0.5 rounded-full border">Maior = Melhor</span>
+                        </div>
+                        <div className="flex items-end gap-4">
+                            <div>
+                                <p className="text-xs text-gray-500">2025</p>
+                                <p className="text-xl font-bold text-gray-600">{formatNumber(roi2025)}x</p>
+                            </div>
+                            <svg className="h-5 w-5 text-gray-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            <div>
+                                <p className="text-xs text-gray-500">Meta 2026</p>
+                                <p className={clsx("text-xl font-bold", getStatusColor(roiMeta2026, roi2025, false))}>{formatNumber(roiMeta2026)}x</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Cada R$1 investido retorna R${formatNumber(roiMeta2026)}</p>
+                    </div>
+
+                    {/* Absenteismo */}
+                    <div className="p-5 rounded-xl border bg-gray-50 border-gray-200">
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-sm font-bold text-gray-800">Absenteismo</p>
+                            <span className="text-xs bg-white px-2 py-0.5 rounded-full border">Menor = Melhor</span>
+                        </div>
+                        <div className="flex items-end gap-4">
+                            <div>
+                                <p className="text-xs text-gray-500">Meta 2026</p>
+                                <p className="text-xl font-bold text-gray-700">{formatPercentage(absenteismoMeta)}</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Meta de faltas e atrasos</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* SECTION 4: Impacto Financeiro do Turnover */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" /></svg>
+                    </span>
+                    Impacto Financeiro do Turnover
+                </h3>
+                <p className="text-sm text-gray-500 mb-6">Quanto custa perder pessoas e quanto voce economiza reduzindo o turnover.</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="bg-red-50 p-5 rounded-xl border border-red-200 text-center">
+                        <p className="text-xs font-bold text-red-700 uppercase mb-1">Custo do Turnover 2025</p>
+                        <p className="text-xl font-extrabold text-red-600">{formatCurrency(custoTurnoverTotal2025, true)}</p>
+                        <p className="text-xs text-red-500/70 mt-1">{formatNumber(pessoasPerdidas2025)} pessoas x {formatCurrency(custoTurnoverPorPessoa, true)}</p>
+                    </div>
+                    <div className="bg-amber-50 p-5 rounded-xl border border-amber-200 text-center">
+                        <p className="text-xs font-bold text-amber-700 uppercase mb-1">Custo Projetado 2026</p>
+                        <p className="text-xl font-extrabold text-amber-600">{formatCurrency(custoTurnoverTotal2026Meta, true)}</p>
+                        <p className="text-xs text-amber-500/70 mt-1">{formatNumber(pessoasPerdidas2026Meta)} pessoas (com meta de {formatPercentage(turnoverMeta2026)})</p>
+                    </div>
+                    <div className="bg-green-50 p-5 rounded-xl border border-green-200 text-center">
+                        <p className="text-xs font-bold text-green-700 uppercase mb-1">Economia Estimada</p>
+                        <p className="text-xl font-extrabold text-green-600">{formatCurrency(Math.max(0, economiaTurnover), true)}</p>
+                        <p className="text-xs text-green-500/70 mt-1">ao reduzir turnover de {formatPercentage(turnover2025)} para {formatPercentage(turnoverMeta2026)}</p>
+                    </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-xl border">
+                    <p className="text-xs text-gray-600">
+                        <strong>Referencia:</strong> Segundo a SHRM (Society for Human Resource Management), o custo de substituicao de um colaborador varia entre 50% e 200% do salario anual. Usamos 75% como estimativa conservadora, incluindo recrutamento, treinamento, perda de produtividade e impacto na equipe.
+                    </p>
+                </div>
+            </div>
+
+            {/* SECTION 5: Projecao Bottom-Up */}
+            <div className="bg-gradient-to-br from-brand-dark to-gray-800 p-6 rounded-2xl shadow-lg text-white">
+                <h3 className="text-lg font-bold border-b border-white/20 pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    </span>
+                    Projecao de Receita Bottom-Up (pela Equipe)
+                </h3>
+                <p className="text-sm text-white/60 mb-6">Se cada colaborador gerar a receita projetada, qual seria o faturamento total?</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-white/10 p-4 rounded-xl text-center">
+                        <p className="text-xs font-medium text-white/60 uppercase">Receita/Colab. 2026</p>
+                        <p className="text-xl font-extrabold mt-1">{formatCurrency(revenuePerEmployee2026, true)}</p>
+                    </div>
+                    <div className="bg-white/10 p-4 rounded-xl text-center">
+                        <p className="text-xs font-medium text-white/60 uppercase">x</p>
+                        <p className="text-xl font-extrabold mt-1 text-white/40">x</p>
+                    </div>
+                    <div className="bg-white/10 p-4 rounded-xl text-center">
+                        <p className="text-xs font-medium text-white/60 uppercase">Headcount 2026</p>
+                        <p className="text-xl font-extrabold mt-1">{formatNumber(headcount2026)}</p>
+                    </div>
+                    <div className="bg-brand-orange p-4 rounded-xl text-center shadow-lg">
+                        <p className="text-xs font-medium text-white/80 uppercase">= Receita Projetada</p>
+                        <p className="text-2xl font-extrabold mt-1">{formatCurrency(projectedRevenue, true)}</p>
+                    </div>
+                </div>
+
+                <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                    <p className="text-xs text-white/50">
+                        <strong>Bottom-Up vs Top-Down:</strong> Compare este valor com a meta de receita definida nas Metas 2026. Se a projecao Bottom-Up for menor que a meta Top-Down, voce precisa aumentar o headcount ou a produtividade. Se for maior, sua equipe tem capacidade de sobra.
+                    </p>
+                </div>
             </div>
         </div>
     );
