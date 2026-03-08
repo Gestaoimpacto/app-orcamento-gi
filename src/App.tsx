@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
-import ImageEditor from './components/ImageEditor';
+
 import DataCollection from './components/DataCollection';
 import GoalSetting from './components/GoalSetting';
 import ScenarioPlanning from './components/ScenarioPlanning';
@@ -62,7 +62,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
             case 'monthly-tracking': return <MonthlyTracking />;
             case 'dre-comparison': return <DreComparison />;
             case 'taxes': return <Taxes />;
-            case 'image-editor': return <ImageEditor />;
+
             case 'pricing-calculator': return <PricingCalculator />;
             case 'report-generator': return <ReportGenerator />;
             case 'liquidity-dashboard': return <LiquidityDashboard />;

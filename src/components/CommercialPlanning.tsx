@@ -5,10 +5,10 @@ import { SalesFunnelData, HiringProjectionItem, DriverBasedPlanningData, Month, 
 import { formatCurrency, formatNumber, formatPercentage } from '../utils/formatters';
 import CurrencyInput from './shared/CurrencyInput';
 import clsx from 'clsx';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell, LineChart, Line, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, AreaChart, Area } from 'recharts';
 
 
-type CommercialPlanningTab = 'demand' | 'funnel' | 'hiring' | 'driver-based' | 'people-analytics';
+type CommercialPlanningTab = 'demand' | 'funnel' | 'execution' | 'hiring' | 'driver-based' | 'people-analytics';
 
 // --- HELPER FUNCTIONS (LOCAL) ---
 const sumMonthlyData = (data?: MonthlyData): number => data ? Object.values(data).reduce((sum, val) => sum + (Number(val) || 0), 0) : 0;
@@ -20,10 +20,10 @@ const avgMonthlyData = (data?: MonthlyData): number => {
 
 
 // --- SUB-COMPONENTS ---
-const InfoBox: React.FC<{ label: string; value: string; hint: string }> = ({ label, value, hint }) => (
+const InfoBox: React.FC<{ label: string; value: string; hint: string; color?: string }> = ({ label, value, hint, color }) => (
     <div className="bg-gray-50 p-4 rounded-lg text-center border">
         <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold text-gray-900 my-1">{value}</p>
+        <p className={clsx("text-2xl font-bold my-1", color || "text-gray-900")}>{value}</p>
         <p className="text-xs text-gray-500">{hint}</p>
     </div>
 );
@@ -52,6 +52,429 @@ const InputField: React.FC<{
     </div>
 );
 
+// --- EXECUTION PLAN COMPONENT ---
+const ExecutionPlanTab: React.FC = () => {
+    const { planData, goals2026, summary2025 } = usePlan();
+    const { salesFunnel, demandPlanning, driverBasedPlanning } = planData.commercialPlanning || {};
+
+    const executionData = useMemo(() => {
+        const channels = demandPlanning?.channels || [];
+        const totalLeads = channels.reduce((sum, ch) => sum + (ch.leads || 0), 0);
+        const totalRevenue = channels.reduce((sum, ch) => sum + (ch.expectedRevenue || 0), 0);
+        const totalBudget = channels.reduce((sum, ch) => sum + (ch.budget || 0), 0);
+
+        const txLeadToMql = (salesFunnel?.conversionRateLeadToMql || 0) / 100;
+        const txMqlToSql = (salesFunnel?.conversionRateMqlToSql || 0) / 100;
+        const txSqlToSale = (salesFunnel?.conversionRateSqlToSale || 0) / 100;
+        const fullConversion = txLeadToMql * txMqlToSql * txSqlToSale;
+
+        const salesNeeded = totalLeads * fullConversion;
+        const avgTicket = salesNeeded > 0 ? totalRevenue / salesNeeded : (summary2025.ticketMedio || 0);
+        const workingDays = salesFunnel?.workingDays || 252;
+        const activitiesPerRep = salesFunnel?.activitiesPerRep || 10;
+
+        // Monthly breakdown
+        const monthlyLeads = totalLeads / 12;
+        const monthlySales = salesNeeded / 12;
+        const monthlyRevenue = totalRevenue / 12;
+        const weeklyLeads = monthlyLeads / 4.3;
+        const dailyLeads = monthlyLeads / (workingDays / 12);
+        const dailySales = monthlySales / (workingDays / 12);
+        const dailyRevenue = monthlyRevenue / (workingDays / 12);
+
+        // Reps calculation
+        const commercialDept = (planData.hiringProjection || []).find(d => (d.department || '').toLowerCase() === 'comercial');
+        const totalReps = (commercialDept?.currentHeadcount || 0) + (commercialDept?.newHires || 0);
+        const leadsPerRep = totalReps > 0 ? dailyLeads / totalReps : dailyLeads;
+        const salesPerRep = totalReps > 0 ? monthlySales / totalReps : monthlySales;
+        const revenuePerRep = totalReps > 0 ? monthlyRevenue / totalReps : monthlyRevenue;
+
+        // CAC
+        const cac = salesNeeded > 0 ? totalBudget / salesNeeded : 0;
+        const ltv = avgTicket * 12; // Simplified LTV (1 year)
+        const ltvCacRatio = cac > 0 ? ltv / cac : 0;
+
+        // Scorecard metrics
+        const metaReceita = goals2026.financeiras?.metaReceita || {};
+        const totalMetaReceita = sumMonthlyData(metaReceita);
+        const driverRevenue = driverBasedPlanning ? MONTHS.reduce((sum, month) => {
+            const leads = driverBasedPlanning.leadsQualificados[month] || 0;
+            const txConv = (driverBasedPlanning.taxaConversao[month] || 0) / 100;
+            const recorrentes = driverBasedPlanning.clientesRecorrentes[month] || 0;
+            const ticket = driverBasedPlanning.ticketMedio[month] || 0;
+            return sum + ((recorrentes + (leads * txConv)) * ticket);
+        }, 0) : 0;
+
+        const gap = totalMetaReceita - driverRevenue;
+        const gapPercent = totalMetaReceita > 0 ? (gap / totalMetaReceita) * 100 : 0;
+
+        // Monthly targets for chart
+        const monthlyTargets = MONTHS.map((m, i) => {
+            const metaRec = metaReceita[m] || 0;
+            const driverRec = driverBasedPlanning ? (() => {
+                const leads = driverBasedPlanning.leadsQualificados[m] || 0;
+                const txConv = (driverBasedPlanning.taxaConversao[m] || 0) / 100;
+                const recorrentes = driverBasedPlanning.clientesRecorrentes[m] || 0;
+                const ticket = driverBasedPlanning.ticketMedio[m] || 0;
+                return (recorrentes + (leads * txConv)) * ticket;
+            })() : 0;
+            return {
+                name: MONTH_LABELS[m].substring(0, 3),
+                meta: metaRec,
+                projecao: driverRec,
+            };
+        });
+
+        return {
+            totalLeads, totalRevenue, totalBudget, salesNeeded, avgTicket,
+            workingDays, activitiesPerRep, fullConversion,
+            monthlyLeads, monthlySales, monthlyRevenue,
+            weeklyLeads, dailyLeads, dailySales, dailyRevenue,
+            totalReps, leadsPerRep, salesPerRep, revenuePerRep,
+            cac, ltv, ltvCacRatio,
+            totalMetaReceita, driverRevenue, gap, gapPercent,
+            monthlyTargets,
+        };
+    }, [planData, goals2026, summary2025, salesFunnel, demandPlanning, driverBasedPlanning]);
+
+    // Radar data for scorecard
+    const radarData = useMemo(() => {
+        const maxLeads = executionData.totalLeads || 1;
+        const maxConv = 100;
+        const maxTicket = executionData.avgTicket * 2 || 1;
+        const maxReps = executionData.totalReps * 1.5 || 1;
+        const maxLtv = executionData.ltv * 1.5 || 1;
+
+        return [
+            { subject: 'Volume Leads', A: Math.min(100, (executionData.totalLeads / maxLeads) * 100), fullMark: 100 },
+            { subject: 'Conversao', A: Math.min(100, executionData.fullConversion * 100 * 10), fullMark: 100 },
+            { subject: 'Ticket Medio', A: Math.min(100, (executionData.avgTicket / maxTicket) * 100), fullMark: 100 },
+            { subject: 'Equipe', A: Math.min(100, (executionData.totalReps / maxReps) * 100), fullMark: 100 },
+            { subject: 'LTV/CAC', A: Math.min(100, (executionData.ltvCacRatio / 5) * 100), fullMark: 100 },
+        ];
+    }, [executionData]);
+
+    return (
+        <div className="space-y-6 mt-6">
+            {/* Header KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div className="bg-gradient-to-br from-brand-orange to-orange-600 text-white p-4 rounded-2xl shadow-lg">
+                    <p className="text-xs font-medium opacity-80 uppercase">Meta Receita Anual</p>
+                    <p className="text-xl font-extrabold mt-1">{formatCurrency(executionData.totalMetaReceita, true)}</p>
+                </div>
+                <div className="bg-gradient-to-br from-brand-dark to-gray-800 text-white p-4 rounded-2xl shadow-lg">
+                    <p className="text-xs font-medium opacity-80 uppercase">Vendas Necessarias</p>
+                    <p className="text-xl font-extrabold mt-1">{formatNumber(executionData.salesNeeded)}</p>
+                    <p className="text-[10px] opacity-60">{formatNumber(executionData.monthlySales)}/mes</p>
+                </div>
+                <div className="bg-white p-4 rounded-2xl shadow-sm border">
+                    <p className="text-xs font-medium text-gray-500 uppercase">Ticket Medio</p>
+                    <p className="text-xl font-extrabold text-gray-900 mt-1">{formatCurrency(executionData.avgTicket, true)}</p>
+                </div>
+                <div className="bg-white p-4 rounded-2xl shadow-sm border">
+                    <p className="text-xs font-medium text-gray-500 uppercase">CAC</p>
+                    <p className="text-xl font-extrabold text-red-600 mt-1">{formatCurrency(executionData.cac, true)}</p>
+                </div>
+                <div className="bg-white p-4 rounded-2xl shadow-sm border">
+                    <p className="text-xs font-medium text-gray-500 uppercase">LTV (12m)</p>
+                    <p className="text-xl font-extrabold text-green-600 mt-1">{formatCurrency(executionData.ltv, true)}</p>
+                </div>
+                <div className={clsx("p-4 rounded-2xl shadow-sm border", executionData.ltvCacRatio >= 3 ? "bg-green-50 border-green-200" : executionData.ltvCacRatio >= 1 ? "bg-yellow-50 border-yellow-200" : "bg-red-50 border-red-200")}>
+                    <p className="text-xs font-medium text-gray-500 uppercase">LTV/CAC</p>
+                    <p className={clsx("text-xl font-extrabold mt-1", executionData.ltvCacRatio >= 3 ? "text-green-700" : executionData.ltvCacRatio >= 1 ? "text-yellow-700" : "text-red-700")}>{formatNumber(executionData.ltvCacRatio)}x</p>
+                    <p className="text-[10px] text-gray-500">{executionData.ltvCacRatio >= 3 ? 'Saudavel' : executionData.ltvCacRatio >= 1 ? 'Atencao' : 'Critico'}</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Rotina Diária do Vendedor */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                        <span className="w-8 h-8 bg-brand-orange/10 rounded-lg flex items-center justify-center text-brand-orange">
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </span>
+                        Rotina Diaria do Vendedor
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-4">O que cada vendedor precisa entregar <strong>TODO DIA</strong> para bater a meta:</p>
+                    
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl border border-blue-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-sm">1</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Prospectar / Contatar Leads</p>
+                                    <p className="text-xs text-gray-500">Ligacoes, emails, mensagens</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-extrabold text-blue-700">{formatNumber(Math.ceil(executionData.leadsPerRep))}</p>
+                                <p className="text-[10px] text-gray-500">contatos/dia</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-xl border border-purple-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-sm">2</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Reunioes / Apresentacoes</p>
+                                    <p className="text-xs text-gray-500">Qualificar e apresentar solucao</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-extrabold text-purple-700">{formatNumber(Math.ceil(executionData.leadsPerRep * (salesFunnel?.conversionRateLeadToMql || 30) / 100))}</p>
+                                <p className="text-[10px] text-gray-500">reunioes/dia</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-orange-50 rounded-xl border border-orange-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center text-white font-bold text-sm">3</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Propostas Enviadas</p>
+                                    <p className="text-xs text-gray-500">Propostas comerciais formais</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-extrabold text-brand-orange">{formatNumber(Math.max(1, Math.ceil(executionData.salesPerRep * 1.5 / (executionData.workingDays / 12))))}</p>
+                                <p className="text-[10px] text-gray-500">propostas/dia</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold text-sm">4</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Fechamentos (Vendas)</p>
+                                    <p className="text-xs text-gray-500">Meta de conversao final</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-extrabold text-green-700">{formatNumber(executionData.salesPerRep, false)}</p>
+                                <p className="text-[10px] text-gray-500">vendas/mes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-gray-50 rounded-xl border text-center">
+                        <p className="text-sm text-gray-600">Meta de Faturamento por Vendedor</p>
+                        <p className="text-2xl font-extrabold text-gray-900">{formatCurrency(executionData.revenuePerRep, true)}<span className="text-sm font-normal text-gray-500">/mes</span></p>
+                    </div>
+                </div>
+
+                {/* Scorecard Radar */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                        <span className="w-8 h-8 bg-brand-dark/10 rounded-lg flex items-center justify-center text-brand-dark">
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        </span>
+                        Scorecard Comercial
+                    </h3>
+
+                    <div className="h-[280px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart data={radarData}>
+                                <PolarGrid stroke="#e5e7eb" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#6b7280' }} />
+                                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                                <Radar name="Performance" dataKey="A" stroke="#EE7533" fill="#EE7533" fillOpacity={0.3} strokeWidth={2} />
+                            </RadarChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                        <div className="p-3 bg-gray-50 rounded-lg text-center">
+                            <p className="text-xs text-gray-500">Equipe Comercial</p>
+                            <p className="text-xl font-extrabold text-gray-900">{executionData.totalReps}</p>
+                            <p className="text-[10px] text-gray-500">vendedores</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg text-center">
+                            <p className="text-xs text-gray-500">Conversao Total</p>
+                            <p className="text-xl font-extrabold text-gray-900">{formatPercentage(executionData.fullConversion * 100)}</p>
+                            <p className="text-[10px] text-gray-500">lead-to-sale</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg text-center">
+                            <p className="text-xs text-gray-500">Leads Necessarios</p>
+                            <p className="text-xl font-extrabold text-gray-900">{formatNumber(executionData.totalLeads)}</p>
+                            <p className="text-[10px] text-gray-500">no ano</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg text-center">
+                            <p className="text-xs text-gray-500">Investimento Mkt</p>
+                            <p className="text-xl font-extrabold text-gray-900">{formatCurrency(executionData.totalBudget, true)}</p>
+                            <p className="text-[10px] text-gray-500">no ano</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Meta vs Projeção Chart */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </span>
+                    Meta vs Projecao de Receita (Mensal)
+                </h3>
+                
+                <div className={clsx("mb-4 p-4 rounded-xl border", executionData.gap > 0 ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200")}>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-semibold text-gray-700">
+                                {executionData.gap > 0 ? 'GAP: Sua projecao esta abaixo da meta' : 'Sua projecao supera a meta'}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Meta: {formatCurrency(executionData.totalMetaReceita)} | Projecao: {formatCurrency(executionData.driverRevenue)}
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <p className={clsx("text-2xl font-extrabold", executionData.gap > 0 ? "text-red-600" : "text-green-600")}>
+                                {executionData.gap > 0 ? '-' : '+'}{formatCurrency(Math.abs(executionData.gap), true)}
+                            </p>
+                            <p className="text-xs text-gray-500">{formatPercentage(Math.abs(executionData.gapPercent))}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={executionData.monthlyTargets} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                            <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                            <YAxis tickFormatter={(val) => `R$${Math.round(val / 1000).toLocaleString('pt-BR')}k`} tick={{ fontSize: 10 }} />
+                            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                            <Legend />
+                            <Area type="monotone" dataKey="meta" name="Meta" stroke="#EE7533" fill="#EE7533" fillOpacity={0.1} strokeWidth={2} strokeDasharray="5 5" />
+                            <Area type="monotone" dataKey="projecao" name="Projecao" stroke="#213242" fill="#213242" fillOpacity={0.15} strokeWidth={2} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
+            {/* Plano de Execução Semanal */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                    </span>
+                    Plano de Execucao - Desdobramento de Metas
+                </h3>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm">
+                        <thead className="bg-brand-dark text-white">
+                            <tr>
+                                <th className="px-4 py-3 text-left font-semibold">Indicador</th>
+                                <th className="px-4 py-3 text-right font-semibold">Anual</th>
+                                <th className="px-4 py-3 text-right font-semibold">Trimestral</th>
+                                <th className="px-4 py-3 text-right font-semibold">Mensal</th>
+                                <th className="px-4 py-3 text-right font-semibold">Semanal</th>
+                                <th className="px-4 py-3 text-right font-semibold">Diario</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            <tr className="hover:bg-gray-50">
+                                <td className="px-4 py-3 font-medium text-gray-900">Receita (R$)</td>
+                                <td className="px-4 py-3 text-right font-semibold">{formatCurrency(executionData.totalRevenue, true)}</td>
+                                <td className="px-4 py-3 text-right">{formatCurrency(executionData.totalRevenue / 4, true)}</td>
+                                <td className="px-4 py-3 text-right">{formatCurrency(executionData.monthlyRevenue, true)}</td>
+                                <td className="px-4 py-3 text-right">{formatCurrency(executionData.monthlyRevenue / 4.3, true)}</td>
+                                <td className="px-4 py-3 text-right font-bold text-brand-orange">{formatCurrency(executionData.dailyRevenue, true)}</td>
+                            </tr>
+                            <tr className="hover:bg-gray-50">
+                                <td className="px-4 py-3 font-medium text-gray-900">Vendas (un.)</td>
+                                <td className="px-4 py-3 text-right font-semibold">{formatNumber(executionData.salesNeeded)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.salesNeeded / 4)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.monthlySales)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.monthlySales / 4.3)}</td>
+                                <td className="px-4 py-3 text-right font-bold text-brand-orange">{formatNumber(executionData.dailySales)}</td>
+                            </tr>
+                            <tr className="hover:bg-gray-50">
+                                <td className="px-4 py-3 font-medium text-gray-900">Leads Necessarios</td>
+                                <td className="px-4 py-3 text-right font-semibold">{formatNumber(executionData.totalLeads)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.totalLeads / 4)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.monthlyLeads)}</td>
+                                <td className="px-4 py-3 text-right">{formatNumber(executionData.weeklyLeads)}</td>
+                                <td className="px-4 py-3 text-right font-bold text-brand-orange">{formatNumber(executionData.dailyLeads)}</td>
+                            </tr>
+                            <tr className="bg-brand-orange/5 hover:bg-brand-orange/10">
+                                <td className="px-4 py-3 font-bold text-brand-orange">Meta por Vendedor (R$/mes)</td>
+                                <td className="px-4 py-3 text-right font-bold">{formatCurrency(executionData.revenuePerRep * 12, true)}</td>
+                                <td className="px-4 py-3 text-right font-bold">{formatCurrency(executionData.revenuePerRep * 3, true)}</td>
+                                <td className="px-4 py-3 text-right font-bold text-brand-orange">{formatCurrency(executionData.revenuePerRep, true)}</td>
+                                <td className="px-4 py-3 text-right">{formatCurrency(executionData.revenuePerRep / 4.3, true)}</td>
+                                <td className="px-4 py-3 text-right">{formatCurrency(executionData.revenuePerRep / (executionData.workingDays / 12), true)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Checklist de Execução */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-600">
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                    </span>
+                    Como o Empresario Deve Executar (Passo a Passo)
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestao Diaria</h4>
+                        {[
+                            { title: 'Reuniao de 15min com a equipe', desc: 'Alinhar metas do dia, revisar pipeline e tirar bloqueios.' },
+                            { title: 'Monitorar atividades no CRM', desc: 'Verificar se cada vendedor esta cumprindo a meta de contatos diarios.' },
+                            { title: 'Acompanhar propostas em aberto', desc: 'Follow-up em propostas com mais de 48h sem resposta.' },
+                            { title: 'Registrar todas as interacoes', desc: 'Garantir que o time registra cada contato, reuniao e proposta.' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-3 p-3 bg-gray-50 rounded-xl border">
+                                <div className="w-6 h-6 bg-brand-orange rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">{i + 1}</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                                    <p className="text-xs text-gray-500">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-brand-dark text-sm uppercase tracking-wider">Gestao Semanal</h4>
+                        {[
+                            { title: 'Reuniao de pipeline (30min)', desc: 'Revisar todas as oportunidades em aberto e definir prioridades.' },
+                            { title: 'Analise de conversao por etapa', desc: 'Identificar onde o funil esta travando e agir na causa raiz.' },
+                            { title: 'Treinamento/Roleplay', desc: 'Praticar objecoes, pitch e tecnicas de fechamento com o time.' },
+                            { title: 'Revisar metas vs realizado', desc: 'Comparar resultado semanal com a meta e ajustar rota se necessario.' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-3 p-3 bg-gray-50 rounded-xl border">
+                                <div className="w-6 h-6 bg-brand-dark rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">{i + 1}</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                                    <p className="text-xs text-gray-500">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-6 p-4 bg-brand-orange/5 border border-brand-orange/20 rounded-xl">
+                    <h4 className="font-bold text-brand-orange text-sm uppercase tracking-wider mb-3">Gestao Mensal (Fechamento)</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {[
+                            { title: 'Analise de Resultado', desc: 'Comparar meta x realizado, identificar desvios e documentar aprendizados.' },
+                            { title: 'Ranking de Performance', desc: 'Reconhecer os melhores vendedores e criar plano de acao para os que ficaram abaixo.' },
+                            { title: 'Ajuste de Rota', desc: 'Recalibrar metas, investimento em marketing e estrategia de canais para o proximo mes.' },
+                        ].map((item, i) => (
+                            <div key={i} className="p-3 bg-white rounded-lg border">
+                                <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                                <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const PeopleAnalyticsDashboard: React.FC = () => {
     const { planData, goals2026, summary2025 } = usePlan();
     
@@ -60,20 +483,20 @@ const PeopleAnalyticsDashboard: React.FC = () => {
 
     const metricsRows = [
         { label: "Receita por Colaborador 2025", value: formatCurrency(revenuePerEmployee2025), hint: "Linha de base de produtividade." },
-        { label: "Meta de Redução de Turnover", value: `${formatPercentage(summary2025.turnoverPercent)} ➔ ${formatPercentage(goals2026.pessoas.metaTurnover)}`, hint: "Menos turnover aumenta a produtividade." },
-        { label: "Meta de ROI de Treinamento", value: `${formatNumber(summary2025.roiTreinamento)}x ➔ ${formatNumber(goals2026.pessoas.metaRoiTreinamento)}x`, hint: "Equipes mais treinadas são mais eficientes." },
-        { label: "Bônus de Produtividade Calculado", value: formatPercentage(productivityGainFactor), hint: "Ganho percentual estimado com base nas metas de RH.", isHighlight: true, color: 'text-green-600' },
-        { label: "Receita/Colaborador Projetada 2026", value: formatCurrency(revenuePerEmployee2025 * (1 + productivityGainFactor / 100)), hint: "Produtividade base + Bônus." },
+        { label: "Meta de Reducao de Turnover", value: `${formatPercentage(summary2025.turnoverPercent)} > ${formatPercentage(goals2026.pessoas.metaTurnover)}`, hint: "Menos turnover aumenta a produtividade." },
+        { label: "Meta de ROI de Treinamento", value: `${formatNumber(summary2025.roiTreinamento)}x > ${formatNumber(goals2026.pessoas.metaRoiTreinamento)}x`, hint: "Equipes mais treinadas sao mais eficientes." },
+        { label: "Bonus de Produtividade Calculado", value: formatPercentage(productivityGainFactor), hint: "Ganho percentual estimado com base nas metas de RH.", isHighlight: true, color: 'text-green-600' },
+        { label: "Receita/Colaborador Projetada 2026", value: formatCurrency(revenuePerEmployee2025 * (1 + productivityGainFactor / 100)), hint: "Produtividade base + Bonus." },
         { label: "Headcount Projetado 2026", value: formatNumber(goals2026.pessoas.metaHeadcount), hint: "Vindo da sua Meta de Pessoas." },
-        { label: "Projeção de Receita (Bottom-Up)", value: formatCurrency(projectedRevenue), hint: "Receita/Colab. 2026 x Headcount 2026.", isHighlight: true, color: 'text-brand-orange' },
+        { label: "Projecao de Receita (Bottom-Up)", value: formatCurrency(projectedRevenue), hint: "Receita/Colab. 2026 x Headcount 2026.", isHighlight: true, color: 'text-brand-orange' },
     ];
 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
             <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Dashboard de People Analytics</h2>
             <p className="text-sm text-gray-600 mb-4">
-                Esta análise conecta suas metas de gestão de pessoas a um resultado financeiro tangível: a projeção de receita que sua equipe é capaz de gerar (Bottom-Up).
-                Use este número para validar as metas de crescimento (Top-Down) nos seus cenários.
+                Esta analise conecta suas metas de gestao de pessoas a um resultado financeiro tangivel: a projecao de receita que sua equipe e capaz de gerar (Bottom-Up).
+                Use este numero para validar as metas de crescimento (Top-Down) nos seus cenarios.
             </p>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -135,7 +558,6 @@ const CommercialPlanning: React.FC = () => {
 
         const dailyActivitiesNeeded = salesFunnel.workingDays ? totalLeadsGoal / salesFunnel.workingDays : 0;
 
-        // Ramp-up aware headcount calculation
         const activitiesPerSenior = (salesFunnel.activitiesPerRep || 0) * (salesFunnel.workingDays || 0);
         const rampUpMonths = salesFunnel.rampUpTime || 0;
         const productivityLossFactor = (rampUpMonths / 12) / 2;
@@ -162,7 +584,6 @@ const CommercialPlanning: React.FC = () => {
         if (commercialDept && repsNeeded > 0) {
             const current = commercialDept.currentHeadcount || 0;
             const toHire = Math.max(0, repsNeeded - current);
-             // Only update if it's different to avoid loops
             if (commercialDept.newHires !== toHire) {
                updateHiringProjectionItem(commercialDept.id, 'newHires', String(toHire));
             }
@@ -228,47 +649,38 @@ const CommercialPlanning: React.FC = () => {
     };
 
     const handlePrefillDrivers = () => {
-        // Simple heuristic to pre-fill based on 2025 averages
-        const avgLeads25 = summary2025.novosClientesTotal / (summary2025.taxaConversaoLeadCliente / 100 || 0.05); // Estimate leads if not tracked
-        const realLeads25 = avgLeads25 || 100; // Fallback
+        const avgLeads25 = summary2025.novosClientesTotal / (summary2025.taxaConversaoLeadCliente / 100 || 0.05);
+        const realLeads25 = avgLeads25 || 100;
         const conversion25 = summary2025.taxaConversaoLeadCliente || 5;
         const ticket25 = summary2025.ticketMedio || 0;
-        const clients25 = summary2025.monthlySummary[11]?.receita / summary2025.ticketMedio || 0; // Estimate active clients at end of year
+        const clients25 = summary2025.monthlySummary[11]?.receita / summary2025.ticketMedio || 0;
 
         MONTHS.forEach(m => {
             updateDriverBasedPlanning('leadsQualificados', m, (realLeads25 / 12).toFixed(0));
             updateDriverBasedPlanning('taxaConversao', m, conversion25.toFixed(1).replace('.', ','));
             updateDriverBasedPlanning('ticketMedio', m, ticket25.toFixed(2).replace('.', ','));
-            updateDriverBasedPlanning('clientesRecorrentes', m, clients25.toFixed(0)); // Static recurrent base
+            updateDriverBasedPlanning('clientesRecorrentes', m, clients25.toFixed(0));
         });
     };
 
     const handleImportFromFunnel = () => {
-        // 1. Leads: From Demand Planning (Annual Total) distributed monthly
-        // We use annual leads from Demand Planning as the "Input"
         const annualLeads = demandTotals.totalLeads || 0;
         const monthlyLeads = annualLeads / 12;
 
-        // 2. Conversion: Aggregate from Funnel (Lead -> Sale)
-        // We calculate the full funnel effectiveness
         let aggregateRate = 0;
         const funnel = planData.commercialPlanning.salesFunnel;
         if (funnel) {
             const r1 = (funnel.conversionRateLeadToMql || 0) / 100;
             const r2 = (funnel.conversionRateMqlToSql || 0) / 100;
             const r3 = (funnel.conversionRateSqlToSale || 0) / 100;
-            aggregateRate = (r1 * r2 * r3) * 100; // As percentage
+            aggregateRate = (r1 * r2 * r3) * 100;
         }
-        // Fallback to 2025 summary if funnel is not set
         if (aggregateRate === 0) {
              aggregateRate = summary2025.taxaConversaoLeadCliente || 1;
         }
 
-        // 3. Ticket: From Funnel Input
         const ticket = funnelCalculations.avgTicket || summary2025.ticketMedio || 0;
 
-        // 4. Recurrent Clients: Estimate based on 2025 active base
-        // (Revenue / Ticket) roughly gives active clients
         const estimatedActiveClients = summary2025.receitaTotal > 0 && (summary2025.ticketMedio || 1) > 0 
             ? (summary2025.receitaTotal / 12) / (summary2025.ticketMedio || 1)
             : 0;
@@ -278,7 +690,6 @@ const CommercialPlanning: React.FC = () => {
             updateDriverBasedPlanning('taxaConversao', m, aggregateRate.toFixed(2).replace('.', ','));
             updateDriverBasedPlanning('ticketMedio', m, ticket.toFixed(2).replace('.', ','));
             
-            // Only update recurrent if empty, to not overwrite custom inputs if user already edited
             const currentRecurrent = driverBasedPlanning?.clientesRecorrentes[m];
             if (currentRecurrent === undefined || currentRecurrent === null || Number(currentRecurrent) === 0) {
                  updateDriverBasedPlanning('clientesRecorrentes', m, estimatedActiveClients.toFixed(0));
@@ -300,9 +711,9 @@ const CommercialPlanning: React.FC = () => {
                         <table className="min-w-full divide-y divide-gray-200 text-sm">
                             <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="px-4 py-2 text-left font-medium text-gray-600 w-1/4">Canal de Aquisição</th>
-                                    <th className="px-4 py-2 text-right font-medium text-gray-600">Orçamento (R$)</th>
-                                    <th className="px-4 py-2 text-right font-medium text-gray-600">Nº Leads</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600 w-1/4">Canal de Aquisicao</th>
+                                    <th className="px-4 py-2 text-right font-medium text-gray-600">Orcamento (R$)</th>
+                                    <th className="px-4 py-2 text-right font-medium text-gray-600">N Leads</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">Receita Esperada (R$)</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">CPL (R$)</th>
                                     <th className="px-4 py-2 text-right font-medium text-gray-600">ROI</th>
@@ -358,13 +769,13 @@ const CommercialPlanning: React.FC = () => {
                      </div>
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-brand-blue">Análise de Canais com IA</h3>
+                            <h3 className="text-lg font-bold text-brand-blue">Analise de Canais com IA</h3>
                             <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
-                                {isLoading.channel ? 'Analisando...' : 'Gerar Análise'}
+                                {isLoading.channel ? 'Analisando...' : 'Gerar Analise'}
                             </button>
                         </div>
                         <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[220px]">
-                            {demandPlanning?.analysis || "A IA analisará seu mix de canais, eficiência (CPL, ROI) e sugerirá otimizações de orçamento."}
+                            {demandPlanning?.analysis || "A IA analisara seu mix de canais, eficiencia (CPL, ROI) e sugerira otimizacoes de orcamento."}
                         </div>
                     </div>
                 </div>
@@ -376,80 +787,79 @@ const CommercialPlanning: React.FC = () => {
         if (!salesFunnel) return <div className="p-4 text-center text-gray-500">Carregando dados do funil...</div>;
         return (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
-                {/* Coluna Esquerda: Inputs e Sugestões IA */}
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                          <h3 className="text-lg font-bold text-brand-blue">Premissas do Funil Granular</h3>
-                         <InputField label="Tx. Conversão (Lead > MQL)" value={salesFunnel.conversionRateLeadToMql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateLeadToMql', e.target.value)} hint="Marketing Qualified Lead" suffix="%" />
-                         <InputField label="Tx. Conversão (MQL > SQL)" value={salesFunnel.conversionRateMqlToSql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateMqlToSql', e.target.value)} hint="Sales Qualified Lead" suffix="%" />
-                         <InputField label="Tx. Conversão (SQL > Venda)" value={salesFunnel.conversionRateSqlToSale} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateSqlToSale', e.target.value)} hint="Taxa de Fechamento" suffix="%" />
-                         <InputField label="Atividades/Dia por Vendedor" value={salesFunnel.activitiesPerRep} onChange={e => updateCommercialPlanning('salesFunnel', 'activitiesPerRep', e.target.value)} hint="Nº de prospecções, etc." />
-                         <InputField label="Dias Úteis em 2026" value={salesFunnel.workingDays} onChange={e => updateCommercialPlanning('salesFunnel', 'workingDays', e.target.value)} hint="Ex: 252 dias" />
+                         <InputField label="Tx. Conversao (Lead > MQL)" value={salesFunnel.conversionRateLeadToMql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateLeadToMql', e.target.value)} hint="Marketing Qualified Lead" suffix="%" />
+                         <InputField label="Tx. Conversao (MQL > SQL)" value={salesFunnel.conversionRateMqlToSql} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateMqlToSql', e.target.value)} hint="Sales Qualified Lead" suffix="%" />
+                         <InputField label="Tx. Conversao (SQL > Venda)" value={salesFunnel.conversionRateSqlToSale} onChange={e => updateCommercialPlanning('salesFunnel', 'conversionRateSqlToSale', e.target.value)} hint="Taxa de Fechamento" suffix="%" />
+                         <InputField label="Atividades/Dia por Vendedor" value={salesFunnel.activitiesPerRep} onChange={e => updateCommercialPlanning('salesFunnel', 'activitiesPerRep', e.target.value)} hint="N de prospecoes, etc." />
+                         <InputField label="Dias Uteis em 2026" value={salesFunnel.workingDays} onChange={e => updateCommercialPlanning('salesFunnel', 'workingDays', e.target.value)} hint="Ex: 252 dias" />
                          <InputField label="Tempo de Ramp-up (meses)" value={salesFunnel.rampUpTime} onChange={e => updateCommercialPlanning('salesFunnel', 'rampUpTime', e.target.value)} hint="Tempo para um novo vendedor ser 100% produtivo." suffix="meses" />
                     </div>
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                          <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-brand-blue">Otimização do Funil com IA</h3>
+                            <h3 className="text-lg font-bold text-brand-blue">Otimizacao do Funil com IA</h3>
                             <button onClick={handleGenerateFunnelSuggestions} disabled={isLoading.funnel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
-                                 {isLoading.funnel ? 'Gerando...' : 'Gerar Sugestões'}
+                                 {isLoading.funnel ? 'Gerando...' : 'Gerar Sugestoes'}
                              </button>
                          </div>
                          <div className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md min-h-[150px]">
-                            {planData.commercialPlanning?.funnelSuggestions || "Clique no botão para que a IA (atuando como um especialista em Growth) analise seu funil e sugira melhorias."}
+                            {planData.commercialPlanning?.funnelSuggestions || "Clique no botao para que a IA (atuando como um especialista em Growth) analise seu funil e sugira melhorias."}
                          </div>
                      </div>
                 </div>
-                {/* Coluna Direita: Resultados */}
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                        <h3 className="text-lg font-bold text-brand-blue">Projeção do Funil</h3>
+                        <h3 className="text-lg font-bold text-brand-blue">Projecao do Funil</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <InfoBox label="Meta Anual de Leads" value={formatNumber(funnelCalculations.totalLeadsGoal)} hint="Vinda do Plano de Demanda" />
                             <InfoBox label="Meta Anual de Receita" value={formatCurrency(funnelCalculations.totalRevenueGoal)} hint="Vinda do Plano de Demanda" />
-                            <InfoBox label="MQLs Necessários" value={formatNumber(funnelCalculations.mqlsNeeded)} hint="Marketing Qualified" />
-                            <InfoBox label="SQLs Necessários" value={formatNumber(funnelCalculations.sqlsNeeded)} hint="Sales Qualified" />
-                            <InfoBox label="Vendas Necessárias" value={formatNumber(funnelCalculations.salesNeeded)} hint="Total no ano" />
-                            <InfoBox label="Ticket Médio Implícito" value={formatCurrency(funnelCalculations.avgTicket)} hint="Receita / Vendas" />
+                            <InfoBox label="MQLs Necessarios" value={formatNumber(funnelCalculations.mqlsNeeded)} hint="Marketing Qualified" />
+                            <InfoBox label="SQLs Necessarios" value={formatNumber(funnelCalculations.sqlsNeeded)} hint="Sales Qualified" />
+                            <InfoBox label="Vendas Necessarias" value={formatNumber(funnelCalculations.salesNeeded)} hint="Total no ano" />
+                            <InfoBox label="Ticket Medio Implicito" value={formatCurrency(funnelCalculations.avgTicket)} hint="Receita / Vendas" />
                         </div>
                     </div>
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <h3 className="text-lg font-bold text-brand-blue">Meta de Comportamento</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                             <InfoBox label="Leads Necessários / Dia" value={formatNumber(funnelCalculations.dailyActivitiesNeeded)} hint="Para alimentar o funil" />
+                             <InfoBox label="Leads Necessarios / Dia" value={formatNumber(funnelCalculations.dailyActivitiesNeeded)} hint="Para alimentar o funil" />
                              <InfoBox label="Atividades de Vendas / Dia" value={formatNumber((funnelCalculations.repsNeeded || 0) * (salesFunnel.activitiesPerRep || 0))} hint="Total da equipe" />
                         </div>
                     </div>
                     <div className="bg-brand-blue text-white p-6 rounded-2xl shadow-sm border">
-                        <h3 className="text-lg font-bold">Headcount de Vendas Necessário</h3>
+                        <h3 className="text-lg font-bold">Headcount de Vendas Necessario</h3>
                          <p className="text-5xl font-extrabold my-2 text-center">{formatNumber(Math.ceil(funnelCalculations.repsNeeded))}</p>
-                         <p className="text-sm text-center opacity-80">Vendedores necessários para gerar o volume de leads diários.</p>
+                         <p className="text-sm text-center opacity-80">Vendedores necessarios para gerar o volume de leads diarios.</p>
                     </div>
                 </div>
             </div>
         );
     }
+
     const renderHiringTab = () => (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Projeção de Contratações e Orçamento de Pessoal 2026</h2>
+            <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Projecao de Contratacoes e Orcamento de Pessoal 2026</h2>
             
             <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-800 text-sm rounded-r-lg">
                 <h4 className="font-bold flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    O que é o Custo Médio?
+                    O que e o Custo Medio?
                 </h4>
                 <p className="mt-2">
-                    Este valor é <strong>Unitário (por colaborador)</strong> e <strong>Anual</strong>.
+                    Este valor e <strong>Unitario (por colaborador)</strong> e <strong>Anual</strong>.
                 </p>
                 <p className="mt-1">
-                    O sistema multiplica este valor pelo <strong>Headcount Final (Atuais + Contratações)</strong> para calcular o orçamento total do departamento.
+                    O sistema multiplica este valor pelo <strong>Headcount Final (Atuais + Contratacoes)</strong> para calcular o orcamento total do departamento.
                 </p>
                 <p className="mt-2 text-xs text-blue-600">
-                    <strong>Como calcular (Estimativa):</strong> (Salário Bruto + Encargos + Benefícios) × 13,3 (inclui 13º e Férias).
+                    <strong>Como calcular (Estimativa):</strong> (Salario Bruto + Encargos + Beneficios) x 13,3 (inclui 13o e Ferias).
                 </p>
                 <div className="mt-3 pt-3 border-t border-blue-200 text-blue-900 font-medium">
-                    💡 Referência 2025: O custo médio geral da sua empresa foi de {formatCurrency(summary2025.custoColaboradorAno)}/ano.
+                    Referencia 2025: O custo medio geral da sua empresa foi de {formatCurrency(summary2025.custoColaboradorAno)}/ano.
                 </div>
             </div>
 
@@ -459,9 +869,9 @@ const CommercialPlanning: React.FC = () => {
                         <tr>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Headcount Atual</th>
-                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Novas Contratações</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Novas Contratacoes</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Headcount 2026</th>
-                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Custo Médio Unitário (R$/ano)</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Custo Medio Unitario (R$/ano)</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Budget Total R$</th>
                             <th className="px-2 py-3"></th>
                         </tr>
@@ -502,18 +912,15 @@ const CommercialPlanning: React.FC = () => {
     
     const renderDriverBasedPlanningTab = () => {
         const metaReceita = goals2026.financeiras?.metaReceita || {};
-        // FIX: Sum the MonthlyData object before performing arithmetic operations.
         const totalMetaReceita = sumMonthlyData(metaReceita);
         const diff = totalMetaReceita - driverCalculations.totals.receitaTotal;
         const diffPercent = totalMetaReceita > 0 ? (diff / totalMetaReceita) * 100 : 0;
         
-        // Reverse calculations to close the gap
         const currentLeads = driverCalculations.totals.leadsQualificados;
         const currentTicket = driverCalculations.totals.ticketMedio;
         const currentConversion = driverCalculations.totals.taxaConversao / 100;
         const currentRecurrentClients = driverCalculations.totals.clientesRecorrentes;
         
-        // Gap Revenue needs to be filled by New Sales
         const recurrentRevenue = currentRecurrentClients * currentTicket;
         const requiredTotalNewRevenue = totalMetaReceita - recurrentRevenue;
         
@@ -533,21 +940,21 @@ const CommercialPlanning: React.FC = () => {
         return (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6 space-y-4">
                 <div className="flex flex-wrap gap-4 justify-between items-center">
-                    <h2 className="text-lg font-bold text-gray-900">Driver-Based Planning - Projeção 2026</h2>
+                    <h2 className="text-lg font-bold text-gray-900">Driver-Based Planning - Projecao 2026</h2>
                     <div className="flex gap-2">
                         <button onClick={handleImportFromFunnel} className="text-sm text-brand-orange bg-orange-50 px-3 py-1 rounded hover:bg-orange-100 border border-orange-200 font-medium">
-                            🔄 Importar do Funil & Demanda 2026
+                            Importar do Funil & Demanda 2026
                         </button>
                         <button onClick={handlePrefillDrivers} className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded hover:bg-gray-100 border border-gray-200">
-                            📥 Carregar Base Histórica 2025
+                            Carregar Base Historica 2025
                         </button>
                     </div>
                 </div>
 
                 <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl">
-                    <p className="font-bold">Como funciona a correlação?</p>
+                    <p className="font-bold">Como funciona a correlacao?</p>
                     <p className="text-sm mt-1">
-                        Aqui comparamos sua <strong>Meta (Desejo)</strong> com seu <strong>Plano Operacional (Realidade)</strong>. Se houver um GAP, use os Drivers abaixo para encontrar o caminho (aumentar leads? melhorar conversão?).
+                        Aqui comparamos sua <strong>Meta (Desejo)</strong> com seu <strong>Plano Operacional (Realidade)</strong>. Se houver um GAP, use os Drivers abaixo para encontrar o caminho (aumentar leads? melhorar conversao?).
                     </p>
                 </div>
 
@@ -557,11 +964,10 @@ const CommercialPlanning: React.FC = () => {
                             <tr>
                                 <th className="p-3 text-left font-semibold sticky left-0 bg-brand-blue z-10 w-[200px]">Direcionador</th>
                                 {MONTHS.map(m => <th key={m} className="p-2 text-center font-medium">{MONTH_LABELS[m].substring(0,3)}</th>)}
-                                <th className="p-3 text-right font-semibold sticky right-0 bg-brand-blue z-10 w-[120px]">Total/Média</th>
+                                <th className="p-3 text-right font-semibold sticky right-0 bg-brand-blue z-10 w-[120px]">Total/Media</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {/* Inputs */}
                             {(['leadsQualificados', 'taxaConversao', 'clientesRecorrentes', 'ticketMedio'] as const).map(key => {
                                 const isPercent = key === 'taxaConversao';
                                 const isCurrency = key === 'ticketMedio';
@@ -569,9 +975,9 @@ const CommercialPlanning: React.FC = () => {
                                 const formatFn = isCurrency ? formatCurrency : (isPercent ? formatPercentage : formatNumber);
                                 const labelMap = {
                                     leadsQualificados: 'Leads Qualificados (#)',
-                                    taxaConversao: 'Taxa de Conversão (%)',
+                                    taxaConversao: 'Taxa de Conversao (%)',
                                     clientesRecorrentes: 'Clientes Recorrentes (#)',
-                                    ticketMedio: 'Ticket Médio (R$)',
+                                    ticketMedio: 'Ticket Medio (R$)',
                                 };
                                 return (
                                     <tr key={key}>
@@ -590,7 +996,6 @@ const CommercialPlanning: React.FC = () => {
                                     </tr>
                                 )
                             })}
-                            {/* Calculations */}
                              <tr className="bg-gray-50 font-semibold">
                                 <td className="p-3 sticky left-0 bg-gray-50 z-10">(=) Novos Clientes (#)</td>
                                 {driverCalculations.monthlyResults.map((r, i) => <td key={i} className="p-2 text-right">{formatNumber(r.novosClientes)}</td>)}
@@ -616,23 +1021,23 @@ const CommercialPlanning: React.FC = () => {
                 
                 <div className={clsx("mt-4 p-4 border rounded-lg", isGap ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200")}>
                     <h4 className={clsx("font-bold mb-2", isGap ? "text-orange-800" : "text-green-800")}>
-                        {isGap ? 'Calculadora de Correção de Rota (GAP)' : 'Análise de Sensibilidade (O que é necessário para a meta exata?)'}
+                        {isGap ? 'Calculadora de Correcao de Rota (GAP)' : 'Analise de Sensibilidade (O que e necessario para a meta exata?)'}
                     </h4>
                     <p className="text-sm text-gray-700 mb-3">
                         {isGap
-                            ? `Para fechar o GAP de ${formatCurrency(diff)} e atingir a meta, você precisa ajustar seus drivers. Veja as opções:`
-                            : `Você já superou a meta em ${formatCurrency(Math.abs(diff))}. Para manter a meta exata (ponto de equilíbrio da meta), você precisaria apenas de:`
+                            ? `Para fechar o GAP de ${formatCurrency(diff)} e atingir a meta, voce precisa ajustar seus drivers. Veja as opcoes:`
+                            : `Voce ja superou a meta em ${formatCurrency(Math.abs(diff))}. Para manter a meta exata (ponto de equilibrio da meta), voce precisaria apenas de:`
                         }
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
-                            <p className="text-xs text-gray-500 font-semibold uppercase">Opção A: Volume de Leads</p>
+                            <p className="text-xs text-gray-500 font-semibold uppercase">Opcao A: Volume de Leads</p>
                             <p className="text-sm mt-1">Gerar <strong className="text-gray-900">{formatNumber(requiredLeads)} leads</strong> no ano.</p>
-                            <p className="text-xs text-gray-400">({formatNumber(requiredLeads - currentLeads)} em relação ao atual)</p>
+                            <p className="text-xs text-gray-400">({formatNumber(requiredLeads - currentLeads)} em relacao ao atual)</p>
                         </div>
                         <div className={clsx("bg-white p-3 rounded border", isGap ? "border-orange-100" : "border-green-100")}>
-                            <p className="text-xs text-gray-500 font-semibold uppercase">Opção B: Eficiência (Conversão)</p>
-                            <p className="text-sm mt-1">Taxa de Conversão de <strong className="text-gray-900">{formatPercentage(requiredConversion)}</strong>.</p>
+                            <p className="text-xs text-gray-500 font-semibold uppercase">Opcao B: Eficiencia (Conversao)</p>
+                            <p className="text-sm mt-1">Taxa de Conversao de <strong className="text-gray-900">{formatPercentage(requiredConversion)}</strong>.</p>
                             <p className="text-xs text-gray-400">({formatPercentage(requiredConversion - driverCalculations.totals.taxaConversao)} pontos percentuais)</p>
                         </div>
                     </div>
@@ -643,24 +1048,25 @@ const CommercialPlanning: React.FC = () => {
     };
 
     const TABS: { id: CommercialPlanningTab; label: string; }[] = [
-        { id: 'demand', label: '1. Planejamento de Demanda' },
+        { id: 'demand', label: '1. Demanda' },
         { id: 'funnel', label: '2. Funil de Vendas' },
-        { id: 'hiring', label: '3. Projeção de Contratações' },
-        { id: 'people-analytics', label: '4. Análise de Pessoas (Bottom-Up)' },
-        { id: 'driver-based', label: '5. Planejamento por Drivers' },
+        { id: 'execution', label: '3. Plano de Execucao' },
+        { id: 'hiring', label: '4. Contratacoes' },
+        { id: 'people-analytics', label: '5. People Analytics' },
+        { id: 'driver-based', label: '6. Drivers' },
     ];
 
     return (
         <div className="space-y-8">
             <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
-                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">6. Planejamento Comercial & RH</h1>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Planejamento Comercial & RH</h1>
                 <p className="text-gray-500 mt-2">
-                    Defina sua estratégia de geração de demanda, estruture seu funil de vendas e projete as contratações necessárias para 2026.
+                    Defina sua estrategia de geracao de demanda, estruture seu funil de vendas, crie o plano de execucao e projete as contratacoes para 2026.
                 </p>
             </header>
 
             <div className="border-b border-gray-200">
-                <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+                <nav className="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
                     {TABS.map(tab => (
                         <button
                             key={tab.id}
@@ -681,6 +1087,7 @@ const CommercialPlanning: React.FC = () => {
             <div>
                 {activeTab === 'demand' && renderDemandPlanningTab()}
                 {activeTab === 'funnel' && renderFunnelTab()}
+                {activeTab === 'execution' && <ExecutionPlanTab />}
                 {activeTab === 'hiring' && renderHiringTab()}
                 {activeTab === 'driver-based' && renderDriverBasedPlanningTab()}
                 {activeTab === 'people-analytics' && <PeopleAnalyticsDashboard />}
