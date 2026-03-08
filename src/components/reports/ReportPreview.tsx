@@ -400,8 +400,36 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                 </div>
                                 {planData.marketAnalysis.blueOcean && (
                                     <div className="p-5 bg-indigo-50 rounded-xl border border-indigo-200">
-                                        <h4 className="font-bold text-base text-indigo-800 mb-2">Estratégia Oceano Azul</h4>
-                                        <p className="text-sm text-indigo-700 whitespace-pre-wrap">{planData.marketAnalysis.blueOcean}</p>
+                                        <h4 className="font-bold text-base text-indigo-800 mb-3">Estratégia Oceano Azul - 4 Ações</h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {[
+                                                { title: 'Eliminar', content: planData.marketAnalysis.blueOcean.fourActions?.eliminate, color: 'text-red-700' },
+                                                { title: 'Reduzir', content: planData.marketAnalysis.blueOcean.fourActions?.reduce, color: 'text-orange-700' },
+                                                { title: 'Elevar', content: planData.marketAnalysis.blueOcean.fourActions?.raise, color: 'text-blue-700' },
+                                                { title: 'Criar', content: planData.marketAnalysis.blueOcean.fourActions?.create, color: 'text-green-700' },
+                                            ].filter(a => a.content).map(action => (
+                                                <div key={action.title} className="p-3 bg-white rounded-lg border border-indigo-100">
+                                                    <p className={`text-xs font-bold uppercase tracking-wider ${action.color} mb-1`}>{action.title}</p>
+                                                    <p className="text-sm text-gray-700">{action.content}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {planData.marketAnalysis.blueOcean.factors?.length > 0 && (
+                                            <div className="mt-3">
+                                                <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Fatores Competitivos</p>
+                                                <div className="space-y-1">
+                                                    {planData.marketAnalysis.blueOcean.factors.map(f => (
+                                                        <div key={f.id} className="flex items-center justify-between text-sm p-2 bg-white rounded border border-indigo-100">
+                                                            <span className="text-gray-700 font-medium">{f.name}</span>
+                                                            <div className="flex gap-4 text-xs">
+                                                                <span className="text-indigo-600">Sua empresa: <strong>{f.yourCompanyScore || 0}</strong></span>
+                                                                <span className="text-gray-500">Concorrente: <strong>{f.competitorScore || 0}</strong></span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -436,18 +464,28 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                             <MetricCard label="ROI Treinamento" value={formatPercentage(planData.goals2026?.pessoas?.roiTreinamento?.annual || 0)} />
                                         </div>
                                     </div>
-                                    {planData.goals2026?.objetivosEstrategicos?.items?.length > 0 && (
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-800 mb-3">Objetivos Estratégicos</h3>
-                                            <div className="space-y-2">
-                                                {planData.goals2026.objetivosEstrategicos.items.map((obj: any, i: number) => (
-                                                    <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border">
-                                                        <span className="text-sm font-bold text-brand-orange">{String(i + 1).padStart(2, '0')}</span>
-                                                        <p className="text-sm text-gray-800">{obj}</p>
+                                    {planData.goals2026?.objetivosEstrategicos && (
+                                        (() => {
+                                            const objs = [
+                                                planData.goals2026.objetivosEstrategicos.objective1,
+                                                planData.goals2026.objetivosEstrategicos.objective2,
+                                                planData.goals2026.objetivosEstrategicos.objective3,
+                                            ].filter(o => o && o.trim());
+                                            if (objs.length === 0) return null;
+                                            return (
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-gray-800 mb-3">Objetivos Estratégicos</h3>
+                                                    <div className="space-y-2">
+                                                        {objs.map((obj, i) => (
+                                                            <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border">
+                                                                <span className="text-sm font-bold text-brand-orange">{String(i + 1).padStart(2, '0')}</span>
+                                                                <p className="text-sm text-gray-800">{obj}</p>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </div>
+                                                </div>
+                                            );
+                                        })()
                                     )}
                                 </div>
                             </div>
