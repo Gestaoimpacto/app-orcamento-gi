@@ -181,6 +181,8 @@ export interface BowmanClockProduct {
 }
 
 export type ActionPlanStatus = 'Não Iniciado' | 'Em Andamento' | 'Concluído' | 'Atrasado';
+export type ActionPlanCategory = 'Comercial' | 'Financeiro' | 'Pessoas' | 'Operacional' | 'Marketing' | 'Estratégico';
+export type ActionPlanPriority = 'Alta' | 'Média' | 'Baixa';
 
 export interface ActionPlanItem {
     id: string;
@@ -192,6 +194,9 @@ export interface ActionPlanItem {
     how: string; 
     howMuch: number | null; 
     status: ActionPlanStatus;
+    category: ActionPlanCategory;
+    priority: ActionPlanPriority;
+    expectedResult: string;
 }
 
 export interface KeyResult {

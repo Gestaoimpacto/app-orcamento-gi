@@ -1430,7 +1430,7 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         removeHiringProjectionItem: (id) => setPlanData(p => ({...p, hiringProjection: p.hiringProjection.filter(i => i.id !== id)})),
         generateFunnelSuggestions: async () => { const result = await api.getFunnelSuggestions(planData.commercialPlanning.salesFunnel); setPlanData(p => ({...p, commercialPlanning: {...p.commercialPlanning, funnelSuggestions: result}})); },
         generateMarketingFunnelAnalysis: async (f25, f26) => { const result = await api.generateMarketingFunnelAnalysis(f25, f26); setPlanData(p => ({...p, analysis: {...p.analysis, marketingFunnelAnalysis: result}})); },
-        addActionPlanItem: () => setPlanData(p => ({...p, actionPlan: [...p.actionPlan, { id: uuidv4(), what: '', why: '', who: '', when: '', where: '', how: '', howMuch: 0, status: 'Não Iniciado' }]})),
+        addActionPlanItem: () => setPlanData(p => ({...p, actionPlan: [...p.actionPlan, { id: uuidv4(), what: '', why: '', who: '', when: '', where: '', how: '', howMuch: 0, status: 'Não Iniciado', category: 'Estratégico' as const, priority: 'Média' as const, expectedResult: '' }]})),
         removeActionPlanItem: (id) => setPlanData(p => ({...p, actionPlan: p.actionPlan.filter(i => i.id !== id)})),
         updateActionPlanItem: (id, field, val) => setPlanData(p => ({...p, actionPlan: p.actionPlan.map(i => i.id === id ? {...i, [field]: field === 'howMuch' ? parseFloat(val) : val} : i)})),
         generateGoalSuggestions, updateGoal, updateObjective, updateInflation,
@@ -1440,7 +1440,7 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         updateDecisionTrigger, updateStrategicAction, generateDecisionTriggers, getScenarioAnalysis, getStrategicScoreAnalysis,
         calculateFinancialPlan2026, setBaseScenario, updateTracking2026, updateTaxes,
         generateBenchmarkAnalysis: async () => { const result = await api.getBenchmarkAnalysis(planData.companyProfile, summary2025); setPlanData(p => ({...p, analysis: {...p.analysis, benchmarkAnalysis: result}})); },
-        generateStrategicSummaryAndActions: async () => { const result = await api.generateComprehensiveStrategicAnalysis(planData, summary2025, goals2026); setPlanData(p => ({...p, analysis: {...p.analysis, strategicSummary: result.analysisText}, actionPlan: [...p.actionPlan, ...result.actionPlanItems.map(i => ({...i, id: uuidv4(), status: 'Não Iniciado' as const}))]})); },
+        generateStrategicSummaryAndActions: async () => { const result = await api.generateComprehensiveStrategicAnalysis(planData, summary2025, goals2026); setPlanData(p => ({...p, analysis: {...p.analysis, strategicSummary: result.analysisText}, actionPlan: [...p.actionPlan, ...result.actionPlanItems.map(i => ({...i, id: uuidv4(), status: 'Não Iniciado' as const, category: i.category || 'Estratégico' as const, priority: i.priority || 'Alta' as const, expectedResult: i.expectedResult || ''}))]})); },
         generateMonthlyAnalysis: async (m) => { const actual = tracking2026[m]; const projected = { receita: scenarios2026[baseScenario].receitaProjetada[m], custos: scenarios2026[baseScenario].custosProjetados[m], despesas: scenarios2026[baseScenario].despesasProjetadas[m] }; 
             const pMC = (projected.receita||0) - (projected.custos||0);
             const pPE = pMC > 0 ? (projected.despesas||0) / (pMC / (projected.receita||1)) : 0;

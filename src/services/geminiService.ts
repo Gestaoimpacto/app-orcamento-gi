@@ -680,7 +680,14 @@ export const generateComprehensiveStrategicAnalysis = async (
         (Explique a lógica por trás das ações que você está sugerindo. Justifique por que essas são as alavancas mais importantes para focar agora. Dê exemplos das ações que serão criadas).
 
         **2. actionPlanItems (array de objetos):**
-        Gere de 3 a 5 itens de ação 5W2H de alto impacto baseados na sua análise. Estes itens devem ser práticos e diretamente ligados às oportunidades e fraquezas identificadas. Use placeholders para responsáveis.
+        Gere de 5 a 8 itens de ação 5W2H de alto impacto baseados na sua análise. Estes itens devem ser práticos e diretamente ligados às oportunidades e fraquezas identificadas. Use placeholders para responsáveis.
+        
+        IMPORTANTE para cada item:
+        - **category**: Classifique em uma destas categorias: "Comercial", "Financeiro", "Pessoas", "Operacional", "Marketing" ou "Estratégico"
+        - **priority**: Defina a prioridade: "Alta" (fazer primeiro, maior impacto), "Média" ou "Baixa"
+        - **expectedResult**: Descreva o resultado esperado de forma mensurável (ex: "Aumentar conversao de 2% para 5% em 3 meses", "Reduzir custo fixo em R$15.000/mes")
+        
+        Ordene as ações por prioridade (Alta primeiro). Garanta que haja pelo menos 1 ação de cada categoria principal (Comercial, Financeiro, Pessoas).
     `;
 
     const actionPlanItemSchema = {
@@ -693,8 +700,11 @@ export const generateComprehensiveStrategicAnalysis = async (
             where: { type: Type.STRING },
             how: { type: Type.STRING },
             howMuch: { type: Type.NUMBER },
+            category: { type: Type.STRING, enum: ['Comercial', 'Financeiro', 'Pessoas', 'Operacional', 'Marketing', 'Estratégico'] },
+            priority: { type: Type.STRING, enum: ['Alta', 'Média', 'Baixa'] },
+            expectedResult: { type: Type.STRING },
         },
-        required: ['what', 'why', 'who', 'when', 'how', 'howMuch']
+        required: ['what', 'why', 'who', 'when', 'how', 'howMuch', 'category', 'priority', 'expectedResult']
     };
 
     const responseSchema = {
