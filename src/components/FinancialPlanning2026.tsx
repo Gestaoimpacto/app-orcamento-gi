@@ -144,7 +144,7 @@ const FinancialPlanning2026: React.FC = () => {
     
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">10. Planejamento Financeiro 2026</h1>
                 <p className="text-gray-500 mt-2">
                     Gere as projeções financeiras (DRE, DFC, BP) com base no cenário selecionado e nos dados inseridos.

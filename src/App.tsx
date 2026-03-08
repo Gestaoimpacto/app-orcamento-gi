@@ -29,12 +29,13 @@ import { PlanProvider, authService, usePlan } from './hooks/usePlanData';
 import SubscriptionExpiredPage from './components/SubscriptionExpiredPage';
 
 const LoadingScreen: React.FC<{ message?: string }> = ({ message = 'Carregando...' }) => (
-    <div className="flex h-screen w-full items-center justify-center bg-gray-50">
-        <div className="text-center">
-            <div className="w-12 h-12 bg-brand-orange rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-                <span className="text-white font-black text-lg">GI</span>
+    <div className="flex h-screen w-full items-center justify-center bg-brand-dark">
+        <div className="text-center animate-fadeIn">
+            <img src="/logo-gi.png" alt="Gestão de Impacto" className="h-12 w-auto object-contain mx-auto mb-4 animate-pulse" />
+            <div className="w-48 h-1 bg-gray-800 rounded-full mx-auto overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-brand-orange to-orange-400 rounded-full" style={{ animation: 'shimmer 1.5s ease-in-out infinite', width: '60%' }}></div>
             </div>
-            <p className="text-gray-500 font-medium text-sm">{message}</p>
+            <p className="text-gray-500 font-medium text-xs mt-3 uppercase tracking-wider">{message}</p>
         </div>
     </div>
 );
@@ -80,7 +81,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
 
     if (subscriptionStatus === 'active') {
         return (
-            <div className="flex h-screen bg-gray-50 text-gray-800 relative">
+            <div className="flex h-screen bg-[#f1f5f9] text-gray-800 relative">
                 <OnboardingWizard />
                 <Sidebar 
                     currentView={currentView} 
@@ -89,7 +90,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
                     onLogout={onLogout}
                 />
                 <main className="flex-1 p-6 lg:p-8 xl:p-10 overflow-y-auto">
-                    <div className="max-w-7xl mx-auto">
+                    <div className="max-w-7xl mx-auto animate-fadeIn">
                         {renderView()}
                     </div>
                 </main>
@@ -98,16 +99,16 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
     }
 
     return (
-        <div className="flex h-screen w-full items-center justify-center bg-gray-50">
-            <div className="text-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-md">
-                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <svg className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+        <div className="flex h-screen w-full items-center justify-center bg-brand-dark">
+            <div className="text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-md animate-fadeIn">
+                <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="h-7 w-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">Ocorreu um erro</h2>
                 <p className="mt-2 text-sm text-gray-500">Nao foi possivel verificar o estado da sua conta. Por favor, tente sair e entrar novamente.</p>
                 <button 
                     onClick={onLogout}
-                    className="mt-6 px-6 py-2.5 bg-brand-orange text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors text-sm"
+                    className="mt-6 px-6 py-2.5 bg-brand-orange text-white font-semibold rounded-xl hover:bg-orange-700 transition-colors text-sm btn-glow"
                 >
                     Sair
                 </button>

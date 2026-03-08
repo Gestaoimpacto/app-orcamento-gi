@@ -294,7 +294,7 @@ const CommercialPlanning: React.FC = () => {
         
         return (
             <div className="space-y-6 mt-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                      <h3 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Planejamento de Demanda por Canal</h3>
                      <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -342,7 +342,7 @@ const CommercialPlanning: React.FC = () => {
                      <button onClick={addDemandChannel} className="mt-2 text-brand-orange font-semibold hover:text-orange-700 text-sm">+ Adicionar Canal</button>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <h3 className="text-lg font-bold text-brand-blue mb-4">Mix de Receita por Canal</h3>
                         <div style={{width: '100%', height: 250}}>
                             <ResponsiveContainer>
@@ -359,7 +359,7 @@ const CommercialPlanning: React.FC = () => {
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-bold text-brand-blue">Análise de Canais com IA</h3>
-                            <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
+                            <button onClick={handleGenerateChannelAnalysis} disabled={isLoading.channel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
                                 {isLoading.channel ? 'Analisando...' : 'Gerar Análise'}
                             </button>
                         </div>
@@ -390,7 +390,7 @@ const CommercialPlanning: React.FC = () => {
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                          <div className="flex justify-between items-center">
                             <h3 className="text-lg font-bold text-brand-blue">Otimização do Funil com IA</h3>
-                            <button onClick={handleGenerateFunnelSuggestions} disabled={isLoading.funnel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
+                            <button onClick={handleGenerateFunnelSuggestions} disabled={isLoading.funnel} className="flex items-center px-3 py-2 text-xs font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
                                  {isLoading.funnel ? 'Gerando...' : 'Gerar Sugestões'}
                              </button>
                          </div>
@@ -652,7 +652,7 @@ const CommercialPlanning: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">6. Planejamento Comercial & RH</h1>
                 <p className="text-gray-500 mt-2">
                     Defina sua estratégia de geração de demanda, estruture seu funil de vendas e projete as contratações necessárias para 2026.

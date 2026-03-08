@@ -73,7 +73,7 @@ const LiquidityDashboard: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Painel de Liquidez e Caixa</h1>
                 <p className="text-gray-500 mt-1">
                     Monitore a saude financeira, necessidade de capital de giro e a sobrevivencia do caixa.

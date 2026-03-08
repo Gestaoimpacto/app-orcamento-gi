@@ -35,14 +35,14 @@ const ActionPlan: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">8. Plano de Ação (5W2H)</h1>
                 <p className="text-gray-500 mt-2">
                     Transforme seus objetivos estratégicos em ações concretas e mensuráveis.
                 </p>
             </header>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm align-top border-separate border-spacing-2">
                         <thead className="bg-gray-50">

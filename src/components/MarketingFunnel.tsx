@@ -132,14 +132,14 @@ const MarketingFunnel: React.FC = () => {
     
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">7. Funil de Marketing & Vendas</h1>
                 <p className="text-gray-500 mt-2">
                     Visualize a jornada do seu cliente desde a primeira impressão até a venda, comparando 2025 com a projeção para 2026.
                 </p>
             </header>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {renderFunnelColumn('2025', funnelData.data2025)}
                     {renderFunnelColumn('2026', funnelData.data2026)}
@@ -149,7 +149,7 @@ const MarketingFunnel: React.FC = () => {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
                  <div className="flex flex-wrap gap-4 justify-between items-center border-b pb-3">
                     <h2 className="text-xl font-bold text-gray-900">Análise do Funil com IA (CMO)</h2>
-                    <button onClick={handleGenerateAnalysis} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
+                    <button onClick={handleGenerateAnalysis} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
                         {isLoading ? 'Analisando...' : 'Analisar Funil & Gerar Recomendações'}
                     </button>
                 </div>

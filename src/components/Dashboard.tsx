@@ -23,7 +23,7 @@ const KpiCard: React.FC<{
     };
     const c = colorMap[color];
     return (
-        <div className={clsx("bg-white p-5 rounded-2xl shadow-sm border hover:shadow-md transition-shadow", c.border)}>
+        <div className={clsx("bg-white p-5 rounded-2xl shadow-sm border hover:shadow-lg transition-all duration-300 card-hover gradient-border", c.border)}>
             <div className="flex items-center justify-between mb-3">
                 <div className={clsx("p-2.5 rounded-xl", c.icon)}>
                     {icon}
@@ -308,14 +308,16 @@ const Dashboard: React.FC = () => {
     return (
         <div className="space-y-6 max-w-7xl">
             {/* Header */}
-            <header className="flex items-end justify-between">
+            <header className="flex items-end justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard Estrategico</h1>
-                    <p className="text-gray-500 mt-1">Visao consolidada da performance de 2025 e insights para 2026</p>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard Estratégico</h1>
+                    <p className="text-gray-500 mt-1">Visão consolidada da performance de 2025 e insights para 2026</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-xs text-gray-400">Ano base</p>
-                    <p className="text-lg font-bold text-brand-orange">2025</p>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-brand-dark rounded-xl">
+                        <span className="text-xs text-gray-400">Ano base</span>
+                        <span className="text-lg font-bold text-brand-orange">2025</span>
+                    </span>
                 </div>
             </header>
 

@@ -91,23 +91,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, user, on
         "bg-gradient-to-b from-brand-dark to-[#111827] text-brand-gray flex flex-col h-full no-print transition-all duration-300",
         isCollapsed ? "w-20" : "w-72"
     )}>
-      {/* Header */}
-      <div className="flex items-center justify-between h-16 border-b border-white/10 flex-shrink-0 px-4">
+      {/* Header com Logo */}
+      <div className="flex flex-col items-center border-b border-white/10 flex-shrink-0 px-4 py-4">
          {!isCollapsed && (
-            <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center">
-                    <span className="text-white font-black text-sm">GI</span>
-                </div>
-                <div>
-                    <h1 className="text-sm font-bold text-white leading-tight">GESTAO DE</h1>
-                    <h1 className="text-sm font-bold text-brand-orange leading-tight">IMPACTO</h1>
-                </div>
+            <div className="flex flex-col items-center gap-1">
+                <img src="/logo-gi.png" alt="Gestão de Impacto" className="h-10 w-auto object-contain" />
+                <span className="text-[10px] font-semibold text-brand-orange uppercase tracking-[0.2em]">Planejamento Estratégico</span>
             </div>
          )}
          {isCollapsed && (
-            <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center mx-auto">
-                <span className="text-white font-black text-sm">GI</span>
-            </div>
+            <img src="/logo-gi.png" alt="GI" className="h-8 w-auto object-contain" />
          )}
       </div>
 

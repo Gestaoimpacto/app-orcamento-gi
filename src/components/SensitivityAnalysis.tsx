@@ -88,7 +88,7 @@ const SensitivityAnalysis: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-4xl font-bold text-gray-900">Análise de Sensibilidade</h1>
                 <p className="text-lg text-gray-600 mt-2">
                     Simule o impacto cruzado de variações de <strong>Preço</strong> e <strong>Volume</strong> no seu Lucro Líquido e entenda os riscos do seu negócio.

@@ -81,14 +81,10 @@ const Login: React.FC = () => {
         </div>
         
         <div className="relative z-10 text-center max-w-md">
-          <div className="w-20 h-20 bg-brand-orange rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-brand-orange/30">
-            <span className="text-white font-black text-3xl">GI</span>
-          </div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mb-4">
-            GESTAO DE<br/><span className="text-brand-orange">IMPACTO</span>
-          </h1>
+          <img src="/logo-gi.png" alt="Gestão de Impacto" className="h-16 w-auto object-contain mx-auto mb-6" />
+          <h2 className="text-lg font-semibold text-brand-orange uppercase tracking-[0.25em] mb-4">Planejamento Estratégico</h2>
           <p className="text-gray-400 text-lg leading-relaxed">
-            Planejamento estrategico inteligente para transformar sua empresa em 2026.
+            Planejamento estratégico inteligente para transformar sua empresa em 2026.
           </p>
           
           <div className="mt-12 grid grid-cols-3 gap-6">
@@ -112,10 +108,8 @@ const Login: React.FC = () => {
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-16">
         {/* Mobile logo */}
         <div className="lg:hidden text-center mb-8">
-          <div className="w-14 h-14 bg-brand-orange rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-black text-xl">GI</span>
-          </div>
-          <h1 className="text-2xl font-extrabold text-white">GESTAO DE <span className="text-brand-orange">IMPACTO</span></h1>
+          <img src="/logo-gi.png" alt="Gestão de Impacto" className="h-12 w-auto object-contain mx-auto mb-3" />
+          <span className="text-xs font-semibold text-brand-orange uppercase tracking-[0.2em]">Planejamento Estratégico</span>
         </div>
 
         <div className="w-full max-w-md mx-auto">

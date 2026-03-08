@@ -174,7 +174,7 @@ const MonthlyTracking: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">12. Acompanhamento & Forecast</h1>
                 <p className="text-gray-500 mt-2">
                     Acompanhe o realizado vs. projetado (cenário <span className="font-bold text-brand-orange">{baseScenario}</span>), analise desvios e crie uma previsão (Forecast) para o restante do ano.
@@ -219,7 +219,7 @@ const MonthlyTracking: React.FC = () => {
             </div>
             
             {/* Forecast Cards */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                 <h2 className="text-lg font-bold text-gray-900 mb-2">Forecast Anual 2026</h2>
                 <p className="text-sm text-gray-500 mb-4">O Forecast combina os dados realizados (até o mês selecionado) com os projetados (meses futuros) para estimar como o ano terminará.</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -229,7 +229,7 @@ const MonthlyTracking: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                 <div className="mb-6">
                     <label htmlFor="month-select" className="block text-sm font-medium text-gray-700">Selecione o Mês para Análise e Inserção de Dados</label>
                     <select

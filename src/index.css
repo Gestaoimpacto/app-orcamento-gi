@@ -2,23 +2,24 @@
 
 @theme {
   --font-sans: 'Montserrat', sans-serif;
-  --color-brand-dark: #111827;
-  --color-brand-blue: #1f2937;
+  --color-brand-dark: #0f172a;
+  --color-brand-blue: #1e293b;
   --color-brand-orange: #ea580c;
   --color-brand-gray: #e5e7eb;
   --color-brand-optimistic: #16a34a;
   --color-brand-conservative: #ea580c;
   --color-brand-disruptive: #dc2626;
-  --color-brand-light-gray: #f9fafb;
+  --color-brand-light-gray: #f8fafc;
 }
 
 body {
   font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f1f5f9;
 }
 
-/* Custom scrollbar */
+/* ===== CUSTOM SCROLLBAR ===== */
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
@@ -30,10 +31,9 @@ body {
   border-radius: 4px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* Main content scrollbar */
 main::-webkit-scrollbar {
   width: 6px;
 }
@@ -41,14 +41,14 @@ main::-webkit-scrollbar-track {
   background: transparent;
 }
 main::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #cbd5e1;
   border-radius: 6px;
 }
 main::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #94a3b8;
 }
 
-/* Hide number input arrows (spinners) */
+/* ===== HIDE NUMBER INPUT ARROWS ===== */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
@@ -58,24 +58,92 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* Better focus styles */
+/* ===== FOCUS STYLES ===== */
 input:focus, textarea:focus, select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+  border-color: #ea580c !important;
 }
 
-/* Smooth transitions for all interactive elements */
+/* ===== SMOOTH TRANSITIONS ===== */
 button, a, input, textarea, select {
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Card hover effect */
+/* ===== CARD EFFECTS ===== */
+.card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
 .card-hover:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Table improvements */
+/* ===== GLASS MORPHISM EFFECT ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== GRADIENT TEXT ===== */
+.gradient-text {
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== ANIMATED GRADIENT BORDER ===== */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ea580c, #f97316, #fb923c, #ea580c);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  border-radius: 999px 999px 0 0;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ===== PULSE ANIMATION FOR ALERTS ===== */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ===== FADE IN ANIMATION ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ===== SLIDE IN FROM LEFT ===== */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slideIn {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+/* ===== TABLE IMPROVEMENTS ===== */
 table {
   border-collapse: separate;
   border-spacing: 0;
@@ -87,6 +155,53 @@ th {
   z-index: 1;
 }
 
+/* Zebra striping for tables */
+tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+tbody tr:hover {
+  background-color: rgba(234, 88, 12, 0.03);
+}
+
+/* ===== BUTTON GLOW EFFECT ===== */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-glow:hover::after {
+  opacity: 1;
+}
+
+/* ===== SECTION DIVIDER ===== */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 1.5rem 0;
+}
+
+/* ===== KPI CARD ACCENT ===== */
+.kpi-card {
+  border-left: 4px solid transparent;
+  transition: all 0.25s ease;
+}
+.kpi-card:hover {
+  border-left-color: #ea580c;
+  transform: translateX(2px);
+}
+
+/* ===== ERROR DISPLAY ===== */
 #error-display {
   display: none;
   position: fixed;
@@ -104,6 +219,7 @@ th {
   overflow-y: auto;
 }
 
+/* ===== PRINT STYLES ===== */
 @media print {
   @page {
     margin: 1cm;

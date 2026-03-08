@@ -87,7 +87,7 @@ const PlanSummary: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Resumo do Plano: 2025 vs 2026</h1>
                 <p className="text-gray-500 mt-2">
                     Visão executiva comparando os resultados de 2025 com as metas e projeções para 2026 (cenário <span className="font-bold">{baseScenario}</span>).
@@ -149,7 +149,7 @@ const PlanSummary: React.FC = () => {
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                     <h2 className="text-lg font-bold text-gray-900 mb-4">Financeiro: 2025 vs 2026</h2>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
@@ -166,7 +166,7 @@ const PlanSummary: React.FC = () => {
                     </div>
                 </div>
 
-                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                     <h2 className="text-lg font-bold text-gray-900 mb-4">Operacional: 2025 vs 2026</h2>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>

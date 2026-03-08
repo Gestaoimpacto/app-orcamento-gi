@@ -109,7 +109,7 @@ const FinancialRatiosDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Indicadores Financeiros</h1>
                 <p className="text-gray-500 mt-1">
                     Analise profunda da saude financeira com diagnosticos automaticos sobre Liquidez, Solvencia e Eficiencia.

@@ -87,7 +87,7 @@ const KpiDashboard: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
              <div className="border-b border-gray-200">
                 <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                     {TABS.map(tab => (
@@ -147,17 +147,17 @@ const OkrsAndKpis: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">5. OKRs & KPIs</h1>
                 <p className="text-gray-500 mt-2">
                     Defina seus Objetivos e Resultados-Chave (OKRs) e monitore seus Indicadores-Chave de Performance (KPIs).
                 </p>
             </header>
             
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                  <div className="flex justify-between items-center border-b pb-2">
                     <h2 className="text-lg font-bold text-gray-900">OKRs Estratégicos 2026</h2>
-                     <button onClick={handleGenerate} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 transition-colors shadow-sm disabled:bg-gray-400">
+                     <button onClick={handleGenerate} disabled={isLoading} className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow transition-colors shadow-sm disabled:bg-gray-400">
                         {isLoading ? 'Gerando...' : 'Gerar Sugestões com IA'}
                      </button>
                 </div>

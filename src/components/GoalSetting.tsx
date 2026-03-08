@@ -188,20 +188,20 @@ const GoalSetting: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <div className="flex flex-wrap justify-between items-start gap-4">
                     <div>
                         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">4. Metas & Objetivos para 2026</h1>
                         <p className="text-gray-500 mt-2">Defina as metas macro e os objetivos estrategicos que guiarao seu planejamento.</p>
                     </div>
-                     <button onClick={handleGenerateSuggestions} disabled={isLoading} className="flex-shrink-0 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-sm disabled:bg-gray-400 transition-colors">
+                     <button onClick={handleGenerateSuggestions} disabled={isLoading} className="flex-shrink-0 px-5 py-2.5 text-sm font-semibold text-white bg-brand-orange rounded-xl hover:bg-orange-700 shadow-md shadow-orange-200 btn-glow shadow-sm disabled:bg-gray-400 transition-colors">
                         {isLoading ? 'Gerando...' : 'Gerar Sugestoes com IA'}
                      </button>
                 </div>
             </header>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                     <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Diagnostico Rapido 2025</h2>
                     <dl className="space-y-1">
                         <DiagnosticItem label="Receita Liquida" value={formatCurrency(summary2025.receitaTotal)} />
@@ -214,7 +214,7 @@ const GoalSetting: React.FC = () => {
                 </div>
 
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Metas de Crescimento 2026</h2>
                         <div className="mb-4">
                              <label className="block text-sm font-medium text-gray-700">Inflacao Prevista para 2026 (%)</label>
@@ -241,7 +241,7 @@ const GoalSetting: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
                         <h2 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Objetivos Estrategicos</h2>
                         {renderStrategicObjectives(goals2026.objetivosEstrategicos)}
                     </div>

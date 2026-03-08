@@ -60,7 +60,7 @@ const ReportGenerator: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Relatórios & Impressão</h1>
                 <p className="text-gray-500 mt-2">
                     Gere relatórios profissionais e consolidados do seu planejamento, enriquecidos com análises da IA.

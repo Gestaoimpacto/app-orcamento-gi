@@ -98,7 +98,7 @@ const Taxes: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-4xl font-bold text-gray-900">2. Configuração de Impostos</h1>
                 <p className="text-lg text-gray-600 mt-2">
                     Preencha as informações tributárias da sua empresa. Os impostos são aplicados automaticamente na Coleta de Dados quando você altera as alíquotas.

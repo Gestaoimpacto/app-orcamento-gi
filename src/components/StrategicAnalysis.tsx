@@ -338,7 +338,7 @@ const BowmanClock: React.FC = () => {
 export const StrategicAnalysis: React.FC = () => {
   return (
     <div className="space-y-8">
-        <header>
+        <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
             <h1 className="text-4xl font-bold text-gray-900">3. Análise Estratégica</h1>
             <p className="text-lg text-gray-600 mt-2">
                 Analise seu mercado, concorrência e portfólio para encontrar oportunidades de crescimento.

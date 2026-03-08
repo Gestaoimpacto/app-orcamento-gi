@@ -61,7 +61,7 @@ const ImageEditor: React.FC = () => {
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto">
-            <header>
+            <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gradient-border">
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Gemini Image Editor</h1>
                 <p className="text-gray-500 mt-2">Edite imagens usando prompts de texto com o poder do Gemini 2.5 Flash Image.</p>
             </header>
