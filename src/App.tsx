@@ -24,6 +24,7 @@ import LiquidityDashboard from './components/LiquidityDashboard';
 import FinancialRatiosDashboard from './components/FinancialRatiosDashboard';
 import SensitivityAnalysis from './components/SensitivityAnalysis';
 import OnboardingWizard from './components/OnboardingWizard';
+import HelpGuide from './components/HelpGuide';
 import { User, View } from './types';
 import { PlanProvider, authService, usePlan } from './hooks/usePlanData';
 import SubscriptionExpiredPage from './components/SubscriptionExpiredPage';
@@ -67,6 +68,7 @@ const MainLayout: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLo
             case 'liquidity-dashboard': return <LiquidityDashboard />;
             case 'financial-ratios': return <FinancialRatiosDashboard />;
             case 'sensitivity-analysis': return <SensitivityAnalysis />;
+            case 'help-guide': return <HelpGuide />;
             default: return <Dashboard />;
         }
     };

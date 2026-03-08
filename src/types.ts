@@ -6,7 +6,7 @@ export const MONTH_LABELS: { [key in Month]: string } = {
     jul: 'Julho', ago: 'Agosto', set: 'Setembro', out: 'Outubro', nov: 'Novembro', dez: 'Dezembro'
 };
 
-export type View = 'dashboard' | 'settings' | 'data-collection' | 'strategic-analysis' | 'goal-setting' | 'okrs-kpis' | 'commercial-planning' | 'marketing-funnel' | 'action-plan' | 'scenario-planning' | 'financial-planning' | 'plan-summary' | 'monthly-tracking' | 'dre-comparison' | 'taxes' | 'image-editor' | 'pricing-calculator' | 'report-generator' | 'liquidity-dashboard' | 'financial-ratios' | 'sensitivity-analysis';
+export type View = 'dashboard' | 'settings' | 'data-collection' | 'strategic-analysis' | 'goal-setting' | 'okrs-kpis' | 'commercial-planning' | 'marketing-funnel' | 'action-plan' | 'scenario-planning' | 'financial-planning' | 'plan-summary' | 'monthly-tracking' | 'dre-comparison' | 'taxes' | 'image-editor' | 'pricing-calculator' | 'report-generator' | 'liquidity-dashboard' | 'financial-ratios' | 'sensitivity-analysis' | 'help-guide';
 
 export type SubscriptionStatus = 'loading' | 'active' | 'inactive' | 'expired' | 'not_found';
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'unsaved';
