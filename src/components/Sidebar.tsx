@@ -108,35 +108,35 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, user, on
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5 scrollbar-thin">
         <NavButton id="dashboard" label="Dashboard" icon={icons.dashboard} currentView={currentView} onClick={() => setCurrentView('dashboard')} />
-        <NavButton id="settings" label="Configuracoes" icon={icons.settings} currentView={currentView} onClick={() => setCurrentView('settings')} />
+        <NavButton id="settings" label="Configurações" icon={icons.settings} currentView={currentView} onClick={() => setCurrentView('settings')} />
 
-        <SectionTitle title="Diagnostico" />
+        <SectionTitle title="Diagnóstico" />
         <NavButton id="data-collection" label="Coleta de Dados 2025" icon={icons.clipboard} currentView={currentView} onClick={() => setCurrentView('data-collection')} />
         <NavButton id="taxes" label="Impostos" icon={icons.scale} currentView={currentView} onClick={() => setCurrentView('taxes')} />
-        <NavButton id="strategic-analysis" label="Analise Estrategica" icon={icons.search} currentView={currentView} onClick={() => setCurrentView('strategic-analysis')} />
+        <NavButton id="strategic-analysis" label="Análise Estratégica" icon={icons.search} currentView={currentView} onClick={() => setCurrentView('strategic-analysis')} />
         
         <SectionTitle title="Planejamento 2026" />
         <NavButton id="goal-setting" label="Metas e Objetivos" icon={icons.trending} currentView={currentView} onClick={() => setCurrentView('goal-setting')} />
         <NavButton id="okrs-kpis" label="OKRs e KPIs" icon={icons.target} currentView={currentView} onClick={() => setCurrentView('okrs-kpis')} />
         <NavButton id="commercial-planning" label="Comercial e RH" icon={icons.people} currentView={currentView} onClick={() => setCurrentView('commercial-planning')} />
         <NavButton id="marketing-funnel" label="Funil de Marketing" icon={icons.funnel} currentView={currentView} onClick={() => setCurrentView('marketing-funnel')} />
-        <NavButton id="action-plan" label="Plano de Acao" icon={icons.checklist} currentView={currentView} onClick={() => setCurrentView('action-plan')} />
-        <NavButton id="scenario-planning" label="Orcamento e Cenarios" icon={icons.grid} currentView={currentView} onClick={() => setCurrentView('scenario-planning')} />
+        <NavButton id="action-plan" label="Plano de Ação" icon={icons.checklist} currentView={currentView} onClick={() => setCurrentView('action-plan')} />
+        <NavButton id="scenario-planning" label="Orçamento e Cenários" icon={icons.grid} currentView={currentView} onClick={() => setCurrentView('scenario-planning')} />
         <NavButton id="financial-planning" label="Planejamento Financeiro" icon={icons.chart} currentView={currentView} onClick={() => setCurrentView('financial-planning')} />
         <NavButton id="plan-summary" label="Resumo do Plano" icon={icons.info} currentView={currentView} onClick={() => setCurrentView('plan-summary')} />
 
-        <SectionTitle title="Execucao" />
+        <SectionTitle title="Execução" />
         <NavButton id="monthly-tracking" label="Acompanhamento Mensal" icon={icons.calendar} currentView={currentView} onClick={() => setCurrentView('monthly-tracking')} />
         <NavButton id="dre-comparison" label="Comparativo DRE" icon={icons.bars} currentView={currentView} onClick={() => setCurrentView('dre-comparison')} />
 
-        <SectionTitle title="Gestao Financeira" />
+        <SectionTitle title="Gestão Financeira" />
         <NavButton id="liquidity-dashboard" label="Caixa e Liquidez" icon={icons.droplet} currentView={currentView} onClick={() => setCurrentView('liquidity-dashboard')} />
         <NavButton id="financial-ratios" label="KPIs Financeiros" icon={icons.pie} currentView={currentView} onClick={() => setCurrentView('financial-ratios')} />
         <NavButton id="sensitivity-analysis" label="Matriz de Sensibilidade" icon={icons.matrix} currentView={currentView} onClick={() => setCurrentView('sensitivity-analysis')} />
 
         <SectionTitle title="Ferramentas" />
-        <NavButton id="report-generator" label="Relatorios" icon={icons.printer} currentView={currentView} onClick={() => setCurrentView('report-generator')} />
-        <NavButton id="pricing-calculator" label="Precificacao Estrategica" icon={icons.calculator} currentView={currentView} onClick={() => setCurrentView('pricing-calculator')} />
+        <NavButton id="report-generator" label="Relatórios" icon={icons.printer} currentView={currentView} onClick={() => setCurrentView('report-generator')} />
+        <NavButton id="pricing-calculator" label="Precificação Estratégica" icon={icons.calculator} currentView={currentView} onClick={() => setCurrentView('pricing-calculator')} />
         <NavButton id="help-guide" label="Guia de Uso" icon={icons.helpGuide} currentView={currentView} onClick={() => setCurrentView('help-guide')} />
       </nav>
 
