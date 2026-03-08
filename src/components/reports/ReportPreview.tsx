@@ -13,10 +13,10 @@ interface ReportPreviewProps {
 
 // ===== HELPER COMPONENTS =====
 
-const PageBreak = () => <div className="break-before-page" style={{ pageBreakBefore: 'always' }} />;
+const PageBreak = () => <div className="break-before-page pt-4" style={{ pageBreakBefore: 'always' }} />;
 
 const SectionHeader: React.FC<{ number: string; title: string; subtitle?: string }> = ({ number, title, subtitle }) => (
-    <div className="mb-6 pb-3 border-b-2 border-brand-orange">
+    <div className="mb-10 pb-4 border-b-2 border-brand-orange">
         <div className="flex items-baseline gap-3">
             <span className="text-sm font-bold text-brand-orange uppercase tracking-wider">{number}</span>
             <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
@@ -217,7 +217,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                 </div>
 
                 {/* ===== REPORT BODY ===== */}
-                <div className="p-12 space-y-0">
+                <div className="p-12 space-y-16">
 
                     {/* EXECUTIVE SUMMARY */}
                     <div id="report-section-exec-summary">
@@ -244,13 +244,13 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-financial-2025">
                                 <SectionHeader number="02" title="Panorama Financeiro 2025" subtitle="Indicadores consolidados do exercício" />
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
                                     <MetricCard label="Receita Bruta" value={formatCurrency(summary2025.receitaBrutaTotal)} highlight />
                                     <MetricCard label="Receita Líquida" value={formatCurrency(summary2025.receitaTotal)} />
                                     <MetricCard label="Lucro Bruto" value={formatCurrency(summary2025.margemBruta)} />
                                     <MetricCard label="Margem Bruta" value={formatPercentage(summary2025.margemBrutaPercent)} />
                                 </div>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
                                     <MetricCard label="EBITDA" value={formatCurrency(summary2025.ebitda)} highlight />
                                     <MetricCard label="Margem EBITDA" value={formatPercentage(summary2025.margemEbitda)} />
                                     <MetricCard label="Custos Variáveis" value={formatCurrency(summary2025.custosVariaveisTotal)} />
@@ -287,7 +287,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                     ])}
                                     highlightLast={false}
                                 />
-                                <div className="grid grid-cols-3 gap-4 mt-6">
+                                <div className="grid grid-cols-3 gap-5 mt-8">
                                     <MetricCard label="Melhor Mês (Receita)" value={
                                         summary2025.monthlySummary.length > 0
                                             ? summary2025.monthlySummary.reduce((best, m) => m.receita > best.receita ? m : best).month
@@ -305,7 +305,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-strategic-analysis">
                                 <SectionHeader number="04" title="Análise Estratégica (SWOT)" subtitle="Forças, Fraquezas, Oportunidades e Ameaças" />
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-5">
                                     {[
                                         { title: 'Forças', content: planData.marketAnalysis.swot.strengths, border: 'border-green-400', bg: 'bg-green-50', icon: '💪' },
                                         { title: 'Fraquezas', content: planData.marketAnalysis.swot.weaknesses, border: 'border-red-400', bg: 'bg-red-50', icon: '⚠️' },
@@ -347,7 +347,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-commercial-kpis">
                                 <SectionHeader number="06" title="Indicadores Comerciais" subtitle="Performance de vendas e marketing em 2025" />
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                     <MetricCard label="Novos Clientes" value={formatNumber(summary2025.novosClientesTotal)} />
                                     <MetricCard label="Ticket Médio" value={formatCurrency(summary2025.ticketMedio)} highlight />
                                     <MetricCard label="Taxa de Retenção" value={formatPercentage(summary2025.taxaRetencao)} />
@@ -362,7 +362,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-people-kpis">
                                 <SectionHeader number="07" title="Indicadores de Pessoas" subtitle="Equipe e capital humano em 2025" />
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                     <MetricCard label="Headcount Final" value={formatNumber(summary2025.headcountFinal)} />
                                     <MetricCard label="Salário Médio Mensal" value={formatCurrency(summary2025.salarioMedioMensal)} />
                                     <MetricCard label="Custo/Colaborador/Ano" value={formatCurrency(summary2025.custoColaboradorAno)} />
@@ -378,7 +378,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-strategic-context">
                                 <SectionHeader number="02" title="Contexto Estratégico" subtitle="SWOT e posicionamento da empresa" />
-                                <div className="grid grid-cols-2 gap-4 mb-8">
+                                <div className="grid grid-cols-2 gap-5 mb-10">
                                     {[
                                         { title: 'Forças', content: planData.marketAnalysis.swot.strengths, border: 'border-green-400', bg: 'bg-green-50', icon: '💪' },
                                         { title: 'Fraquezas', content: planData.marketAnalysis.swot.weaknesses, border: 'border-red-400', bg: 'bg-red-50', icon: '⚠️' },
@@ -437,10 +437,10 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-goals-2026">
                                 <SectionHeader number="03" title="Metas e Objetivos 2026" subtitle="Metas financeiras, comerciais e de pessoas" />
-                                <div className="space-y-6">
+                                <div className="space-y-8">
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-800 mb-3">Metas Financeiras</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                             <MetricCard label="Receita Bruta" value={formatCurrency(planData.goals2026?.financeiras?.receitaBruta?.annual || 0)} highlight />
                                             <MetricCard label="Margem Bruta" value={formatPercentage(planData.goals2026?.financeiras?.margemBruta?.annual || 0)} />
                                             <MetricCard label="Margem EBITDA" value={formatPercentage(planData.goals2026?.financeiras?.margemEbitda?.annual || 0)} />
@@ -449,7 +449,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-800 mb-3">Metas Comerciais</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                             <MetricCard label="Novos Clientes" value={formatNumber(planData.goals2026?.comerciais?.novosClientes?.annual || 0)} highlight />
                                             <MetricCard label="Ticket Médio" value={formatCurrency(planData.goals2026?.comerciais?.ticketMedio?.annual || 0)} />
                                             <MetricCard label="Taxa de Retenção" value={formatPercentage(planData.goals2026?.comerciais?.taxaRetencao?.annual || 0)} />
@@ -458,7 +458,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-800 mb-3">Metas de Pessoas</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                             <MetricCard label="Headcount Final" value={formatNumber(planData.goals2026?.pessoas?.headcountFinal?.annual || 0)} />
                                             <MetricCard label="Turnover" value={formatPercentage(planData.goals2026?.pessoas?.turnover?.annual || 0)} />
                                             <MetricCard label="ROI Treinamento" value={formatPercentage(planData.goals2026?.pessoas?.roiTreinamento?.annual || 0)} />
@@ -494,7 +494,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <div id="report-section-okrs">
                                 <SectionHeader number="04" title="OKRs - Objetivos e Resultados-Chave" subtitle="Metodologia OKR para acompanhamento de resultados" />
                                 {planData.okrsAndKpis?.okrs?.length > 0 ? (
-                                    <div className="space-y-6">
+                                    <div className="space-y-8">
                                         {planData.okrsAndKpis.okrs.map((okr, i) => (
                                             <div key={okr.id} className="p-5 bg-gray-50 rounded-xl border border-gray-200">
                                                 <h4 className="font-bold text-base text-gray-900 mb-3">
@@ -540,9 +540,9 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <div id="report-section-action-plan">
                                 <SectionHeader number="05" title="Plano de Ação" subtitle="Ações priorizadas com responsáveis, prazos e resultados esperados" />
                                 {planData.actionPlanItems?.length > 0 ? (
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         {/* Summary stats */}
-                                        <div className="grid grid-cols-5 gap-3 mb-6">
+                                        <div className="grid grid-cols-5 gap-4 mb-8">
                                             <MetricCard label="Total de Ações" value={String(planData.actionPlanItems.length)} />
                                             <MetricCard label="Prioridade Alta" value={String(planData.actionPlanItems.filter(i => i.priority === 'Alta').length)} />
                                             <MetricCard label="Em Andamento" value={String(planData.actionPlanItems.filter(i => i.status === 'Em Andamento').length)} />
@@ -560,7 +560,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                                         Prioridade {priority} ({items.length} {items.length === 1 ? 'ação' : 'ações'})
                                                     </h4>
                                                     {items.map((item, idx) => (
-                                                        <div key={item.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 mb-2">
+                                                        <div key={item.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 mb-3">
                                                             <div className="flex items-start justify-between gap-4">
                                                                 <div className="flex-1">
                                                                     <div className="flex items-center gap-2 mb-1">
@@ -603,7 +603,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-commercial-plan">
                                 <SectionHeader number="06" title="Planejamento Comercial" subtitle="Canais de demanda e funil de vendas" />
-                                <div className="space-y-6">
+                                <div className="space-y-8">
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-800 mb-3">Canais de Demanda</h3>
                                         {planData.commercialPlanning?.demandPlanning?.channels?.length > 0 ? (
@@ -623,7 +623,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-800 mb-3">Funil de Vendas</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                             <MetricCard label="Dias Úteis/Mês" value={formatNumber(planData.commercialPlanning?.salesFunnel?.workingDays || 0)} />
                                             <MetricCard label="Lead → MQL" value={formatPercentage(planData.commercialPlanning?.salesFunnel?.conversionRateLeadToMql || 0)} />
                                             <MetricCard label="MQL → SQL" value={formatPercentage(planData.commercialPlanning?.salesFunnel?.conversionRateMqlToSql || 0)} />
@@ -636,7 +636,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportType, onClose }) =>
                             <PageBreak />
                             <div id="report-section-financial-projections">
                                 <SectionHeader number="07" title={`Projeções Financeiras 2026 (Cenário ${baseScenario})`} subtitle="Visão consolidada das projeções financeiras" />
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
                                     <MetricCard label="Receita Líquida" value={formatCurrency(financialTotals2026.receitaLiquida)} highlight />
                                     <MetricCard label="Lucro Bruto" value={formatCurrency(financialTotals2026.lucroBruto)} />
                                     <MetricCard label="EBITDA" value={formatCurrency(financialTotals2026.ebitda)} highlight />
