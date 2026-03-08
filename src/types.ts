@@ -24,7 +24,8 @@ export interface User {
 export interface CompanyProfile {
     name: string;
     cnpj: string;
-    industry: string; 
+    industry: string;
+    geminiApiKey: string;
 }
 
 export interface FinancialSheetRow {

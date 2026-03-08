@@ -5,27 +5,36 @@ import { CompanyProfile } from '../types';
 import { getIndustryFromCnpj } from '../services/geminiService';
 
 const Settings: React.FC = () => {
-    const { planData, updateCompanyProfile } = usePlan();
+    const { planData, updateCompanyProfile, saveDataNow } = usePlan();
     const [isSearching, setIsSearching] = useState(false);
-    const [apiKey, setApiKey] = useState('');
     const [showKey, setShowKey] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
     
+    // Migrar chave antiga do localStorage para o Firebase (uma única vez)
     useEffect(() => {
-        // Load Gemini Key
-        const storedKey = localStorage.getItem('google_gemini_api_key');
-        if (storedKey) {
-            setApiKey(storedKey);
+        const oldKey = localStorage.getItem('google_gemini_api_key');
+        if (oldKey && !planData.companyProfile.geminiApiKey) {
+            updateCompanyProfile('geminiApiKey', oldKey);
+            localStorage.removeItem('google_gemini_api_key');
         }
-    }, []);
+    }, [planData.companyProfile.geminiApiKey]);
 
-    const handleSaveKey = () => {
-        if (apiKey.trim()) {
-            localStorage.setItem('google_gemini_api_key', apiKey.trim());
-            setSaveMessage('Chave salva com sucesso! ✅');
-            setTimeout(() => setSaveMessage(''), 3000);
+    const handleSaveKey = async () => {
+        const key = planData.companyProfile.geminiApiKey?.trim() || '';
+        if (key) {
+            // Também salva no localStorage como cache local para o geminiService
+            localStorage.setItem('google_gemini_api_key', key);
+            updateCompanyProfile('geminiApiKey', key);
+            try {
+                await saveDataNow();
+                setSaveMessage('Chave salva com sucesso no seu perfil! ✅');
+            } catch {
+                setSaveMessage('Chave salva localmente. Será sincronizada automaticamente.');
+            }
+            setTimeout(() => setSaveMessage(''), 4000);
         } else {
             localStorage.removeItem('google_gemini_api_key');
+            updateCompanyProfile('geminiApiKey', '');
             setSaveMessage('Chave removida.');
             setTimeout(() => setSaveMessage(''), 3000);
         }
@@ -73,17 +82,21 @@ const Settings: React.FC = () => {
                     </p>
                 </div>
 
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-sm text-green-800">
+                    <p><strong>A chave é salva no seu perfil (Firebase).</strong> Você pode acessar de qualquer dispositivo sem precisar configurar novamente.</p>
+                </div>
+
                 <div>
-                    <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">Sua Chave de API (Gemini API Key)</label>
+                    <label htmlFor="geminiApiKey" className="block text-sm font-medium text-gray-700">Sua Chave de API (Gemini API Key)</label>
                     <div className="mt-1 flex flex-col gap-2">
                         <div className="flex gap-2 items-center">
                             <div className="relative flex-grow">
                                 <input
                                     type={showKey ? "text" : "password"}
-                                    name="apiKey"
-                                    id="apiKey"
-                                    value={apiKey}
-                                    onChange={(e) => { setApiKey(e.target.value); setSaveMessage(''); }}
+                                    name="geminiApiKey"
+                                    id="geminiApiKey"
+                                    value={planData.companyProfile.geminiApiKey || ''}
+                                    onChange={(e) => { updateCompanyProfile('geminiApiKey', e.target.value); setSaveMessage(''); }}
                                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-orange focus:ring-brand-orange sm:text-sm p-3 pr-10 bg-white text-gray-900"
                                     placeholder="Cole sua chave aqui (AIzaSy...)"
                                 />

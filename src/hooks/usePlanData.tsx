@@ -102,7 +102,7 @@ export const authService = {
     }
 };
 
-const initialCompanyProfile: CompanyProfile = { name: '', cnpj: '', industry: '' };
+const initialCompanyProfile: CompanyProfile = { name: '', cnpj: '', industry: '', geminiApiKey: '' };
 const initialFinancialSheet: FinancialSheetData = {
     receitaBruta: { values2025: {} },
     impostosSobreFaturamento: { values2025: {} },
@@ -291,6 +291,10 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
                                 }
                             }
                         }));
+                    }
+                    // Sync geminiApiKey do Firebase para localStorage
+                    if (data.planData?.companyProfile?.geminiApiKey) {
+                        localStorage.setItem('google_gemini_api_key', data.planData.companyProfile.geminiApiKey);
                     }
                     if (data.goals2026) setGoals2026(prev => ({ ...prev, ...data.goals2026 }));
                     if (data.scenarios2026) setScenarios2026(prev => ({ ...prev, ...data.scenarios2026 }));

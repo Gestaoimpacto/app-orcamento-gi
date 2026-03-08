@@ -8,12 +8,13 @@ const sumMonthlyData = (data: MonthlyData): number => data ? Object.values(data)
 const getAI = () => {
     // Priority: 
     // 1. Valid Environment Variable (System) IF it's not a placeholder
-    // 2. Valid Local Storage (User Settings)
+    // 2. Local Storage (synced with Firebase via Settings)
     
     let apiKey = import.meta.env.VITE_API_KEY as string | undefined;
     
     // Check if env var is missing, empty, or a known placeholder from some build systems
     if (!apiKey || apiKey.trim() === '' || apiKey === 'undefined' || apiKey === 'null' || apiKey.includes('YOUR_API_KEY')) {
+        // localStorage is kept in sync with Firebase by Settings.tsx
         apiKey = localStorage.getItem('google_gemini_api_key') || '';
     }
     
