@@ -449,7 +449,7 @@ const PricingCalculator: React.FC = () => {
                                     </div>
                                     <div className="flex justify-between text-xs">
                                         <span className="text-gray-500">Divisor (1 - Taxas):</span>
-                                        <span className={clsx("font-bold", financialCalc.divisor <= 0 ? "text-red-600" : "text-green-600")}>{financialCalc.divisor.toFixed(4)}</span>
+                                        <span className={clsx("font-bold", financialCalc.divisor <= 0 ? "text-red-600" : "text-green-600")}>{financialCalc.divisor.toFixed(4).replace('.', ',')}</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                                         <div className="h-3 rounded-full flex">
@@ -564,7 +564,7 @@ const PricingCalculator: React.FC = () => {
                                                 <p>Metodo do <strong>Divisor (Markup por Dentro)</strong>:</p>
                                                 <div className="bg-white p-3 rounded-lg border border-blue-200 font-mono text-xs">
                                                     <p>Preco = Custo / Divisor</p>
-                                                    <p>Preco = {formatCurrency(directCost)} / {financialCalc.divisor.toFixed(4)}</p>
+                                                    <p>Preco = {formatCurrency(directCost)} / {financialCalc.divisor.toFixed(4).replace('.', ',')}</p>
                                                     <p className="font-bold text-brand-orange mt-1">Preco = {formatCurrency(financialCalc.suggestedPrice)}</p>
                                                     {behavioralScore !== 5 && (
                                                         <p className="text-gray-500 mt-1">x Fator Estrategico = {formatCurrency(financialCalc.finalPrice)}</p>
@@ -792,7 +792,7 @@ const PricingCalculator: React.FC = () => {
                                                 <td className="px-4 py-3 text-right">{formatPercentage(grossMargin)}</td>
                                                 <td className="px-4 py-3 text-right font-bold text-green-600">{formatCurrency(item.netProfit)}</td>
                                                 <td className="px-4 py-3 text-right">{formatPercentage(item.netProfitPercent)}</td>
-                                                <td className="px-4 py-3 text-right">{item.estimatedMonthlyVolume}</td>
+                                                <td className="px-4 py-3 text-right">{formatNumber(item.estimatedMonthlyVolume)}</td>
                                                 <td className="px-4 py-3 text-right font-semibold">{formatCurrency(item.finalPrice * item.estimatedMonthlyVolume)}</td>
                                                 <td className="px-2 py-3 text-center">
                                                     <button onClick={() => removePricingItem(item.id)} className="text-red-400 hover:text-red-600 font-bold">&times;</button>

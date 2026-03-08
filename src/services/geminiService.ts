@@ -89,14 +89,110 @@ export const editImageWithText = async (
     }
 };
 
-export const getIndustryFromCnpj = async (cnpj: string): Promise<string> => {
-    const prompt = `
-        Pesquise na internet pelo CNPJ a seguir e retorne APENAS a descrição do CNAE (Classificação Nacional de Atividades Econômicas) principal.
-        Não inclua o código do CNAE, apenas a descrição da atividade principal.
-        Seja direto e retorne apenas o texto da descrição.
+export interface CnpjData {
+    razaoSocial: string;
+    nomeFantasia: string;
+    cnaeDescricao: string;
+    cnaeCodigo: string;
+    porte: string;
+    naturezaJuridica: string;
+    municipio: string;
+    uf: string;
+    capitalSocial: number;
+    dataAbertura: string;
+    situacao: string;
+}
 
-        CNPJ: ${cnpj}
-    `;
+export interface MarketResearchResult {
+    cnpjData: CnpjData;
+    marketAnalysis: string;
+}
+
+const fetchCnpjFromBrasilAPI = async (cnpj: string): Promise<CnpjData> => {
+    const cleanCnpj = cnpj.replace(/[^\d]/g, '');
+    if (cleanCnpj.length !== 14) throw new Error('CNPJ deve ter 14 digitos.');
+    
+    const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cleanCnpj}`);
+    if (!response.ok) {
+        if (response.status === 404) throw new Error('CNPJ nao encontrado na base da Receita Federal.');
+        throw new Error(`Erro ao consultar CNPJ: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+        razaoSocial: data.razao_social || '',
+        nomeFantasia: data.nome_fantasia || '',
+        cnaeDescricao: data.cnae_fiscal_descricao || '',
+        cnaeCodigo: String(data.cnae_fiscal || ''),
+        porte: data.porte || data.descricao_porte || '',
+        naturezaJuridica: data.natureza_juridica || '',
+        municipio: data.municipio || '',
+        uf: data.uf || '',
+        capitalSocial: data.capital_social || 0,
+        dataAbertura: data.data_inicio_atividade || '',
+        situacao: data.descricao_situacao_cadastral || data.situacao_cadastral || '',
+    };
+};
+
+export const getIndustryFromCnpj = async (cnpj: string): Promise<string> => {
+    try {
+        const cnpjData = await fetchCnpjFromBrasilAPI(cnpj);
+        return cnpjData.cnaeDescricao;
+    } catch {
+        // Fallback: usar Gemini com Google Search
+        const prompt = `
+            Pesquise na internet pelo CNPJ a seguir e retorne APENAS a descricao do CNAE principal.
+            Nao inclua o codigo do CNAE, apenas a descricao da atividade principal.
+            Seja direto e retorne apenas o texto da descricao.
+            CNPJ: ${cnpj}
+        `;
+        const ai = getAI();
+        const response = await withRetry(async () => {
+            return await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+                config: { tools: [{ googleSearch: {} }] },
+            });
+        });
+        return response.text;
+    }
+};
+
+export const getMarketResearchFromCnpj = async (cnpj: string): Promise<MarketResearchResult> => {
+    // Step 1: Buscar dados oficiais do CNPJ
+    const cnpjData = await fetchCnpjFromBrasilAPI(cnpj);
+    
+    // Step 2: Usar Gemini com Google Search para análise de mercado regional
+    const prompt = `
+Voce e um consultor estrategico de nivel CEO/CFO. Com base nos dados oficiais abaixo de uma empresa brasileira, faca uma ANALISE DE MERCADO REGIONAL completa.
+
+DADOS DA EMPRESA:
+- Razao Social: ${cnpjData.razaoSocial}
+- Nome Fantasia: ${cnpjData.nomeFantasia}
+- CNAE: ${cnpjData.cnaeCodigo} - ${cnpjData.cnaeDescricao}
+- Porte: ${cnpjData.porte}
+- Municipio/UF: ${cnpjData.municipio}/${cnpjData.uf}
+- Capital Social: R$ ${cnpjData.capitalSocial?.toLocaleString('pt-BR')}
+- Data de Abertura: ${cnpjData.dataAbertura}
+
+PESQUISE NA INTERNET e faca uma analise completa cobrindo:
+
+1. **TAMANHO DO MERCADO**: Estime o tamanho do mercado (TAM, SAM, SOM) para o setor ${cnpjData.cnaeDescricao} na regiao de ${cnpjData.municipio}/${cnpjData.uf} e no Rio Grande do Sul. Use dados reais de pesquisas, IBGE, SEBRAE, associacoes setoriais.
+
+2. **CRESCIMENTO DO SETOR**: Taxa de crescimento anual do setor nos ultimos 3 anos e projecao para 2026. Cite fontes.
+
+3. **CONCORRENCIA REGIONAL**: Quantos concorrentes diretos existem na regiao? Quais sao os principais? Qual o nivel de concentracao do mercado?
+
+4. **OPORTUNIDADES**: Identifique pelo menos 3 oportunidades concretas para uma empresa deste porte e setor na regiao. Considere tendencias de mercado, gaps de mercado, demanda reprimida.
+
+5. **AMEACAS E RISCOS**: Principais riscos do setor na regiao (regulatorios, economicos, concorrenciais).
+
+6. **BENCHMARKS DO SETOR**: Margem de lucro media, ticket medio, taxa de crescimento tipica, numero medio de funcionarios para empresas similares.
+
+7. **RECOMENDACOES ESTRATEGICAS**: 3 a 5 acoes concretas que o empresario deveria considerar para 2026.
+
+Formate a resposta em Markdown com titulos claros. Seja especifico com numeros e dados. Cite fontes quando possivel.
+Escreva em portugues brasileiro.
+`;
 
     try {
         const ai = getAI();
@@ -109,11 +205,14 @@ export const getIndustryFromCnpj = async (cnpj: string): Promise<string> => {
                 },
             });
         });
-        return response.text;
+        return {
+            cnpjData,
+            marketAnalysis: response.text || 'Analise nao disponivel.',
+        };
     } catch (error) {
-        console.error("Error calling Gemini API for CNPJ analysis:", error);
-         const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-        throw new Error(`Falha ao analisar o CNPJ com a IA: ${errorMessage}`);
+        console.error("Error calling Gemini API for market research:", error);
+        const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+        throw new Error(`Falha ao gerar analise de mercado: ${errorMessage}`);
     }
 };
 
@@ -488,7 +587,7 @@ export const getStrategicScoreImpactAnalysis = async (score: PlanData['analysis'
         ${componentsText}
 
         Com base nisso, forneça uma análise em texto, explicando:
-        1.  **Diagnóstico Rápido:** O que a pontuação geral (${score.total >= 0 ? '+' : ''}${score.total.toFixed(1)}%) significa? A estratégia da empresa está ajudando ou atrapalhando seu potencial de crescimento?
+        1.  **Diagnóstico Rápido:** O que a pontuação geral (${score.total >= 0 ? '+' : ''}${score.total.toFixed(1).replace('.', ',')}%) significa? A estratégia da empresa está ajudando ou atrapalhando seu potencial de crescimento?
         2.  **Análise dos Componentes:** Destaque os 2 componentes mais importantes (positivos ou negativos) e explique como eles estão impactando a pontuação. Por exemplo, "Apesar de um bom posicionamento de mercado, a alta concentração de receita (Curva ABC) está agindo como um freio...".
         3.  **Impacto no Orçamento:** Explique como este fator de ${formatPercentage(score.total, 1)} influenciará as projeções de receita nos cenários. Por exemplo, "Na prática, isso significa que o cenário 'Conservador', que tinha uma meta de crescimento de 20%, será ajustado para ${formatPercentage(20 + score.total, 1)}, refletindo o impulso (ou o obstáculo) da sua situação estratégica atual."
 
@@ -841,7 +940,7 @@ export const generatePlanReportAnalysis = async (planData: PlanData, goals2026: 
            - Fraquezas: ${planData.marketAnalysis.swot.weaknesses}
            - Ameaças: ${planData.marketAnalysis.swot.threats}
            - Oportunidades: ${planData.marketAnalysis.swot.opportunities}
-           - Fator Estratégico (Score): ${planData.analysis.strategicScore.total.toFixed(1)}%
+           - Fator Estratégico (Score): ${planData.analysis.strategicScore.total.toFixed(1).replace('.', ',')}%
 
         2. **O Alvo (Metas 2026):**
            - Receita Alvo: ${formatCurrency(sumMonthlyData(goals2026.financeiras.metaReceita))}
