@@ -222,8 +222,12 @@ tbody tr:hover {
 /* ===== PRINT STYLES ===== */
 @media print {
   @page {
-    margin: 1cm;
-    size: landscape;
+    margin: 15mm 12mm;
+    size: A4 portrait;
+  }
+  
+  @page :first {
+    margin: 0;
   }
   
   html, body {
@@ -233,6 +237,8 @@ tbody tr:hover {
     margin: 0 !important;
     padding: 0 !important;
     background-color: white !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
   }
 
   * {
@@ -250,6 +256,24 @@ tbody tr:hover {
     display: block !important;
     width: 100% !important;
     white-space: normal !important;
+  }
+
+  /* Page break utilities */
+  .break-before-page {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Avoid breaking inside cards and tables */
+  table, .report-section, .grid > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Ensure headers stay with content */
+  h1, h2, h3, h4 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   body:not(.printing-report-mode) #root {
@@ -291,18 +315,29 @@ tbody tr:hover {
     display: block !important;
     background: white !important;
     overflow: visible !important;
+    padding: 0 !important;
   }
 
   body.printing-report-mode .report-portal-content {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 8mm !important;
     box-shadow: none !important;
     border: none !important;
   }
   
   body.printing-report-mode .report-toolbar {
     display: none !important;
+  }
+
+  /* Table styling for print */
+  body.printing-report-mode table {
+    font-size: 9pt !important;
+  }
+
+  body.printing-report-mode table th,
+  body.printing-report-mode table td {
+    padding: 4px 6px !important;
   }
 }
