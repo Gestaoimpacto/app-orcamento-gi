@@ -759,4 +759,5 @@ export interface PlanContextType {
     generateDiagnosisReport: () => Promise<void>;
     generatePlanReport: () => Promise<void>;
     checkSubscription: () => Promise<void>;
+    resetAllData: () => Promise<void>;
 }

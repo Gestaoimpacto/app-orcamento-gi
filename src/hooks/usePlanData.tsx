@@ -1451,6 +1451,38 @@ export const PlanProvider: React.FC<{ children: React.ReactNode, user: User }> =
         },
         generateDiagnosisReport: async () => { const result = await api.generateDiagnosisReportAnalysis(planData, summary2025); setPlanData(p => ({...p, analysis: {...p.analysis, diagnosisReportAnalysis: result}})); },
         generatePlanReport: async () => { const result = await api.generatePlanReportAnalysis(planData, goals2026, scenarios2026, baseScenario); setPlanData(p => ({...p, analysis: {...p.analysis, planReportAnalysis: result}})); },
+        resetAllData: async () => {
+            setPlanData(initialPlanData);
+            setGoals2026(initialGoals);
+            setScenarios2026(initialScenarios);
+            setTracking2026({});
+            setPricingItems([]);
+            setTaxes({
+                regimeTributario: 'Simples Nacional', anexoSimples: '', aliquotaEfetiva: 0, simplesNacional: 0,
+                iss: 0, icms: 0, pis: 0, cofins: 0, irpj: 0, csll: 0, inssPatronal: 0, fgts: 0, ratTerceiros: 0,
+                totalEncargosFolha: 0, totalImpostos2024: 0, totalImpostos2025: 0
+            });
+            localStorage.removeItem('google_gemini_api_key');
+            try {
+                if (!isOfflineMode && db) {
+                    const docRef = doc(db, 'users', user.uid);
+                    await setDoc(docRef, {
+                        planData: initialPlanData,
+                        goals2026: initialGoals,
+                        scenarios2026: initialScenarios,
+                        tracking2026: {},
+                        taxes: {
+                            regimeTributario: 'Simples Nacional', anexoSimples: '', aliquotaEfetiva: 0, simplesNacional: 0,
+                            iss: 0, icms: 0, pis: 0, cofins: 0, irpj: 0, csll: 0, inssPatronal: 0, fgts: 0, ratTerceiros: 0,
+                            totalEncargosFolha: 0, totalImpostos2024: 0, totalImpostos2025: 0
+                        },
+                        pricingItems: []
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao limpar dados no Firebase:', error);
+            }
+        },
         checkSubscription,
         financialIndicators,
         calculateSensitivityAnalysis,

@@ -5,7 +5,7 @@ import { CompanyProfile } from '../types';
 import { getIndustryFromCnpj, getMarketResearchFromCnpj, CnpjData } from '../services/geminiService';
 
 const Settings: React.FC = () => {
-    const { planData, updateCompanyProfile, updateMarketCompetitionData, saveDataNow } = usePlan();
+    const { planData, updateCompanyProfile, updateMarketCompetitionData, saveDataNow, resetAllData } = usePlan();
     const [isSearching, setIsSearching] = useState(false);
     const [isResearching, setIsResearching] = useState(false);
     const [showKey, setShowKey] = useState(false);
@@ -13,6 +13,10 @@ const Settings: React.FC = () => {
     const [cnpjData, setCnpjData] = useState<CnpjData | null>(null);
     const [marketAnalysis, setMarketAnalysis] = useState<string>('');
     const [researchError, setResearchError] = useState<string>('');
+    const [showResetModal, setShowResetModal] = useState(false);
+    const [resetConfirmText, setResetConfirmText] = useState('');
+    const [isResetting, setIsResetting] = useState(false);
+    const RESET_CONFIRMATION_WORD = 'APAGAR TUDO';
     
     // Migrar chave antiga do localStorage para o Firebase (uma única vez)
     useEffect(() => {
@@ -335,6 +339,97 @@ const Settings: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {/* ZONA DE PERIGO */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border-2 border-red-200 space-y-6">
+                <h2 className="text-lg font-bold text-red-700 border-b border-red-200 pb-3 flex items-center gap-2">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                    Zona de Perigo
+                </h2>
+                
+                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <p className="text-sm text-red-800">
+                        <strong>Atenção:</strong> A ação abaixo irá apagar permanentemente todos os dados do seu planejamento, incluindo dados financeiros, metas, cenários, plano de ação e todas as configurações. Esta ação <strong>não pode ser desfeita</strong>.
+                    </p>
+                </div>
+
+                <button
+                    onClick={() => { setShowResetModal(true); setResetConfirmText(''); }}
+                    className="px-6 py-3 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2"
+                >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    Limpar Todos os Dados
+                </button>
+            </div>
+
+            {/* MODAL DE CONFIRMAÇÃO */}
+            {showResetModal && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 space-y-6">
+                        <div className="text-center">
+                            <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900">Tem certeza absoluta?</h3>
+                            <p className="text-sm text-gray-600 mt-2">
+                                Todos os seus dados serão apagados permanentemente. Isso inclui dados financeiros, metas, OKRs, cenários, plano de ação, precificação e todas as análises geradas.
+                            </p>
+                        </div>
+
+                        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <p className="text-sm text-red-800 font-medium text-center">
+                                Para confirmar, digite <strong className="text-red-900 bg-red-200 px-2 py-0.5 rounded">{RESET_CONFIRMATION_WORD}</strong> no campo abaixo:
+                            </p>
+                        </div>
+
+                        <input
+                            type="text"
+                            value={resetConfirmText}
+                            onChange={(e) => setResetConfirmText(e.target.value)}
+                            placeholder={`Digite: ${RESET_CONFIRMATION_WORD}`}
+                            className="block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 text-center text-lg font-bold p-3 bg-white text-gray-900 tracking-wider"
+                            autoFocus
+                        />
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => { setShowResetModal(false); setResetConfirmText(''); }}
+                                className="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+                                disabled={isResetting}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    if (resetConfirmText !== RESET_CONFIRMATION_WORD) return;
+                                    setIsResetting(true);
+                                    try {
+                                        await resetAllData();
+                                        setShowResetModal(false);
+                                        setResetConfirmText('');
+                                    } catch (error) {
+                                        console.error('Erro ao limpar dados:', error);
+                                        alert('Erro ao limpar dados. Tente novamente.');
+                                    } finally {
+                                        setIsResetting(false);
+                                    }
+                                }}
+                                disabled={resetConfirmText !== RESET_CONFIRMATION_WORD || isResetting}
+                                className="flex-1 px-4 py-3 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isResetting ? (
+                                    <>
+                                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Apagando...
+                                    </>
+                                ) : (
+                                    'Apagar Todos os Dados'
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
