@@ -3,9 +3,11 @@ import { usePlan } from '../hooks/usePlanData';
 import type { TaxesData } from '../types';
 import { formatCurrency, formatPercentage, formatNumber } from '../utils/formatters';
 import CurrencyInput from './shared/CurrencyInput';
+import { getTaxRecommendation } from '../services/geminiService';
+import ReactMarkdown from 'react-markdown';
 
 // ===== TAB TYPES =====
-type TaxTab = 'config' | 'cenario' | 'simulador' | 'engenharia';
+type TaxTab = 'config' | 'cenario' | 'simulador' | 'engenharia' | 'sugestao';
 
 // ===== TIMELINE DATA =====
 const timelineData = [
@@ -16,9 +18,36 @@ const timelineData = [
 ];
 
 const Taxes: React.FC = () => {
-    const { taxes, updateTaxes, applyTaxesTo2025, summary2025 } = usePlan();
+    const { taxes, updateTaxes, applyTaxesTo2025, summary2025, planData } = usePlan();
     const prevTaxesRef = useRef<string>('');
     const [activeTab, setActiveTab] = useState<TaxTab>('config');
+    const [taxRecommendation, setTaxRecommendation] = useState<string>('');
+    const [isLoadingRecommendation, setIsLoadingRecommendation] = useState(false);
+    const [recommendationError, setRecommendationError] = useState<string>('');
+
+    const handleGetTaxRecommendation = async () => {
+        const cnpj = planData.companyProfile?.cnpj;
+        if (!cnpj || cnpj.replace(/[^\d]/g, '').length !== 14) {
+            setRecommendationError('CNPJ n\u00e3o configurado. V\u00e1 em Configura\u00e7\u00f5es e preencha o CNPJ da empresa.');
+            return;
+        }
+        setIsLoadingRecommendation(true);
+        setRecommendationError('');
+        setTaxRecommendation('');
+        try {
+            const result = await getTaxRecommendation(
+                cnpj,
+                taxes.regimeTributario || 'N\u00e3o informado',
+                calculatedRate,
+                receitaBruta2025
+            );
+            setTaxRecommendation(result);
+        } catch (error) {
+            setRecommendationError(error instanceof Error ? error.message : 'Erro ao gerar recomenda\u00e7\u00e3o.');
+        } finally {
+            setIsLoadingRecommendation(false);
+        }
+    };
 
     // Calcula a alíquota efetiva atual
     const calculatedRate = (() => {
@@ -786,11 +815,133 @@ const Taxes: React.FC = () => {
         </div>
     );
 
+    const renderSugestaoTab = () => (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-brand-orange/10 rounded-xl flex items-center justify-center">
+                        <span className="text-xl" dangerouslySetInnerHTML={{ __html: '&#129302;' }} />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900">Sugest\u00e3o Tribut\u00e1ria Personalizada</h2>
+                        <p className="text-sm text-gray-500">An\u00e1lise com IA baseada nos dados do seu CNPJ</p>
+                    </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    Com base nos dados do seu <strong>CNPJ</strong> (CNAE, porte, localiza\u00e7\u00e3o), no <strong>regime tribut\u00e1rio</strong> configurado e na <strong>receita bruta</strong> de 2025, a IA vai analisar:
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Diagn\u00f3stico do Regime</p>
+                        <p className="text-xs text-gray-500">O regime atual \u00e9 o melhor para voc\u00ea?</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Impacto da Reforma</p>
+                        <p className="text-xs text-gray-500">Como a reforma afeta seu CNAE</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Simples H\u00edbrido</p>
+                        <p className="text-xs text-gray-500">Vale a pena aderir?</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Oportunidades</p>
+                        <p className="text-xs text-gray-500">Cr\u00e9ditos e benef\u00edcios dispon\u00edveis</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Plano de A\u00e7\u00e3o</p>
+                        <p className="text-xs text-gray-500">Cronograma 2026-2027</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs font-bold text-gray-700">Alertas</p>
+                        <p className="text-xs text-gray-500">Riscos espec\u00edficos do seu setor</p>
+                    </div>
+                </div>
+
+                {/* Dados usados na an\u00e1lise */}
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4">
+                    <p className="text-xs font-bold text-gray-600 uppercase mb-2">Dados que ser\u00e3o usados na an\u00e1lise:</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <p className="text-xs text-gray-500">CNPJ</p>
+                            <p className="text-sm font-semibold text-gray-800">{planData.companyProfile?.cnpj || 'N\u00e3o configurado'}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-gray-500">Regime Tribut\u00e1rio</p>
+                            <p className="text-sm font-semibold text-gray-800">{taxes.regimeTributario || 'N\u00e3o informado'}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-gray-500">Receita Bruta 2025</p>
+                            <p className="text-sm font-semibold text-gray-800">{formatCurrency(receitaBruta2025)}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleGetTaxRecommendation}
+                    disabled={isLoadingRecommendation || !planData.companyProfile?.cnpj}
+                    className="w-full py-3 bg-brand-orange text-white font-bold rounded-xl hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {isLoadingRecommendation ? (
+                        <><span className="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span> Analisando com IA (pode levar at\u00e9 30s)...</>
+                    ) : (
+                        <><span dangerouslySetInnerHTML={{ __html: '&#129302;' }} /> Gerar Sugest\u00e3o Tribut\u00e1ria Personalizada</>
+                    )}
+                </button>
+
+                {!planData.companyProfile?.cnpj && (
+                    <p className="text-xs text-red-500 mt-2 text-center">Configure o CNPJ da empresa em Configura\u00e7\u00f5es antes de gerar a sugest\u00e3o.</p>
+                )}
+            </div>
+
+            {/* Erro */}
+            {recommendationError && (
+                <div className="bg-red-50 p-4 rounded-xl border border-red-200">
+                    <p className="text-sm text-red-700 font-medium">{recommendationError}</p>
+                </div>
+            )}
+
+            {/* Resultado */}
+            {taxRecommendation && (
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-gray-900">An\u00e1lise Tribut\u00e1ria Personalizada</h3>
+                        <button
+                            onClick={() => {
+                                const blob = new Blob([taxRecommendation], { type: 'text/markdown' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'analise-tributaria.md';
+                                a.click();
+                                URL.revokeObjectURL(url);
+                            }}
+                            className="text-sm text-brand-orange font-semibold hover:text-orange-700"
+                        >
+                            Baixar Relat\u00f3rio
+                        </button>
+                    </div>
+                    <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-li:text-gray-700 prose-a:text-brand-orange">
+                        <ReactMarkdown>{taxRecommendation}</ReactMarkdown>
+                    </div>
+                </div>
+            )}
+
+            {/* Disclaimer */}
+            <div className="p-4 bg-gray-100 rounded-xl border border-gray-200">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                    <strong>Aviso importante:</strong> Esta an\u00e1lise \u00e9 gerada por intelig\u00eancia artificial com base em dados p\u00fablicos e legisla\u00e7\u00e3o vigente. N\u00e3o substitui a consultoria de um contador ou advogado tributarista. Sempre valide as recomenda\u00e7\u00f5es com seu profissional de confian\u00e7a antes de tomar decis\u00f5es.
+                </p>
+            </div>
+        </div>
+    );
+
     const tabs: { id: TaxTab; label: string; icon: string }[] = [
-        { id: 'config', label: 'Configuração', icon: '&#9881;' },
-        { id: 'cenario', label: 'Cenário Tributário', icon: '&#128200;' },
+        { id: 'config', label: 'Configura\u00e7\u00e3o', icon: '&#9881;' },
+        { id: 'cenario', label: 'Cen\u00e1rio Tribut\u00e1rio', icon: '&#128200;' },
         { id: 'simulador', label: 'Simulador de Impacto', icon: '&#9889;' },
-        { id: 'engenharia', label: 'Engenharia Contábil', icon: '&#128736;' },
+        { id: 'engenharia', label: 'Engenharia Cont\u00e1bil', icon: '&#128736;' },
+        { id: 'sugestao', label: 'Sugest\u00e3o para seu Neg\u00f3cio', icon: '&#129302;' },
     ];
 
     return (
@@ -825,6 +976,7 @@ const Taxes: React.FC = () => {
             {activeTab === 'cenario' && renderCenarioTab()}
             {activeTab === 'simulador' && renderSimuladorTab()}
             {activeTab === 'engenharia' && renderEngenhariaTab()}
+            {activeTab === 'sugestao' && renderSugestaoTab()}
         </div>
     );
 };

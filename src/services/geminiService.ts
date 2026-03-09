@@ -217,6 +217,76 @@ Escreva em portugues brasileiro.
 };
 
 
+export const getTaxRecommendation = async (cnpj: string, regimeTributario: string, aliquotaEfetiva: number, receitaBruta: number): Promise<string> => {
+    const cnpjData = await fetchCnpjFromBrasilAPI(cnpj);
+    
+    const prompt = `
+Voce e um especialista em planejamento tributario e engenharia contabil no Brasil. Com base nos dados abaixo, faca uma ANALISE TRIBUTARIA PERSONALIZADA e de recomendacoes praticas.
+
+DADOS DA EMPRESA:
+- Razao Social: ${cnpjData.razaoSocial}
+- Nome Fantasia: ${cnpjData.nomeFantasia}
+- CNAE: ${cnpjData.cnaeCodigo} - ${cnpjData.cnaeDescricao}
+- Porte: ${cnpjData.porte}
+- Natureza Juridica: ${cnpjData.naturezaJuridica}
+- Municipio/UF: ${cnpjData.municipio}/${cnpjData.uf}
+- Capital Social: R$ ${cnpjData.capitalSocial?.toLocaleString('pt-BR')}
+- Data de Abertura: ${cnpjData.dataAbertura}
+
+DADOS TRIBUTARIOS ATUAIS:
+- Regime Tributario: ${regimeTributario}
+- Aliquota Efetiva Atual: ${aliquotaEfetiva.toFixed(2).replace('.', ',')}%
+- Receita Bruta Anual Estimada: R$ ${receitaBruta.toLocaleString('pt-BR')}
+
+CONTEXTO 2026-2027:
+- Reforma Tributaria em transicao (EC 132/2023, LC 214/2025)
+- 2026: Fase de testes com aliquota 1% (0,9% CBS + 0,1% IBS)
+- 2027: Extincao de PIS/COFINS, CBS com aliquota cheia (~8,8%)
+- Split Payment obrigatorio a partir de 2027
+- Ajuste fiscal do governo com ampliacao da base tributavel
+- Simples Nacional com regime hibrido opcional (setembro/2026)
+
+ANALISE E RECOMENDE:
+
+1. **DIAGNOSTICO DO REGIME ATUAL**: O regime ${regimeTributario} e o mais adequado para esta empresa considerando CNAE, porte e faturamento? Compare com os outros regimes.
+
+2. **IMPACTO DA REFORMA**: Como a Reforma Tributaria vai impactar especificamente este CNAE (${cnpjData.cnaeDescricao})? O setor vai pagar mais ou menos? Quanto aproximadamente?
+
+3. **SIMPLES NACIONAL HIBRIDO**: Se a empresa esta no Simples, vale a pena aderir ao regime hibrido (recolher CBS/IBS separadamente para gerar creditos)? Analise o caso especifico.
+
+4. **OPORTUNIDADES DE ECONOMIA**: Identifique pelo menos 3 oportunidades concretas de reducao de carga tributaria para esta empresa, considerando:
+   - Creditos tributarios disponiveis no novo sistema
+   - Beneficios fiscais regionais (${cnpjData.uf})
+   - Incentivos setoriais para o CNAE ${cnpjData.cnaeCodigo}
+   - Reestruturacao societaria se aplicavel
+
+5. **PLANO DE ACAO TRIBUTARIO**: Cronograma com acoes especificas para 2026 (preparacao) e 2027 (transicao), com prazos e prioridades.
+
+6. **ALERTAS**: Riscos tributarios especificos para este tipo de empresa que o empresario deve ficar atento.
+
+Formate em Markdown com titulos claros, bullets e destaques em negrito. Seja especifico e pratico. Use dados reais quando possivel.
+Escreva em portugues brasileiro.
+`;
+
+    try {
+        const ai = getAI();
+        const response = await withRetry(async () => {
+            return await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                },
+            });
+        });
+        return response.text || 'Analise nao disponivel.';
+    } catch (error) {
+        console.error("Error calling Gemini API for tax recommendation:", error);
+        const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+        throw new Error(`Falha ao gerar recomendacao tributaria: ${errorMessage}`);
+    }
+};
+
 export const getGoalSuggestions = async (planData: PlanData, summary: Summary2025): Promise<{ financeiras: FinancialGoals, comerciais: CommercialGoals, pessoas: PeopleGoals }> => {
     const { companyProfile, marketAnalysis } = planData;
 
